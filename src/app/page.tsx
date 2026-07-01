@@ -1,9 +1,10 @@
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#fffaf5] text-[#241812]">
-<Navbar />
+      <Navbar />
 
       <section className="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-2 md:items-center">
         <div>
@@ -23,22 +24,33 @@ export default function Home() {
           </p>
 
           <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-            <button className="rounded-full bg-[#ff6b4a] px-7 py-4 font-semibold text-white shadow-lg">
-              Create Your MemoryPop
-            </button>
-            <button className="rounded-full border border-[#e8d8cc] bg-white px-7 py-4 font-semibold">
+            <Link
+              href="/create"
+              className="rounded-full bg-[#ff6b4a] px-7 py-4 text-center font-semibold text-white shadow-lg transition hover:scale-105"
+            >
+              Start a MemoryPop
+            </Link>
+
+            <Link
+              href="/create"
+              className="rounded-full border border-[#e8d8cc] bg-white px-7 py-4 text-center font-semibold transition hover:bg-gray-50"
+            >
               View Demo
-            </button>
+            </Link>
           </div>
         </div>
 
         <div className="rounded-[2rem] bg-white p-5 shadow-2xl">
           <div className="rounded-[1.5rem] bg-gradient-to-br from-[#ffe1d6] via-[#fff3c7] to-[#e5d4ff] p-8">
             <p className="text-sm font-semibold">A MemoryPop for</p>
-            <h2 className="mt-2 text-4xl font-bold">Aarav’s Birthday 🎉</h2>
+
+            <h2 className="mt-2 text-4xl font-bold">
+              Aarav’s Birthday 🎉
+            </h2>
+
             <p className="mt-6 text-[#6b5b52]">
-              “You make every room brighter. Here are some memories from the
-              people who love you most.”
+              "You make every room brighter. Here are some memories from the
+              people who love you most."
             </p>
 
             <div className="mt-8 grid grid-cols-3 gap-3">
@@ -47,15 +59,20 @@ export default function Home() {
               <div className="h-28 rounded-2xl bg-white/70" />
             </div>
 
-            <button className="mt-8 w-full rounded-full bg-[#241812] py-4 font-semibold text-white">
-              Open Memory
-            </button>
+            <Link
+              href="/create"
+              className="mt-8 block w-full rounded-full bg-[#241812] py-4 text-center font-semibold text-white transition hover:opacity-90"
+            >
+              Start Creating
+            </Link>
           </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-6xl px-6 py-16">
-        <h2 className="text-3xl font-bold">For every moment that matters</h2>
+        <h2 className="text-3xl font-bold">
+          For every moment that matters
+        </h2>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
           {[
@@ -70,7 +87,7 @@ export default function Home() {
           ].map((item) => (
             <div
               key={item}
-              className="rounded-3xl border border-[#f0ded2] bg-white p-6 font-semibold shadow-sm"
+              className="rounded-3xl border border-[#f0ded2] bg-white p-6 font-semibold shadow-sm transition hover:-translate-y-1 hover:shadow-md"
             >
               {item}
             </div>
