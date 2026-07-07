@@ -1,5 +1,5 @@
 "use client";
-
+import { supabase } from "@/lib/supabase";
 import { ChangeEvent, useState } from "react";
 
 export default function CreatePage() {
@@ -17,7 +17,29 @@ export default function CreatePage() {
     const photoUrls = files.map((file) => URL.createObjectURL(file));
     setPhotos(photoUrls);
   }
+async function saveMemoryPop() {
+  const { data, error } = await supabase
+    .from("memorypops")
+    .insert({
+      recipient_name: recipient,
+      occasion,
+      story,
+      tone,
+      status: "collecting",
+      share_code: crypto.randomUUID(),
+    })
+    .select()
+    .single();
 
+  if (error) {
+  alert(error.message);
+  return;
+}
+
+window.location.href = `/success?shareCode=${data.share_code}&recipient=${encodeURIComponent(
+  data.recipient_name
+)}&occasion=${encodeURIComponent(data.occasion)}`;
+}
   function goBack() {
     if (step > 1) setStep(step - 1);
   }
@@ -210,10 +232,12 @@ export default function CreatePage() {
             </div>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <button className="rounded-full bg-[#FF6B57] px-7 py-4 font-semibold text-white">
-                Invite Contributors
-              </button>
-
+              <button
+  onClick={saveMemoryPop}
+  className="rounded-full bg-[#FF6B57] px-7 py-4 font-semibold text-white"
+>
+  Create My MemoryPop ❤️
+</button>
               <button className="rounded-full border border-[#F0DED2] bg-white px-7 py-4 font-semibold">
                 Share MemoryPop
               </button>
