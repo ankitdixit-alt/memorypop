@@ -1,25 +1,21 @@
-"use client";
-
 import Link from "next/link";
-import { Suspense } from "react";
-import { useSearchParams } from "next/navigation";
 
-function SuccessContent() {
-  const searchParams = useSearchParams();
+type SuccessPageProps = {
+  searchParams: Promise<{
+    recipient?: string;
+    occasion?: string;
+    shareCode?: string;
+  }>;
+};
 
-  const recipient = searchParams.get("recipient") || "your loved one";
-  const occasion = searchParams.get("occasion") || "Celebration";
-  const shareCode = searchParams.get("shareCode") || "";
+export default async function SuccessPage({ searchParams }: SuccessPageProps) {
+  const params = await searchParams;
 
-  const shareLink =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/m/${shareCode}`
-      : "";
+  const recipient = params.recipient || "your loved one";
+  const occasion = params.occasion || "Celebration";
+  const shareCode = params.shareCode || "";
 
-  async function copyLink() {
-    await navigator.clipboard.writeText(shareLink);
-    alert("Share link copied! ❤️");
-  }
+  const shareLink = `https://memorypop.vercel.app/m/${shareCode}`;
 
   return (
     <main className="min-h-screen bg-[#FFF8F2] px-6 py-12 text-[#2B1E18]">
@@ -27,7 +23,7 @@ function SuccessContent() {
         <p className="text-5xl">🎉</p>
 
         <h1 className="mt-6 text-4xl font-bold">
-          {recipient}'s {occasion} MemoryPop is ready!
+          {recipient}&apos;s {occasion} MemoryPop is ready!
         </h1>
 
         <p className="mt-5 max-w-xl text-lg leading-8 text-[#6B5B52]">
@@ -44,15 +40,8 @@ function SuccessContent() {
             {shareLink}
           </div>
 
-          <button
-            onClick={copyLink}
-            className="mt-5 w-full rounded-full bg-[#FF6B57] px-6 py-4 font-semibold text-white"
-          >
-            🔗 Copy Share Link
-          </button>
-
           <p className="mt-4 text-sm text-[#6B5B52]">
-            Contributor page coming next ❤️
+            Copy this link manually for now. Contributor page coming next ❤️
           </p>
         </div>
 
@@ -73,13 +62,5 @@ function SuccessContent() {
         </div>
       </div>
     </main>
-  );
-}
-
-export default function SuccessPage() {
-  return (
-    <Suspense>
-      <SuccessContent />
-    </Suspense>
   );
 }
