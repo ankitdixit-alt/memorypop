@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 
 type SuccessPageProps = {
   searchParams: Promise<{
@@ -15,7 +16,11 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   const occasion = params.occasion || "Celebration";
   const shareCode = params.shareCode || "";
 
-  const shareLink = `https://memorypop.vercel.app/m/${shareCode}`;
+  // Get current host for dynamic URL generation
+  const headersList = await headers();
+  const host = headersList.get("host") || "localhost:3000";
+  const protocol = host.includes("localhost") ? "http" : "https";
+  const shareLink = `${protocol}://${host}/m/${shareCode}`;
 
   return (
     <main className="min-h-screen bg-[#FFF8F2] px-6 py-12 text-[#2B1E18]">
