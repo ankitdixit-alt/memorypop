@@ -34,14 +34,14 @@ export function ShareButtons({
     <div className="flex flex-col gap-3 sm:flex-row">
       <button
         onClick={handleCopy}
-        className="rounded-full border border-[#F0DED2] bg-white px-7 py-4 font-semibold text-[#2B1E18] transition-colors hover:bg-[#FFF8F2]"
+        className="rounded-full bg-[#ef6a57] px-7 py-4 font-semibold text-white transition-colors hover:bg-[#e05a47]"
       >
         {copied ? "Copied! ✓" : "Copy Link"}
       </button>
 
       <button
         onClick={handleWhatsApp}
-        className="rounded-full bg-[#25D366] px-7 py-4 font-semibold text-white transition-colors hover:bg-[#22c55e]"
+        className="rounded-full border border-[#ead8c9] bg-white px-7 py-4 font-semibold text-[#3a241e] transition-colors hover:bg-[#fff8ef]"
       >
         Share on WhatsApp
       </button>

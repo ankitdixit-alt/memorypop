@@ -37,25 +37,38 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
           to add their memories.
         </p>
 
-        <div className="mt-10 w-full rounded-3xl border border-[#F0DED2] bg-white p-6 shadow-sm">
-          <p className="mb-6 text-sm font-semibold uppercase tracking-wide text-[#6B5B52]">
+        <div className="mt-10 w-full rounded-3xl border border-[#ead8c9] bg-white p-6 shadow-sm">
+          <p className="mb-6 text-center text-sm font-semibold uppercase tracking-wide text-[#856b5f]">
             Share your MemoryPop
           </p>
 
-          <ShareButtons shareLink={shareLink} recipient={recipient} />
+          <div className="flex justify-center">
+            <ShareButtons shareLink={shareLink} recipient={recipient} />
+          </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <div className="mt-10 w-full border-t border-[#ead8c9]"></div>
+
+        <Link
+          href={`/dashboard/${shareCode}`}
+          className="mt-10 rounded-full border-2 border-[#ef6a57] bg-white px-7 py-4 font-semibold text-[#ef6a57] transition-colors hover:bg-[#fff8ef]"
+        >
+          View Creator Dashboard
+        </Link>
+
+        <div className="mt-10 w-full border-t border-[#ead8c9]"></div>
+
+        <div className="mt-10 flex flex-col gap-3 sm:flex-row">
           <Link
             href="/create"
-            className="rounded-full bg-[#FF6B57] px-7 py-4 font-semibold text-white"
+            className="rounded-full border border-[#ead8c9] bg-white px-7 py-4 font-semibold text-[#3a241e] transition-colors hover:bg-[#fff8ef]"
           >
             Create Another
           </Link>
 
           <Link
             href="/"
-            className="rounded-full border border-[#F0DED2] bg-white px-7 py-4 font-semibold"
+            className="rounded-full border border-[#ead8c9] bg-white px-7 py-4 font-semibold text-[#3a241e] transition-colors hover:bg-[#fff8ef]"
           >
             Back Home
           </Link>
