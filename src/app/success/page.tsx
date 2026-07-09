@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { headers } from "next/headers";
+import { ShareButtons } from "@/components/ShareButtons";
 
 type SuccessPageProps = {
   searchParams: Promise<{
@@ -37,17 +38,11 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
         </p>
 
         <div className="mt-10 w-full rounded-3xl border border-[#F0DED2] bg-white p-6 shadow-sm">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-[#6B5B52]">
+          <p className="mb-6 text-sm font-semibold uppercase tracking-wide text-[#6B5B52]">
             Share your MemoryPop
           </p>
 
-          <div className="rounded-2xl bg-[#FFF8F2] p-4 text-sm break-all">
-            {shareLink}
-          </div>
-
-          <p className="mt-4 text-sm text-[#6B5B52]">
-            Copy this link manually for now. Contributor page coming next ❤️
-          </p>
+          <ShareButtons shareLink={shareLink} recipient={recipient} />
         </div>
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">

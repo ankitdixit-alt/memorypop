@@ -1,5 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
+import { ShareButtons } from "@/components/ShareButtons";
 
 export default async function MemoryPopPage({
   params,
@@ -25,6 +27,12 @@ export default async function MemoryPopPage({
     .eq("memorypop_id", data.id)
     .order("created_at", { ascending: false });
 
+  // Generate share link
+  const headersList = await headers();
+  const host = headersList.get("host") || "localhost:3000";
+  const protocol = host.includes("localhost") ? "http" : "https";
+  const shareLink = `${protocol}://${host}/m/${shareCode}`;
+
   return (
     <main className="min-h-screen bg-[#FFF8F2] px-6 py-12 text-[#2B1E18]">
       <div className="mx-auto max-w-2xl">
@@ -45,6 +53,20 @@ export default async function MemoryPopPage({
           >
             ❤️ Add Your Memory
           </a>
+        </div>
+
+        {/* Share Section */}
+        <div className="mt-8 rounded-2xl border border-[#F0DED2] bg-white p-6 shadow-sm">
+          <p className="mb-4 text-center text-sm font-semibold uppercase tracking-wide text-[#6B5B52]">
+            Share this MemoryPop
+          </p>
+
+          <div className="flex justify-center">
+            <ShareButtons
+              shareLink={shareLink}
+              recipient={data.recipient_name}
+            />
+          </div>
         </div>
 
         {/* Memories Section */}
