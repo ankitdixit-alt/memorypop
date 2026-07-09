@@ -41,7 +41,7 @@ export function ShareButtons({
 
       <button
         onClick={handleWhatsApp}
-        className="rounded-full border border-[#ead8c9] bg-white px-7 py-4 font-semibold text-[#3a241e] transition-colors hover:bg-[#fff8ef]"
+        className="rounded-full bg-[#25D366] px-7 py-4 font-semibold text-white transition-colors hover:bg-[#22c55e]"
       >
         Share on WhatsApp
       </button>
