@@ -105,6 +105,15 @@ export default async function DashboardPage({
               recipient={memorypop.recipient_name}
             />
 
+            {memoryCount > 0 && (
+              <Link
+                href={`/m/${shareCode}/reveal`}
+                className="mt-6 block w-full rounded-full bg-[#ef6a57] px-7 py-4 text-center font-semibold text-white transition-colors hover:bg-[#e05a47]"
+              >
+                Reveal Celebration
+              </Link>
+            )}
+
             <Link
               href={`/m/${shareCode}`}
               className="rounded-full border border-[#ead8c9] bg-white px-7 py-4 text-center font-semibold text-[#3a241e] transition-colors hover:bg-[#fff8ef]"
