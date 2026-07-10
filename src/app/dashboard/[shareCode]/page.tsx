@@ -132,14 +132,14 @@ export default async function DashboardPage({
 
             <div className="space-y-3">
               {/* Group by contributor */}
-              {Array.from(
+              {(Array.from(
                 memories.reduce((acc, memory) => {
                   if (!acc.has(memory.contributor_name)) {
                     acc.set(memory.contributor_name, memory.created_at);
                   }
                   return acc;
                 }, new Map<string, string>())
-              ).map(([name, createdAt]) => (
+              ) as [string, string][]).map(([name, createdAt]) => (
                 <div
                   key={name}
                   className="flex items-center justify-between border-b border-[#ead8c9] pb-3 last:border-0 last:pb-0"
