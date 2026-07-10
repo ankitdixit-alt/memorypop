@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getOccasionCopy } from "@/lib/occasions";
 
 interface Memory {
   id: string;
@@ -26,6 +27,7 @@ export default function RevealExperience({
   // Step memories.length + 1: Final celebration
 
   const totalSteps = memories.length + 2; // welcome + memories + final
+  const occasionCopy = getOccasionCopy(occasion, recipientName);
 
   const handleNext = () => {
     if (currentStep < totalSteps - 1) {
@@ -40,13 +42,14 @@ export default function RevealExperience({
         recipientName={recipientName}
         memoryCount={memories.length}
         onBegin={handleNext}
+        emoji={occasionCopy.emoji}
       />
     );
   } else if (currentStep <= memories.length) {
     const memoryIndex = currentStep - 1;
     return <MemoryScreen memory={memories[memoryIndex]} onNext={handleNext} />;
   } else {
-    return <FinalScreen recipientName={recipientName} occasion={occasion} />;
+    return <FinalScreen occasionCopy={occasionCopy} />;
   }
 }
 
@@ -55,15 +58,17 @@ function WelcomeScreen({
   recipientName,
   memoryCount,
   onBegin,
+  emoji,
 }: {
   recipientName: string;
   memoryCount: number;
   onBegin: () => void;
+  emoji: string;
 }) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#fff8ef] px-6">
-      {/* Heart emoji */}
-      <div className="mb-8 text-7xl">❤️</div>
+      {/* Occasion emoji */}
+      <div className="mb-8 text-7xl">{emoji}</div>
 
       {/* Welcome message */}
       <h1 className="mb-4 text-center text-4xl font-bold text-[#3a241e]">
@@ -131,21 +136,26 @@ function MemoryScreen({
 
 // Final Screen (Step n+1)
 function FinalScreen({
-  recipientName,
-  occasion,
+  occasionCopy,
 }: {
-  recipientName: string;
-  occasion: string;
+  occasionCopy: { celebrationMessage: string; subMessage?: string; emoji: string };
 }) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#fff8ef] px-6">
       {/* Celebration emoji */}
-      <div className="mb-8 text-7xl">🎉</div>
+      <div className="mb-8 text-7xl">{occasionCopy.emoji}</div>
 
       {/* Celebration message */}
       <h1 className="mb-4 text-center text-4xl font-bold text-[#3a241e]">
-        Happy {occasion} {recipientName}!
+        {occasionCopy.celebrationMessage}
       </h1>
+
+      {/* Optional sub-message (for Farewell, etc.) */}
+      {occasionCopy.subMessage && (
+        <p className="mb-4 text-center text-xl text-[#856b5f]">
+          {occasionCopy.subMessage}
+        </p>
+      )}
 
       {/* Thank you message */}
       <p className="text-center text-xl text-[#856b5f]">

@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { ShareButtons } from "@/components/ShareButtons";
+import { getOccasionCopy } from "@/lib/occasions";
 
 export default async function MemoryPopPage({
   params,
@@ -33,15 +34,24 @@ export default async function MemoryPopPage({
   const protocol = host.includes("localhost") ? "http" : "https";
   const shareLink = `${protocol}://${host}/m/${shareCode}`;
 
+  // Get occasion-specific copy
+  const occasionCopy = getOccasionCopy(data.occasion, data.recipient_name);
+
   return (
     <main className="min-h-screen bg-[#FFF8F2] px-6 py-12 text-[#2B1E18]">
       <div className="mx-auto max-w-2xl">
         <div className="flex flex-col items-center text-center">
-          <p className="text-5xl">❤️</p>
+          <p className="text-5xl">{occasionCopy.emoji}</p>
 
           <h1 className="mt-6 text-4xl font-bold">
-            {data.recipient_name}&apos;s {data.occasion} MemoryPop
+            {occasionCopy.celebrationMessage}
           </h1>
+
+          {occasionCopy.subMessage && (
+            <p className="mt-2 text-lg text-[#6B5B52]">
+              {occasionCopy.subMessage}
+            </p>
+          )}
 
           <p className="mt-4 text-lg leading-8 text-[#6B5B52]">
             &ldquo;{data.story}&rdquo;
@@ -51,14 +61,14 @@ export default async function MemoryPopPage({
             href={`/m/${shareCode}/contribute`}
             className="mt-10 inline-block rounded-full bg-[#FF6B57] px-8 py-4 font-semibold text-white"
           >
-            ❤️ Add Your Memory
+            {occasionCopy.emoji} {occasionCopy.actionLabel}
           </a>
         </div>
 
         {/* Share Section */}
         <div className="mt-8 rounded-2xl border border-[#F0DED2] bg-white p-6 shadow-sm">
           <p className="mb-4 text-center text-sm font-semibold uppercase tracking-wide text-[#6B5B52]">
-            Share this MemoryPop
+            {occasionCopy.sharePrompt}
           </p>
 
           <div className="flex justify-center">
@@ -76,7 +86,7 @@ export default async function MemoryPopPage({
           {!memories || memories.length === 0 ? (
             <div className="mt-8 rounded-2xl bg-white p-8 text-center shadow-sm">
               <p className="text-[#6B5B52]">
-                No memories yet. Be the first to add one ❤️
+                {occasionCopy.emptyStateMessage}
               </p>
             </div>
           ) : (

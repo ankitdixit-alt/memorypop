@@ -1,8 +1,9 @@
 "use client";
 
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { getOccasionCopy, type OccasionCopy } from "@/lib/occasions";
 
 export default function ContributePage() {
   const params = useParams();
@@ -14,6 +15,23 @@ export default function ContributePage() {
   const [photo, setPhoto] = useState("");
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [occasionCopy, setOccasionCopy] = useState<OccasionCopy | null>(null);
+
+  // Fetch occasion and recipient name for occasion-aware copy
+  useEffect(() => {
+    async function loadOccasionCopy() {
+      const { data } = await supabase
+        .from("memorypops")
+        .select("occasion, recipient_name")
+        .eq("share_code", shareCode)
+        .single();
+
+      if (data) {
+        setOccasionCopy(getOccasionCopy(data.occasion, data.recipient_name));
+      }
+    }
+    loadOccasionCopy();
+  }, [shareCode]);
 
   function handlePhotoUpload(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -109,10 +127,10 @@ export default function ContributePage() {
   return (
     <main className="min-h-screen bg-[#FFF8F2] px-6 py-12 text-[#2B1E18]">
       <div className="mx-auto max-w-2xl rounded-[2rem] bg-white p-8 shadow-xl">
-        <p className="text-center text-5xl">❤️</p>
+        <p className="text-center text-5xl">{occasionCopy?.emoji || "❤️"}</p>
 
         <h1 className="mt-6 text-center text-4xl font-bold">
-          Add Your Memory
+          {occasionCopy?.actionLabel || "Add Your Memory"}
         </h1>
 
         <p className="mt-4 text-center text-[#6B5B52]">

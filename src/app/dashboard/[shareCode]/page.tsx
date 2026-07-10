@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { ShareButtons } from "@/components/ShareButtons";
 import Link from "next/link";
+import { getOccasionCopy } from "@/lib/occasions";
 
 export default async function DashboardPage({
   params,
@@ -31,6 +32,10 @@ export default async function DashboardPage({
 
   // Calculate metrics
   const memoryCount = memories?.length || 0;
+  const photoCount = memories?.filter(m => m.photo_url).length || 0;
+  const messagesCount = memories?.filter(
+    (m) => m.message && m.message.trim() !== ""
+  ).length || 0;
   const contributorCount = new Set(
     memories?.map((m) => m.contributor_name) || []
   ).size;
@@ -40,6 +45,9 @@ export default async function DashboardPage({
   const host = headersList.get("host") || "localhost:3000";
   const protocol = host.includes("localhost") ? "http" : "https";
   const shareLink = `${protocol}://${host}/m/${shareCode}`;
+
+  // Get occasion-specific copy
+  const occasionCopy = getOccasionCopy(memorypop.occasion, memorypop.recipient_name);
 
   return (
     <main className="min-h-screen bg-[#fff8ef] px-6 py-12 text-[#3a241e]">
@@ -55,8 +63,77 @@ export default async function DashboardPage({
           </h1>
         </div>
 
-        {/* Info Card */}
-        <div className="mt-10 rounded-2xl bg-white p-6 shadow-sm">
+        {/* Progress Card */}
+        {memoryCount > 0 && (
+          <div className="mt-10 rounded-2xl bg-white p-6 shadow-sm text-center">
+            <div className="text-5xl mb-4">❤️</div>
+            <h2 className="text-3xl font-bold text-[#3a241e] mb-2">
+              {memoryCount} {memoryCount === 1 ? "Memory" : "Memories"} Collected
+            </h2>
+            <p className="text-[#856b5f]">
+              Goal: Collect memories before the celebration.
+            </p>
+          </div>
+        )}
+
+        {/* Memory Counter Breakdown */}
+        {memoryCount > 0 && (
+          <div className="mt-6 grid grid-cols-3 gap-4">
+            <div className="rounded-2xl bg-white p-6 text-center shadow-sm">
+              <p className="text-3xl font-bold text-[#3a241e]">{messagesCount}</p>
+              <p className="mt-1 text-sm text-[#856b5f]">
+                {messagesCount === 1 ? "Message" : "Messages"}
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-white p-6 text-center shadow-sm">
+              <p className="text-3xl font-bold text-[#3a241e]">{photoCount}</p>
+              <p className="mt-1 text-sm text-[#856b5f]">
+                {photoCount === 1 ? "Photo" : "Photos"}
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-white p-6 text-center shadow-sm">
+              <p className="text-3xl font-bold text-[#3a241e]">{contributorCount}</p>
+              <p className="mt-1 text-sm text-[#856b5f]">
+                {contributorCount === 1 ? "Contributor" : "Contributors"}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Quick Actions */}
+        <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm">
+          <p className="mb-4 text-center text-sm font-semibold uppercase tracking-wide text-[#856b5f]">
+            Quick Actions
+          </p>
+
+          <div className="flex flex-col gap-3">
+            <ShareButtons
+              shareLink={shareLink}
+              recipient={memorypop.recipient_name}
+            />
+
+            <Link
+              href={`/m/${shareCode}`}
+              className="rounded-full border border-[#ead8c9] bg-white px-7 py-4 text-center font-semibold text-[#3a241e] transition-colors hover:bg-[#fff8ef]"
+            >
+              Preview MemoryPop
+            </Link>
+
+            {memoryCount > 0 && (
+              <Link
+                href={`/m/${shareCode}/reveal`}
+                className="rounded-full bg-[#ef6a57] px-7 py-4 text-center font-semibold text-white transition-colors hover:bg-[#e05a47]"
+              >
+                Reveal Celebration
+              </Link>
+            )}
+          </div>
+        </div>
+
+        {/* Story Card */}
+        <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-semibold uppercase tracking-wide text-[#856b5f]">
@@ -72,59 +149,8 @@ export default async function DashboardPage({
           </div>
         </div>
 
-        {/* Metrics */}
-        <div className="mt-6 grid grid-cols-2 gap-4">
-          <div className="rounded-2xl bg-white p-6 text-center shadow-sm">
-            <p className="text-3xl font-bold text-[#3a241e]">
-              {contributorCount}
-            </p>
-            <p className="mt-1 text-sm text-[#856b5f]">
-              {contributorCount === 1 ? "Contributor" : "Contributors"}
-            </p>
-          </div>
-
-          <div className="rounded-2xl bg-white p-6 text-center shadow-sm">
-            <p className="text-3xl font-bold text-[#3a241e]">
-              {memoryCount}
-            </p>
-            <p className="mt-1 text-sm text-[#856b5f]">
-              {memoryCount === 1 ? "Memory" : "Memories"}
-            </p>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm">
-          <p className="mb-4 text-center text-sm font-semibold uppercase tracking-wide text-[#856b5f]">
-            Share or View
-          </p>
-
-          <div className="flex flex-col items-center gap-3">
-            <ShareButtons
-              shareLink={shareLink}
-              recipient={memorypop.recipient_name}
-            />
-
-            {memoryCount > 0 && (
-              <Link
-                href={`/m/${shareCode}/reveal`}
-                className="mt-6 block w-full rounded-full bg-[#ef6a57] px-7 py-4 text-center font-semibold text-white transition-colors hover:bg-[#e05a47]"
-              >
-                Reveal Celebration
-              </Link>
-            )}
-
-            <Link
-              href={`/m/${shareCode}`}
-              className="rounded-full border border-[#ead8c9] bg-white px-7 py-4 text-center font-semibold text-[#3a241e] transition-colors hover:bg-[#fff8ef]"
-            >
-              Open MemoryPop
-            </Link>
-          </div>
-        </div>
-
-        {/* Contributors List */}
-        {memories && memories.length > 0 && (
+        {/* Contributors List or Empty State */}
+        {memories && memories.length > 0 ? (
           <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm">
             <p className="mb-4 text-sm font-semibold uppercase tracking-wide text-[#856b5f]">
               Recent Contributors
@@ -157,13 +183,12 @@ export default async function DashboardPage({
               ))}
             </div>
           </div>
-        )}
-
-        {/* Empty State */}
-        {(!memories || memories.length === 0) && (
+        ) : (
           <div className="mt-6 rounded-2xl bg-white p-8 text-center shadow-sm">
+            <div className="text-5xl mb-4">{occasionCopy.emoji}</div>
+            <p className="text-lg text-[#3a241e] mb-2">No memories yet.</p>
             <p className="text-[#856b5f]">
-              No memories yet. Share your MemoryPop to start collecting! ❤️
+              {occasionCopy.emptyStateMessage}
             </p>
           </div>
         )}

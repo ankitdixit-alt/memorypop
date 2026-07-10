@@ -1,6 +1,7 @@
 "use client";
 import { supabase } from "@/lib/supabase";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState, useMemo } from "react";
+import { getOccasionCopy } from "@/lib/occasions";
 
 export default function CreatePage() {
   const [step, setStep] = useState(1);
@@ -11,6 +12,14 @@ export default function CreatePage() {
   const [photos, setPhotos] = useState<string[]>([]);
 
   const progress = (step / 3) * 100;
+
+  // Get occasion-specific copy
+  const occasionCopy = useMemo(() => {
+    if (occasion && recipient) {
+      return getOccasionCopy(occasion, recipient);
+    }
+    return null;
+  }, [occasion, recipient]);
 
   function handlePhotoUpload(event: ChangeEvent<HTMLInputElement>) {
     const files = Array.from(event.target.files || []).slice(0, 3);
@@ -77,7 +86,7 @@ window.location.href = `/success?shareCode=${data.share_code}&recipient=${encode
           <section className="rounded-[2rem] bg-white p-8 shadow-xl">
             <h1 className="text-4xl font-bold">Start a MemoryPop</h1>
             <p className="mt-4 text-gray-600">
-              Let’s create one beautiful celebration your loved one will never forget.
+              {occasionCopy?.helperText || "Let’s create one beautiful celebration your loved one will never forget."}
             </p>
 
             <label className="mt-8 block font-semibold">What are we celebrating?</label>
