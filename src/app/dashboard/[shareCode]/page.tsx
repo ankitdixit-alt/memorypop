@@ -2,6 +2,8 @@ import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { ShareButtons } from "@/components/ShareButtons";
+import { DashboardPlusFeatures } from "@/components/DashboardPlusFeatures";
+import { Suspense } from "react";
 import Link from "next/link";
 import { getOccasionCopy } from "@/lib/occasions";
 
@@ -53,15 +55,30 @@ export default async function DashboardPage({
     <main className="min-h-screen bg-[#fff8ef] px-6 py-12 text-[#3a241e]">
       <div className="mx-auto max-w-3xl">
 
-        {/* Header */}
+        {/* Header with Plus Badge */}
         <div className="text-center">
           <p className="text-sm font-semibold uppercase tracking-wide text-[#856b5f]">
             Dashboard
           </p>
-          <h1 className="mt-2 text-4xl font-bold">
-            {memorypop.recipient_name}&apos;s {memorypop.occasion}
-          </h1>
+          <div className="flex items-center justify-center gap-3 mt-2 flex-wrap">
+            <h1 className="text-4xl font-bold">
+              {memorypop.recipient_name}&apos;s {memorypop.occasion}
+            </h1>
+            {memorypop.is_premium && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-[#FFD700] to-[#FFA500] px-3 py-1 text-sm font-bold text-white shadow-md">
+                ✨ Plus
+              </span>
+            )}
+          </div>
         </div>
+
+        {/* Plus Features (Welcome Message & Upgrade CTA) */}
+        <Suspense fallback={null}>
+          <DashboardPlusFeatures
+            isPremium={memorypop.is_premium || false}
+            shareCode={shareCode}
+          />
+        </Suspense>
 
         {/* Progress Card */}
         {memoryCount > 0 && (
