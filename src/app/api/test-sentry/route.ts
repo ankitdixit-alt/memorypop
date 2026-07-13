@@ -1,6 +1,14 @@
 import { NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 
 export async function GET() {
-  throw new Error('Server-side test error for Sentry');
-  return NextResponse.json({ error: 'This should not be reached' });
+  const error = new Error('Server-side test error for Sentry');
+  console.log('[Test API] Capturing exception explicitly:', error.message);
+
+  Sentry.captureException(error);
+
+  // Flush to ensure the event is sent before returning
+  await Sentry.flush(2000);
+
+  throw error;
 }

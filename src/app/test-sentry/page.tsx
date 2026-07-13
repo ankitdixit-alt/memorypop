@@ -2,13 +2,17 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useEffect, Suspense } from 'react';
+import * as Sentry from '@sentry/nextjs';
 
 function TestContent() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
     if (searchParams.get('trigger') === 'true') {
-      throw new Error('Test error for Sentry production');
+      const error = new Error('Test error for Sentry production');
+      console.log('[Test Page] Capturing exception explicitly:', error.message);
+      Sentry.captureException(error);
+      throw error;
     }
   }, [searchParams]);
 
