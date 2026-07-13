@@ -11,6 +11,7 @@ export default function CreatePage() {
   const [tone, setTone] = useState("Heartfelt");
   const [photos, setPhotos] = useState<string[]>([]);
   const [isCreating, setIsCreating] = useState(false);
+  const [selectedCover, setSelectedCover] = useState("none");
 
   const progress = (step / 3) * 100;
 
@@ -144,12 +145,70 @@ async function saveMemoryPop() {
               If someone asked why {recipient} is special, what would you say?
             </p>
 
+            {/* Message Starters */}
+            {occasionCopy?.messageStarters && (
+              <div className="mt-6 mb-4">
+                <label className="block font-semibold text-sm text-[#6B5B52] mb-2">
+                  Need inspiration? Try one of these:
+                </label>
+                <div className="flex flex-col gap-2">
+                  {occasionCopy.messageStarters.map((starter, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setStory(starter)}
+                      className="text-left text-sm rounded-xl border border-[#F0DED2] bg-white px-4 py-3 hover:border-[#FF6B57] hover:bg-[#FFF1EC] transition-colors"
+                    >
+                      {starter}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <textarea
               value={story}
               onChange={(e) => setStory(e.target.value)}
               placeholder="e.g. He always brings the family together and makes everyone laugh."
               className="mt-8 min-h-40 w-full rounded-2xl border border-[#F0DED2] px-5 py-4 text-lg outline-none focus:border-[#FF6B57]"
             />
+
+            {/* Emoji Shortcuts */}
+            {occasionCopy?.emojiShortcuts && (
+              <div className="mt-4">
+                <label className="block font-semibold text-sm text-[#6B5B52] mb-2">
+                  Add some emotion:
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {occasionCopy.emojiShortcuts.map((emoji, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        const textarea = document.querySelector('textarea');
+                        if (textarea) {
+                          const start = textarea.selectionStart;
+                          const end = textarea.selectionEnd;
+                          const newText = story.substring(0, start) + emoji + story.substring(end);
+                          setStory(newText);
+                          // Restore cursor position after emoji
+                          setTimeout(() => {
+                            textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
+                            textarea.focus();
+                          }, 0);
+                        } else {
+                          setStory(story + emoji);
+                        }
+                      }}
+                      className="text-2xl w-10 h-10 rounded-lg border border-[#F0DED2] bg-white hover:border-[#FF6B57] hover:bg-[#FFF1EC] transition-colors flex items-center justify-center"
+                      aria-label={`Add ${emoji} emoji`}
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <label className="mt-6 block font-semibold">Choose the feeling</label>
             <div className="mt-3 grid grid-cols-2 gap-3">
@@ -167,6 +226,38 @@ async function saveMemoryPop() {
                 </button>
               ))}
             </div>
+
+            {/* Cover Presets */}
+            {occasionCopy?.coverPresets && (
+              <div className="mt-6">
+                <label className="block font-semibold mb-2">
+                  Choose a cover style <span className="text-gray-400">(optional)</span>
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  {occasionCopy.coverPresets.map((preset) => (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => setSelectedCover(preset.id)}
+                      className={`rounded-2xl border p-4 text-left ${
+                        selectedCover === preset.id
+                          ? "border-[#FF6B57] ring-2 ring-[#FF6B57] ring-offset-2"
+                          : "border-[#F0DED2]"
+                      }`}
+                    >
+                      <div
+                        className="w-full h-16 rounded-xl mb-2"
+                        style={{ background: preset.gradient }}
+                      />
+                      <p className="font-semibold text-sm">{preset.label}</p>
+                      {preset.description && (
+                        <p className="text-xs text-[#6B5B52] mt-1">{preset.description}</p>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="mt-6">
               <label className="block font-semibold">
@@ -213,7 +304,13 @@ async function saveMemoryPop() {
               Here’s your MemoryPop for {recipient}
             </h1>
 
-            <div className="mt-8 overflow-hidden rounded-[1.7rem] bg-gradient-to-br from-[#FFE1D6] via-[#FFF3C7] to-[#E5D4FF] p-8 shadow-inner">
+            <div
+              className="mt-8 overflow-hidden rounded-[1.7rem] p-8 shadow-inner"
+              style={{
+                background: occasionCopy?.coverPresets?.find(p => p.id === selectedCover)?.gradient ||
+                  'linear-gradient(135deg, #FFE1D6 0%, #FFF3C7 50%, #E5D4FF 100%)'
+              }}
+            >
               <p className="text-sm font-semibold uppercase tracking-wide text-[#6B5B52]">
                 {occasion} MemoryPop
               </p>
