@@ -10,6 +10,7 @@ export default function CreatePage() {
   const [story, setStory] = useState("");
   const [tone, setTone] = useState("Heartfelt");
   const [photos, setPhotos] = useState<string[]>([]);
+  const [isCreating, setIsCreating] = useState(false);
 
   const progress = (step / 3) * 100;
 
@@ -27,7 +28,9 @@ export default function CreatePage() {
     setPhotos(photoUrls);
   }
 async function saveMemoryPop() {
-  const { data, error } = await supabase
+  setIsCreating(true);
+
+  const { data, error} = await supabase
     .from("memorypops")
     .insert({
       recipient_name: recipient,
@@ -41,13 +44,15 @@ async function saveMemoryPop() {
     .single();
 
   if (error) {
-  alert(error.message);
-  return;
-}
+    setIsCreating(false);
+    alert(error.message);
+    return;
+  }
 
-window.location.href = `/success?shareCode=${data.share_code}&recipient=${encodeURIComponent(
-  data.recipient_name
-)}&occasion=${encodeURIComponent(data.occasion)}`;
+  // Keep loading state true during redirect
+  window.location.href = `/success?shareCode=${data.share_code}&recipient=${encodeURIComponent(
+    data.recipient_name
+  )}&occasion=${encodeURIComponent(data.occasion)}`;
 }
   function goBack() {
     if (step > 1) setStep(step - 1);
@@ -243,9 +248,10 @@ window.location.href = `/success?shareCode=${data.share_code}&recipient=${encode
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button
   onClick={saveMemoryPop}
-  className="rounded-full bg-[#FF6B57] px-7 py-4 font-semibold text-white"
+  disabled={isCreating}
+  className="rounded-full bg-[#FF6B57] px-7 py-4 font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed"
 >
-  Create My MemoryPop ❤️
+  {isCreating ? "Creating..." : "Create My MemoryPop ❤️"}
 </button>
               <button className="rounded-full border border-[#F0DED2] bg-white px-7 py-4 font-semibold">
                 Share MemoryPop
