@@ -144,7 +144,7 @@ function WelcomeScreen({
       {/* Begin button */}
       <button
         onClick={onBegin}
-        className="rounded-full bg-[#ef6a57] px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-[#e05a47]"
+        className="rounded-full bg-[#ef6a57] px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2 transition-all"
       >
         Begin
       </button>
@@ -186,7 +186,7 @@ function MemoryScreen({
       {/* Next button */}
       <button
         onClick={onNext}
-        className="rounded-full bg-[#ef6a57] px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-[#e05a47]"
+        className="rounded-full bg-[#ef6a57] px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2 transition-all"
       >
         Next
       </button>
@@ -228,7 +228,7 @@ function FinalScreen({
       {onNext && (
         <button
           onClick={onNext}
-          className="rounded-full bg-[#ef6a57] px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-[#e05a47]"
+          className="rounded-full bg-[#ef6a57] px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2 transition-all"
         >
           Continue
         </button>

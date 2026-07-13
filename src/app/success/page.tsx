@@ -65,7 +65,7 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
 
         <Link
           href={`/dashboard/${shareCode}`}
-          className="mt-10 rounded-full border-2 border-[#ef6a57] bg-white px-7 py-4 font-semibold text-[#ef6a57] transition-colors hover:bg-[#fff8ef]"
+          className="mt-10 rounded-full border-2 border-[#ef6a57] bg-white px-7 py-4 font-semibold text-[#ef6a57] transition-colors hover:bg-[#fff8ef] active:ring-2 active:ring-[#FF6B57] active:ring-offset-2 transition-all"
         >
           View Creator Dashboard
         </Link>
@@ -75,14 +75,14 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
         <div className="mt-10 flex flex-col gap-3 sm:flex-row">
           <Link
             href="/create"
-            className="rounded-full border border-[#ead8c9] bg-white px-7 py-4 font-semibold text-[#3a241e] transition-colors hover:bg-[#fff8ef]"
+            className="rounded-full border border-[#ead8c9] bg-white px-7 py-4 font-semibold text-[#3a241e] transition-colors hover:bg-[#fff8ef] active:ring-2 active:ring-[#FF6B57] active:ring-offset-2 transition-all"
           >
             Create Another
           </Link>
 
           <Link
             href="/"
-            className="rounded-full border border-[#ead8c9] bg-white px-7 py-4 font-semibold text-[#3a241e] transition-colors hover:bg-[#fff8ef]"
+            className="rounded-full border border-[#ead8c9] bg-white px-7 py-4 font-semibold text-[#3a241e] transition-colors hover:bg-[#fff8ef] active:ring-2 active:ring-[#FF6B57] active:ring-offset-2 transition-all"
           >
             Back Home
           </Link>

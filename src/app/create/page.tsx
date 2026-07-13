@@ -110,11 +110,11 @@ async function saveMemoryPop() {
                 <button
                   key={item}
                   onClick={() => setOccasion(item)}
-                  className={`rounded-2xl border p-4 text-left font-semibold ${
+                  className={`rounded-2xl border p-4 text-left font-semibold transition-all ${
                     occasion === item
                       ? "border-[#FF6B57] bg-[#FFF1EC]"
                       : "border-[#F0DED2]"
-                  }`}
+                  } active:ring-2 active:ring-[#FF6B57] active:ring-offset-1`}
                 >
                   {item === "Birthday" ? "🎂 " : ""}
                   {item}
@@ -127,13 +127,13 @@ async function saveMemoryPop() {
               value={recipient}
               onChange={(e) => setRecipient(e.target.value)}
               placeholder="e.g. Rahul"
-              className="mt-3 w-full rounded-2xl border border-[#F0DED2] px-5 py-4 text-lg outline-none focus:border-[#FF6B57]"
+              className="mt-3 w-full rounded-2xl border border-[#F0DED2] px-5 py-4 text-lg outline-none focus:border-[#FF6B57] focus:ring-2 focus:ring-[#FF6B57] focus:ring-opacity-50"
             />
 
             <button
               onClick={() => setStep(2)}
               disabled={!recipient}
-              className="mt-8 rounded-full bg-[#FF6B57] px-7 py-4 font-semibold text-white disabled:opacity-40"
+              className="mt-8 rounded-full bg-[#FF6B57] px-7 py-4 font-semibold text-white disabled:opacity-40 disabled:cursor-not-allowed active:ring-2 active:ring-white active:ring-offset-2 transition-all"
             >
               Make it personal →
             </button>
@@ -159,7 +159,7 @@ async function saveMemoryPop() {
                       key={idx}
                       type="button"
                       onClick={() => setStory(starter)}
-                      className="text-left text-sm rounded-xl border border-[#F0DED2] bg-white px-4 py-3 hover:border-[#FF6B57] hover:bg-[#FFF1EC] transition-colors"
+                      className="text-left text-sm rounded-xl border border-[#F0DED2] bg-white px-4 py-3 hover:border-[#FF6B57] hover:bg-[#FFF1EC] active:ring-2 active:ring-[#FF6B57] transition-all"
                     >
                       {starter}
                     </button>
@@ -172,7 +172,7 @@ async function saveMemoryPop() {
               value={story}
               onChange={(e) => setStory(e.target.value)}
               placeholder="e.g. He always brings the family together and makes everyone laugh."
-              className="mt-8 min-h-40 w-full rounded-2xl border border-[#F0DED2] px-5 py-4 text-lg outline-none focus:border-[#FF6B57]"
+              className="mt-8 min-h-40 w-full rounded-2xl border border-[#F0DED2] px-5 py-4 text-lg outline-none focus:border-[#FF6B57] focus:ring-2 focus:ring-[#FF6B57] focus:ring-opacity-50"
             />
 
             {/* Emoji Shortcuts */}
@@ -202,7 +202,7 @@ async function saveMemoryPop() {
                           setStory(story + emoji);
                         }
                       }}
-                      className="text-2xl w-10 h-10 rounded-lg border border-[#F0DED2] bg-white hover:border-[#FF6B57] hover:bg-[#FFF1EC] transition-colors flex items-center justify-center"
+                      className="text-2xl w-12 h-12 rounded-lg border border-[#F0DED2] bg-white hover:border-[#FF6B57] hover:bg-[#FFF1EC] active:ring-2 active:ring-[#FF6B57] transition-all flex items-center justify-center"
                       aria-label={`Add ${emoji} emoji`}
                     >
                       {emoji}
@@ -218,11 +218,11 @@ async function saveMemoryPop() {
                 <button
                   key={item}
                   onClick={() => setTone(item)}
-                  className={`rounded-2xl border p-4 text-left font-semibold ${
+                  className={`rounded-2xl border p-4 text-left font-semibold transition-all ${
                     tone === item
                       ? "border-[#FF6B57] bg-[#FFF1EC]"
                       : "border-[#F0DED2]"
-                  }`}
+                  } active:ring-2 active:ring-[#FF6B57] active:ring-offset-1`}
                 >
                   {item}
                 </button>
@@ -241,11 +241,11 @@ async function saveMemoryPop() {
                       key={preset.id}
                       type="button"
                       onClick={() => setSelectedCover(preset.id)}
-                      className={`rounded-2xl border p-4 text-left ${
+                      className={`rounded-2xl border p-4 text-left transition-all ${
                         selectedCover === preset.id
                           ? "border-[#FF6B57] ring-2 ring-[#FF6B57] ring-offset-2"
                           : "border-[#F0DED2]"
-                      }`}
+                      } active:ring-2 active:ring-[#FF6B57] active:ring-offset-1`}
                     >
                       <div
                         className="w-full h-16 rounded-xl mb-2"
@@ -272,7 +272,7 @@ async function saveMemoryPop() {
                 accept="image/*"
                 multiple
                 onChange={handlePhotoUpload}
-                className="mt-3 block w-full rounded-2xl border border-[#F0DED2] bg-white px-5 py-4 text-sm"
+                className="mt-3 block w-full rounded-2xl border border-[#F0DED2] bg-white px-5 py-4 text-sm focus:border-[#FF6B57] focus:ring-2 focus:ring-[#FF6B57] focus:ring-opacity-50 outline-none"
               />
 
               {photos.length > 0 && (
@@ -292,7 +292,7 @@ async function saveMemoryPop() {
             <button
               onClick={() => setStep(3)}
               disabled={!story}
-              className="mt-8 rounded-full bg-[#FF6B57] px-7 py-4 font-semibold text-white disabled:opacity-40"
+              className="mt-8 rounded-full bg-[#FF6B57] px-7 py-4 font-semibold text-white disabled:opacity-40 disabled:cursor-not-allowed active:ring-2 active:ring-white active:ring-offset-2 transition-all"
             >
               See your MemoryPop →
             </button>
@@ -361,7 +361,7 @@ async function saveMemoryPop() {
               <button
   onClick={saveMemoryPop}
   disabled={isCreating}
-  className="rounded-full bg-[#FF6B57] px-7 py-4 font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed"
+  className="rounded-full bg-[#FF6B57] px-7 py-4 font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed active:ring-2 active:ring-white active:ring-offset-2 transition-all"
 >
   {isCreating ? "Creating..." : "Create My MemoryPop ❤️"}
 </button>

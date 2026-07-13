@@ -357,7 +357,7 @@ function SiteHeader() {
         </div>
 
         <button
-          className="inline-flex size-10 items-center justify-center rounded-xl text-foreground md:hidden"
+          className="inline-flex size-11 items-center justify-center rounded-xl text-foreground md:hidden active:ring-2 active:ring-primary active:ring-offset-2 transition-all"
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
@@ -374,7 +374,7 @@ function SiteHeader() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="rounded-xl px-3 py-2.5 text-sm font-medium text-foreground hover:bg-secondary"
+                className="rounded-xl px-3 py-3 text-sm font-medium text-foreground hover:bg-secondary active:bg-secondary transition-colors"
               >
                 {link.label}
               </a>
@@ -691,7 +691,7 @@ function SiteFooter() {
               <ul className="mt-4 space-y-2.5">
                 {col.links.map((link) => (
                   <li key={link}>
-                    <a href="#" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                    <a href="#" className="text-sm text-muted-foreground transition-colors hover:text-foreground active:bg-secondary rounded px-2 py-1">
                       {link}
                     </a>
                   </li>
@@ -704,9 +704,9 @@ function SiteFooter() {
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border/60 pt-6 sm:flex-row">
           <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} MemoryPop. Made with love.</p>
           <div className="flex gap-5">
-            <a href="#" className="text-sm text-muted-foreground hover:text-foreground">Instagram</a>
-            <a href="#" className="text-sm text-muted-foreground hover:text-foreground">TikTok</a>
-            <a href="#" className="text-sm text-muted-foreground hover:text-foreground">Pinterest</a>
+            <a href="#" className="text-sm text-muted-foreground hover:text-foreground active:bg-secondary rounded px-2 py-1 transition-colors">Instagram</a>
+            <a href="#" className="text-sm text-muted-foreground hover:text-foreground active:bg-secondary rounded px-2 py-1 transition-colors">TikTok</a>
+            <a href="#" className="text-sm text-muted-foreground hover:text-foreground active:bg-secondary rounded px-2 py-1 transition-colors">Pinterest</a>
           </div>
         </div>
       </div>

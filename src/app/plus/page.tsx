@@ -84,7 +84,7 @@ export default function PlusPage() {
 
             <Link
               href="/"
-              className="inline-block w-full rounded-full bg-[#ef6a57] px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-[#e05a47]"
+              className="inline-block w-full rounded-full bg-[#ef6a57] px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2 transition-all"
             >
               Create Your MemoryPop
             </Link>
@@ -137,7 +137,7 @@ export default function PlusPage() {
           </p>
           <Link
             href="/"
-            className="inline-block rounded-full bg-[#ef6a57] px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-[#e05a47]"
+            className="inline-block rounded-full bg-[#ef6a57] px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2 transition-all"
           >
             Create Your MemoryPop
           </Link>

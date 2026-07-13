@@ -107,7 +107,7 @@ export default async function DashboardPage({
 
         {/* Memory Counter Breakdown */}
         {memoryCount > 0 && (
-          <div className="mt-6 grid grid-cols-3 gap-4">
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="rounded-2xl bg-white p-6 text-center shadow-sm">
               <p className="text-3xl font-bold text-[#3a241e]">{messagesCount}</p>
               <p className="mt-1 text-sm text-[#856b5f]">
@@ -145,7 +145,7 @@ export default async function DashboardPage({
 
             <Link
               href={`/m/${shareCode}`}
-              className="rounded-full border border-[#ead8c9] bg-white px-7 py-4 text-center font-semibold text-[#3a241e] transition-colors hover:bg-[#fff8ef]"
+              className="rounded-full border border-[#ead8c9] bg-white px-7 py-4 text-center font-semibold text-[#3a241e] transition-colors hover:bg-[#fff8ef] active:ring-2 active:ring-[#FF6B57] active:ring-offset-2 transition-all"
             >
               Preview MemoryPop
             </Link>
@@ -153,7 +153,7 @@ export default async function DashboardPage({
             {memoryCount > 0 && (
               <Link
                 href={`/m/${shareCode}/reveal`}
-                className="rounded-full bg-[#ef6a57] px-7 py-4 text-center font-semibold text-white transition-colors hover:bg-[#e05a47]"
+                className="rounded-full bg-[#ef6a57] px-7 py-4 text-center font-semibold text-white transition-colors hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2 transition-all"
               >
                 Reveal Celebration
               </Link>

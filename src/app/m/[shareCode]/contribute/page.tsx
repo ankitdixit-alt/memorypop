@@ -145,7 +145,7 @@ export default function ContributePage() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. Mum"
-          className="mt-3 w-full rounded-2xl border border-[#F0DED2] px-5 py-4"
+          className="mt-3 w-full rounded-2xl border border-[#F0DED2] px-5 py-4 outline-none focus:border-[#FF6B57] focus:ring-2 focus:ring-[#FF6B57] focus:ring-opacity-50"
         />
 
         <label className="mt-8 block font-semibold">Your Memory</label>
@@ -154,7 +154,7 @@ export default function ContributePage() {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Write something heartfelt..."
-          className="mt-3 min-h-40 w-full rounded-2xl border border-[#F0DED2] px-5 py-4"
+          className="mt-3 min-h-40 w-full rounded-2xl border border-[#F0DED2] px-5 py-4 outline-none focus:border-[#FF6B57] focus:ring-2 focus:ring-[#FF6B57] focus:ring-opacity-50"
         />
 
         <label className="mt-8 block font-semibold">
@@ -192,7 +192,7 @@ export default function ContributePage() {
         <button
           onClick={handleSubmit}
           disabled={isSubmitting || !name || !message}
-          className="mt-8 w-full rounded-full bg-[#FF6B57] px-8 py-4 font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mt-8 w-full rounded-full bg-[#FF6B57] px-8 py-4 font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed active:ring-2 active:ring-white active:ring-offset-2 transition-all"
         >
           {isSubmitting ? "Saving..." : "❤️ Submit Memory"}
         </button>

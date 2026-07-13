@@ -67,7 +67,7 @@ export default async function MemoryPopPage({
 
           <a
             href={`/m/${shareCode}/contribute`}
-            className="mt-10 inline-block rounded-full bg-[#FF6B57] px-8 py-4 font-semibold text-white"
+            className="mt-10 inline-block rounded-full bg-[#FF6B57] px-8 py-4 font-semibold text-white active:ring-2 active:ring-white active:ring-offset-2 transition-all"
           >
             {occasionCopy.emoji} {occasionCopy.actionLabel}
           </a>
