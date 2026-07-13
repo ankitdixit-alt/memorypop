@@ -21,7 +21,19 @@ export default async function DashboardPage({
     .eq("share_code", shareCode)
     .single();
 
-  if (error || !memorypop) {
+  // Check for errors
+  if (error) {
+    // Differentiate error types
+    if (error.code === 'PGRST116') {
+      // PostgreSQL "no rows returned" - this is a legitimate not-found
+      notFound();
+    }
+    // Network or database error - throw to error boundary
+    throw new Error(`Failed to fetch MemoryPop: ${error.message}`);
+  }
+
+  // Check for no data (also a legitimate not-found)
+  if (!memorypop) {
     notFound();
   }
 

@@ -11,6 +11,7 @@ export default function CreatePage() {
   const [tone, setTone] = useState("Heartfelt");
   const [photos, setPhotos] = useState<string[]>([]);
   const [isCreating, setIsCreating] = useState(false);
+  const [createError, setCreateError] = useState("");
   const [selectedCover, setSelectedCover] = useState("none");
 
   const progress = (step / 3) * 100;
@@ -29,6 +30,7 @@ export default function CreatePage() {
     setPhotos(photoUrls);
   }
 async function saveMemoryPop() {
+  setCreateError(""); // Clear any previous errors
   setIsCreating(true);
 
   const { data, error} = await supabase
@@ -46,7 +48,7 @@ async function saveMemoryPop() {
 
   if (error) {
     setIsCreating(false);
-    alert(error.message);
+    setCreateError(error.message);
     return;
   }
 
@@ -341,6 +343,19 @@ async function saveMemoryPop() {
                 </p>
               </div>
             </div>
+
+            {createError && (
+              <div className="mt-6 rounded-lg border-2 border-red-300 bg-red-50 p-4 text-center">
+                <p className="font-semibold text-red-800">Failed to create MemoryPop</p>
+                <p className="mt-1 text-sm text-red-600">{createError}</p>
+                <button
+                  onClick={() => setCreateError("")}
+                  className="mt-2 text-sm text-red-600 underline"
+                >
+                  Dismiss
+                </button>
+              </div>
+            )}
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button

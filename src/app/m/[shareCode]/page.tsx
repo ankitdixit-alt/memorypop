@@ -17,7 +17,15 @@ export default async function MemoryPopPage({
     .eq("share_code", shareCode)
     .single();
 
-  if (error || !data) {
+  // Check for errors
+  if (error) {
+    if (error.code === 'PGRST116') {
+      notFound(); // Legitimate not-found
+    }
+    throw new Error(`Failed to fetch MemoryPop: ${error.message}`);
+  }
+
+  if (!data) {
     notFound();
   }
 

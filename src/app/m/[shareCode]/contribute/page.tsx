@@ -15,6 +15,7 @@ export default function ContributePage() {
   const [photo, setPhoto] = useState("");
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [occasionCopy, setOccasionCopy] = useState<OccasionCopy | null>(null);
 
   // Fetch occasion and recipient name for occasion-aware copy
@@ -73,10 +74,11 @@ export default function ContributePage() {
 
   async function handleSubmit() {
     if (!name || !message) {
-      alert("Please enter your name and message");
+      setSubmitError("Please enter your name and message");
       return;
     }
 
+    setSubmitError(""); // Clear any previous errors
     setIsSubmitting(true);
 
     try {
@@ -95,7 +97,7 @@ export default function ContributePage() {
         .single();
 
       if (fetchError || !memorypop) {
-        alert("Could not find the MemoryPop");
+        setSubmitError("Could not find the MemoryPop");
         setIsSubmitting(false);
         return;
       }
@@ -111,7 +113,7 @@ export default function ContributePage() {
         });
 
       if (insertError) {
-        alert("Failed to save memory: " + insertError.message);
+        setSubmitError("Failed to save memory: " + insertError.message);
         setIsSubmitting(false);
         return;
       }
@@ -119,7 +121,7 @@ export default function ContributePage() {
       // Redirect back to the view page
       router.push(`/m/${shareCode}`);
     } catch (error) {
-      alert("An error occurred");
+      setSubmitError("An error occurred");
       setIsSubmitting(false);
     }
   }
@@ -172,6 +174,19 @@ export default function ContributePage() {
             alt="Selected memory"
             className="mt-4 h-48 w-full rounded-2xl object-cover"
           />
+        )}
+
+        {submitError && (
+          <div className="mt-6 rounded-lg border-2 border-red-300 bg-red-50 p-4 text-center">
+            <p className="font-semibold text-red-800">Error</p>
+            <p className="mt-1 text-sm text-red-600">{submitError}</p>
+            <button
+              onClick={() => setSubmitError("")}
+              className="mt-2 text-sm text-red-600 underline"
+            >
+              Dismiss
+            </button>
+          </div>
         )}
 
         <button

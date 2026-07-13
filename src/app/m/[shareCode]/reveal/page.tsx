@@ -16,7 +16,14 @@ export default async function RevealPage({
     .eq("share_code", shareCode)
     .single();
 
-  if (memoryPopError || !memoryPop) {
+  if (memoryPopError) {
+    if (memoryPopError.code === 'PGRST116') {
+      notFound();
+    }
+    throw new Error(`Failed to fetch MemoryPop: ${memoryPopError.message}`);
+  }
+
+  if (!memoryPop) {
     notFound();
   }
 
@@ -28,7 +35,7 @@ export default async function RevealPage({
     .order("created_at", { ascending: false }); // Most recent first for impact
 
   if (memoriesError) {
-    notFound();
+    throw new Error(`Failed to fetch memories: ${memoriesError.message}`);
   }
 
   // Pass to client component
