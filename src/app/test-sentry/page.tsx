@@ -10,7 +10,6 @@ function TestContent() {
   useEffect(() => {
     if (searchParams.get('trigger') === 'true') {
       const error = new Error('Test error for Sentry production');
-      console.log('[Test Page] Capturing exception explicitly:', error.message);
       Sentry.captureException(error);
       throw error;
     }

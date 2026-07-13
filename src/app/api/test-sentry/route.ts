@@ -3,7 +3,6 @@ import * as Sentry from '@sentry/nextjs';
 
 export async function GET() {
   const error = new Error('Server-side test error for Sentry');
-  console.log('[Test API] Capturing exception explicitly:', error.message);
 
   Sentry.captureException(error);
 
