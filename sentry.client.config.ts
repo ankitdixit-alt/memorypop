@@ -1,5 +1,13 @@
 import * as Sentry from '@sentry/nextjs';
 
+// Debug logging for initialization
+console.log('[Sentry Client] Initializing...', {
+  hasDSN: !!process.env.NEXT_PUBLIC_SENTRY_DSN,
+  dsnPrefix: process.env.NEXT_PUBLIC_SENTRY_DSN?.substring(0, 20) + '...',
+  nodeEnv: process.env.NODE_ENV,
+  sentryEnv: process.env.SENTRY_ENVIRONMENT,
+});
+
 Sentry.init({
   // DSN from environment variable
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
@@ -27,8 +35,8 @@ Sentry.init({
   // Replay all sessions with errors
   replaysOnErrorSampleRate: 1.0,
 
-  // Ignore development errors
-  enabled: process.env.NODE_ENV === 'production',
+  // Enable when DSN exists (not just in production NODE_ENV)
+  enabled: !!process.env.NEXT_PUBLIC_SENTRY_DSN,
 
   // Ignore common noise
   ignoreErrors: [
@@ -52,11 +60,11 @@ Sentry.init({
 
   // Attach user context
   beforeSend(event) {
-    // Don't send events in development
-    if (process.env.NODE_ENV !== 'production') {
-      console.log('Sentry event (dev only):', event);
-      return null;
-    }
+    console.log('[Sentry Client] Sending event:', {
+      message: event.message,
+      level: event.level,
+      environment: event.environment,
+    });
     return event;
   },
 });

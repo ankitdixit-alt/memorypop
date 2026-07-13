@@ -1,5 +1,13 @@
 import * as Sentry from '@sentry/nextjs';
 
+// Debug logging for initialization
+console.log('[Sentry Server] Initializing...', {
+  hasDSN: !!process.env.SENTRY_DSN,
+  dsnPrefix: process.env.SENTRY_DSN?.substring(0, 20) + '...',
+  nodeEnv: process.env.NODE_ENV,
+  sentryEnv: process.env.SENTRY_ENVIRONMENT,
+});
+
 Sentry.init({
   // DSN from environment variable
   dsn: process.env.SENTRY_DSN,
@@ -16,16 +24,16 @@ Sentry.init({
     Sentry.httpIntegration(),
   ],
 
-  // Only enable in production
-  enabled: process.env.NODE_ENV === 'production',
+  // Enable when DSN exists (not just in production NODE_ENV)
+  enabled: !!process.env.SENTRY_DSN,
 
   // Attach server context
   beforeSend(event) {
-    // Don't send events in development
-    if (process.env.NODE_ENV !== 'production') {
-      console.log('Sentry server event (dev only):', event);
-      return null;
-    }
+    console.log('[Sentry Server] Sending event:', {
+      message: event.message,
+      level: event.level,
+      environment: event.environment,
+    });
     return event;
   },
 });
