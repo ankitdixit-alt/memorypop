@@ -1,0 +1,28 @@
+{
+  "name": "MemoryPop - Celebrate Together",
+  "short_name": "MemoryPop",
+  "description": "Create one beautiful home for every celebration. Friends and family come together to share memories, photos, and heartfelt messages.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFF8F2",
+  "theme_color": "#FF6B57",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["lifestyle", "social"],
+  "lang": "en-US",
+  "dir": "ltr"
+}

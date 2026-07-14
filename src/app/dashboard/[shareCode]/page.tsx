@@ -6,6 +6,33 @@ import { DashboardPlusFeatures } from "@/components/DashboardPlusFeatures";
 import { Suspense } from "react";
 import Link from "next/link";
 import { getOccasionCopy } from "@/lib/occasions";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ shareCode: string }>;
+}): Promise<Metadata> {
+  const { shareCode } = await params;
+
+  // Fetch MemoryPop to get recipient name
+  const { data: memorypop } = await supabase
+    .from("memorypops")
+    .select("recipient_name, occasion")
+    .eq("share_code", shareCode)
+    .single();
+
+  if (memorypop) {
+    return {
+      title: `${memorypop.recipient_name}'s ${memorypop.occasion}`,
+      description: `View and share memories for ${memorypop.recipient_name}'s ${memorypop.occasion.toLowerCase()} celebration on MemoryPop.`,
+    };
+  }
+
+  return {
+    title: 'Dashboard',
+  };
+}
 
 export default async function DashboardPage({
   params,
