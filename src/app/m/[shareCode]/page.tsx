@@ -3,6 +3,141 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { ShareButtons } from "@/components/ShareButtons";
 import { getOccasionCopy } from "@/lib/occasions";
+import type { Metadata } from "next";
+
+/**
+ * Normalize occasion string to match OG image filename
+ * @param occasion - Raw occasion string from database
+ * @returns Lowercase, hyphenated filename (e.g., "newbaby")
+ */
+function normalizeOccasion(occasion: string): string {
+  const normalized = occasion.toLowerCase().trim();
+
+  switch (normalized) {
+    case "birthday":
+      return "birthday";
+    case "farewell":
+      return "farewell";
+    case "wedding":
+      return "wedding";
+    case "new baby":
+      return "newbaby";
+    case "graduation":
+      return "graduation";
+    case "retirement":
+      return "retirement";
+    case "anniversary":
+      return "anniversary";
+    default:
+      return "default";
+  }
+}
+
+/**
+ * Generate dynamic metadata for shared MemoryPop links
+ * Fetches recipient name and occasion from Supabase to personalize
+ * social sharing previews across WhatsApp, Slack, LinkedIn, Facebook, X
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ shareCode: string }>;
+}): Promise<Metadata> {
+  const { shareCode } = await params;
+
+  // Set 5-second timeout for metadata fetch
+  const METADATA_TIMEOUT = 5000;
+
+  // Fallback metadata in case of fetch failure
+  const fallbackMetadata: Metadata = {
+    title: "MemoryPop - Celebrate Together",
+    description:
+      "Friends and family are creating something special. Add your memory and be part of the celebration.",
+    openGraph: {
+      title: "MemoryPop - Celebrate Together",
+      description:
+        "Friends and family are creating something special. Add your memory and be part of the celebration.",
+      type: "website",
+      url: `/m/${shareCode}`,
+      images: [
+        {
+          url: "/og/default.png",
+          width: 1200,
+          height: 630,
+          alt: "MemoryPop - Celebrate Together",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "MemoryPop - Celebrate Together",
+      description:
+        "Friends and family are creating something special. Add your memory and be part of the celebration.",
+      images: ["/og/default.png"],
+    },
+  };
+
+  try {
+    // Fetch with timeout
+    const fetchPromise = supabase
+      .from("memorypops")
+      .select("recipient_name, occasion")
+      .eq("share_code", shareCode)
+      .single();
+
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Metadata fetch timeout")), METADATA_TIMEOUT)
+    );
+
+    const { data, error } = await Promise.race([
+      fetchPromise,
+      timeoutPromise,
+    ]) as { data: { recipient_name: string; occasion: string } | null; error: any };
+
+    if (error || !data) {
+      console.error("Metadata fetch error:", error);
+      return fallbackMetadata;
+    }
+
+    const { recipient_name, occasion } = data;
+
+    // Normalize occasion for image matching
+    const normalizedOccasion = normalizeOccasion(occasion);
+    const ogImagePath = `/og/${normalizedOccasion}.png`;
+
+    // Personalized metadata
+    const title = `${recipient_name}'s ${occasion} MemoryPop`;
+    const description = `Friends and family are creating something special for ${recipient_name}. Add your memory and be part of the celebration.`;
+
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        type: "website",
+        url: `/m/${shareCode}`,
+        images: [
+          {
+            url: ogImagePath,
+            width: 1200,
+            height: 630,
+            alt: title,
+          },
+        ],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: [ogImagePath],
+      },
+    };
+  } catch (error) {
+    console.error("Metadata generation error:", error);
+    return fallbackMetadata;
+  }
+}
 
 export default async function MemoryPopPage({
   params,
