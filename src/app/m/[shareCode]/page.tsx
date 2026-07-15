@@ -107,7 +107,7 @@ export async function generateMetadata({
 
     // Personalized metadata
     const title = `${recipient_name}'s ${occasion} MemoryPop`;
-    const description = `Friends and family are creating something special for ${recipient_name}. Add your memory and be part of the celebration.`;
+    const description = `Friends and family are creating something special for ${recipient_name}. Add a memory for ${recipient_name} and be part of the celebration.`;
 
     return {
       title,

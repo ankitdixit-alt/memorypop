@@ -470,7 +470,7 @@ function PhoneMockup() {
               className="flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-medium text-primary-foreground"
             >
               <Heart className="size-4" />
-              Add your memory
+              Add a memory for Emma
             </Link>
           </div>
         </div>

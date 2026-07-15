@@ -94,7 +94,9 @@ async function saveMemoryPop() {
           <section className="rounded-[2rem] bg-white p-8 shadow-xl">
             <h1 className="text-4xl font-bold">Start a MemoryPop</h1>
             <p className="mt-4 text-gray-600">
-              {occasionCopy?.helperText || "Let’s create one beautiful celebration your loved one will never forget."}
+              {recipient
+                ? `Let’s create one beautiful celebration ${recipient} will never forget.`
+                : (occasionCopy?.helperText || "Let’s create one beautiful celebration your loved one will never forget.")}
             </p>
 
             <label className="mt-8 block font-semibold">What are we celebrating?</label>
@@ -151,7 +153,7 @@ async function saveMemoryPop() {
             {occasionCopy?.messageStarters && (
               <div className="mt-6 mb-4">
                 <label className="block font-semibold text-sm text-[#6B5B52] mb-2">
-                  Need inspiration? Try one of these:
+                  Need inspiration? Try one of these messages about {recipient}:
                 </label>
                 <div className="flex flex-col gap-2">
                   {occasionCopy.messageStarters.map((starter, idx) => (

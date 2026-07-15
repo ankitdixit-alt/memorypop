@@ -51,16 +51,16 @@ export function getOccasionCopy(
       return weddingCopy(recipientName);
 
     case "new baby":
-      return newBabyCopy();
+      return newBabyCopy(recipientName);
 
     case "graduation":
-      return graduationCopy();
+      return graduationCopy(recipientName);
 
     case "farewell":
       return farewellCopy(recipientName);
 
     case "retirement":
-      return retirementCopy();
+      return retirementCopy(recipientName);
 
     default:
       return defaultCopy(recipientName);
@@ -73,11 +73,11 @@ function birthdayCopy(recipientName?: string): OccasionCopy {
   return {
     celebrationMessage: recipientName ? `Happy Birthday ${recipientName}!` : "Happy Birthday!",
     emoji: "🎂",
-    actionLabel: "Add Your Birthday Memory",
+    actionLabel: recipientName ? `Add a memory for ${recipientName}` : "Add a memory",
     progressLabel: "Starting the birthday celebration",
     helperText: "Create one beautiful birthday celebration your loved one will never forget.",
-    emptyStateMessage: "No birthday memories yet. Be the first to add one ❤️",
-    sharePrompt: "Share this birthday MemoryPop",
+    emptyStateMessage: recipientName ? `No memories yet. Be the first to add one for ${recipientName} ❤️` : "No memories yet. Be the first to add one ❤️",
+    sharePrompt: recipientName ? `Invite others to add memories for ${recipientName}` : "Invite others to add memories",
     messageStarters: [
       recipientName ? `Happy birthday ${recipientName}! You always make every day brighter.` : "Happy birthday! You always make every day brighter.",
       recipientName ? `${recipientName} has this incredible way of bringing joy to everyone around them.` : "You have this incredible way of bringing joy to everyone around you.",
@@ -117,11 +117,11 @@ function anniversaryCopy(recipientName?: string): OccasionCopy {
   return {
     celebrationMessage: recipientName ? `Happy Anniversary ${recipientName}!` : "Happy Anniversary!",
     emoji: "💕",
-    actionLabel: "Add Your Anniversary Memory",
+    actionLabel: recipientName ? `Add a memory for ${recipientName}` : "Add a memory",
     progressLabel: "Starting the anniversary celebration",
     helperText: "Create one beautiful anniversary celebration your loved one will never forget.",
-    emptyStateMessage: "No anniversary memories yet. Be the first to add one ❤️",
-    sharePrompt: "Share this anniversary MemoryPop",
+    emptyStateMessage: recipientName ? `No memories yet. Be the first to celebrate ${recipientName} ❤️` : "No memories yet. Be the first to add one ❤️",
+    sharePrompt: recipientName ? `Invite others to celebrate ${recipientName}` : "Invite others to celebrate",
     messageStarters: [
       recipientName ? `Happy anniversary ${recipientName}! Your love story inspires everyone.` : "Happy anniversary! Your love story inspires everyone.",
       recipientName ? `${recipientName}, watching your journey together has been beautiful.` : "Watching your journey together has been beautiful.",
@@ -157,11 +157,11 @@ function weddingCopy(recipientName?: string): OccasionCopy {
   return {
     celebrationMessage: recipientName ? `Congratulations ${recipientName}!` : "Congratulations!",
     emoji: "💕",
-    actionLabel: "Add Your Wedding Memory",
+    actionLabel: recipientName ? `Add a memory for ${recipientName}` : "Add a memory",
     progressLabel: "Starting the wedding celebration",
     helperText: "Create one beautiful wedding celebration your loved one will never forget.",
-    emptyStateMessage: "No wedding memories yet. Be the first to add one ❤️",
-    sharePrompt: "Share this wedding MemoryPop",
+    emptyStateMessage: recipientName ? `No memories yet. Be the first to add one for ${recipientName} ❤️` : "No memories yet. Be the first to add one ❤️",
+    sharePrompt: recipientName ? `Invite guests to add memories for ${recipientName}` : "Invite guests to add memories",
     messageStarters: [
       recipientName ? `Congratulations ${recipientName}! Wishing you a lifetime of love and happiness.` : "Congratulations! Wishing you a lifetime of love and happiness.",
       recipientName ? `${recipientName}, so excited to celebrate this beautiful new chapter with you.` : "So excited to celebrate this beautiful new chapter with you.",
@@ -193,15 +193,15 @@ function weddingCopy(recipientName?: string): OccasionCopy {
   };
 }
 
-function newBabyCopy(): OccasionCopy {
+function newBabyCopy(recipientName?: string): OccasionCopy {
   return {
     celebrationMessage: "Welcome to the World",
     emoji: "👶",
-    actionLabel: "Add Your Memory",
+    actionLabel: recipientName ? `Add a memory for ${recipientName}` : "Add a memory",
     progressLabel: "Starting the celebration",
     helperText: "Create one beautiful celebration for the new arrival.",
-    emptyStateMessage: "No memories yet. Be the first to add one ❤️",
-    sharePrompt: "Share this MemoryPop",
+    emptyStateMessage: recipientName ? `No memories yet. Be the first to add one for ${recipientName} ❤️` : "No memories yet. Be the first to add one ❤️",
+    sharePrompt: recipientName ? `Invite others to add memories for ${recipientName}` : "Invite others to add memories",
     messageStarters: [
       "Welcome to the world! So excited to meet this little one.",
       "Congratulations on your beautiful new arrival!",
@@ -233,15 +233,15 @@ function newBabyCopy(): OccasionCopy {
   };
 }
 
-function graduationCopy(): OccasionCopy {
+function graduationCopy(recipientName?: string): OccasionCopy {
   return {
     celebrationMessage: "Congratulations Graduate!",
     emoji: "🎓",
-    actionLabel: "Add Your Graduation Memory",
+    actionLabel: recipientName ? `Add a memory for ${recipientName}` : "Add a memory",
     progressLabel: "Starting the graduation celebration",
     helperText: "Create one beautiful graduation celebration your loved one will never forget.",
-    emptyStateMessage: "No graduation memories yet. Be the first to add one ❤️",
-    sharePrompt: "Share this graduation MemoryPop",
+    emptyStateMessage: recipientName ? `No memories yet. Be the first to celebrate ${recipientName} ❤️` : "No memories yet. Be the first to add one ❤️",
+    sharePrompt: recipientName ? `Invite others to celebrate ${recipientName}` : "Invite others to celebrate",
     messageStarters: [
       "Congratulations graduate! So proud of all you've accomplished.",
       "This is just the beginning of amazing things ahead!",
@@ -278,11 +278,11 @@ function farewellCopy(recipientName?: string): OccasionCopy {
     celebrationMessage: recipientName ? `Thank You ${recipientName}` : "Thank You",
     subMessage: "We'll miss you.",
     emoji: "❤️",
-    actionLabel: "Add Your Memory",
+    actionLabel: recipientName ? `Add a memory for ${recipientName}` : "Add a memory",
     progressLabel: "Starting the farewell celebration",
     helperText: "Create one beautiful farewell celebration they will never forget.",
-    emptyStateMessage: "No memories yet. Be the first to add one ❤️",
-    sharePrompt: "Share this farewell MemoryPop",
+    emptyStateMessage: recipientName ? `No memories yet. Be the first to add one for ${recipientName} ❤️` : "No memories yet. Be the first to add one ❤️",
+    sharePrompt: recipientName ? `Invite others to add memories for ${recipientName}` : "Invite others to add memories",
     messageStarters: [
       recipientName ? `Thank you ${recipientName}! You've made such a positive impact.` : "Thank you! You've made such a positive impact.",
       recipientName ? `We'll miss ${recipientName} so much. Best wishes on your next adventure!` : "We'll miss you so much. Best wishes on your next adventure!",
@@ -314,15 +314,15 @@ function farewellCopy(recipientName?: string): OccasionCopy {
   };
 }
 
-function retirementCopy(): OccasionCopy {
+function retirementCopy(recipientName?: string): OccasionCopy {
   return {
     celebrationMessage: "Congratulations on an Incredible Career",
     emoji: "🎉",
-    actionLabel: "Add Your Memory",
+    actionLabel: recipientName ? `Add a memory for ${recipientName}` : "Add a memory",
     progressLabel: "Starting the retirement celebration",
     helperText: "Create one beautiful retirement celebration they will never forget.",
-    emptyStateMessage: "No retirement memories yet. Be the first to add one ❤️",
-    sharePrompt: "Share this retirement MemoryPop",
+    emptyStateMessage: recipientName ? `No memories yet. Be the first to add one for ${recipientName} ❤️` : "No memories yet. Be the first to add one ❤️",
+    sharePrompt: recipientName ? `Invite others to celebrate ${recipientName}` : "Invite others to celebrate",
     messageStarters: [
       "Congratulations on an incredible career! Enjoy this well-deserved new chapter.",
       "Thank you for years of dedication and inspiration.",

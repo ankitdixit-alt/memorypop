@@ -127,7 +127,7 @@ export default async function DashboardPage({
               {memoryCount} {memoryCount === 1 ? "Memory" : "Memories"} Collected
             </h2>
             <p className="text-[#856b5f]">
-              Goal: Collect memories before the celebration.
+              Keep inviting friends and family to add memories for {memorypop.recipient_name}.
             </p>
           </div>
         )}
@@ -161,7 +161,7 @@ export default async function DashboardPage({
         {/* Quick Actions */}
         <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm">
           <p className="mb-4 text-center text-sm font-semibold uppercase tracking-wide text-[#856b5f]">
-            Quick Actions
+            Invite Contributors
           </p>
 
           <div className="flex flex-col gap-3">
@@ -244,7 +244,7 @@ export default async function DashboardPage({
             <div className="text-5xl mb-4">{occasionCopy.emoji}</div>
             <p className="text-lg text-[#3a241e] mb-2">No memories yet.</p>
             <p className="text-[#856b5f]">
-              {occasionCopy.emptyStateMessage}
+              Share the link above to invite friends and family to add memories for {memorypop.recipient_name}.
             </p>
           </div>
         )}

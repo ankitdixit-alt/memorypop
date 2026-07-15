@@ -17,6 +17,7 @@ export default function ContributePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [occasionCopy, setOccasionCopy] = useState<OccasionCopy | null>(null);
+  const [recipientName, setRecipientName] = useState<string>("");
 
   // Fetch occasion and recipient name for occasion-aware copy
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function ContributePage() {
         .single();
 
       if (data) {
+        setRecipientName(data.recipient_name);
         setOccasionCopy(getOccasionCopy(data.occasion, data.recipient_name));
       }
     }
@@ -132,7 +134,7 @@ export default function ContributePage() {
         <p className="text-center text-5xl">{occasionCopy?.emoji || "❤️"}</p>
 
         <h1 className="mt-6 text-center text-4xl font-bold">
-          {occasionCopy?.actionLabel || "Add Your Memory"}
+          {occasionCopy?.actionLabel || (recipientName ? `Add a memory for ${recipientName}` : "Add a memory")}
         </h1>
 
         <p className="mt-4 text-center text-[#6B5B52]">
@@ -194,7 +196,7 @@ export default function ContributePage() {
           disabled={isSubmitting || !name || !message}
           className="mt-8 w-full rounded-full bg-[#FF6B57] px-8 py-4 font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed active:ring-2 active:ring-white active:ring-offset-2 transition-all"
         >
-          {isSubmitting ? "Saving..." : "❤️ Submit Memory"}
+          {isSubmitting ? "Saving..." : (recipientName ? `❤️ Add Memory for ${recipientName}` : "❤️ Submit Memory")}
         </button>
       </div>
     </main>

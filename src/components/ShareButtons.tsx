@@ -27,7 +27,7 @@ export function ShareButtons({
   function handleWhatsApp() {
     // Tested format: Simple message without emoji (better mobile compatibility)
     // Works on iPhone Safari → WhatsApp, Android Chrome → WhatsApp, Desktop → WhatsApp Web
-    const message = `I created a MemoryPop for ${recipient}. Add your memory here: ${shareLink}`;
+    const message = `I created a MemoryPop for ${recipient}. Add a memory for ${recipient} here: ${shareLink}`;
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
 
     // location.href is more reliable than window.open() on mobile devices

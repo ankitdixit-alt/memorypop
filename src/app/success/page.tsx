@@ -33,7 +33,7 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
         <p className="text-5xl">{occasionCopy.emoji}</p>
 
         <h1 className="mt-6 text-4xl font-bold">
-          Your MemoryPop is Ready!
+          {recipient}'s MemoryPop is Ready!
         </h1>
 
         <p className="mt-3 text-lg text-[#6B5B52]">
@@ -47,8 +47,8 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
         )}
 
         <p className="mt-5 max-w-xl text-lg leading-8 text-[#6B5B52]">
-          Your celebration has been safely saved. Now invite friends and family
-          to add their memories.
+          {recipient}'s celebration has been safely saved. Now invite friends and family
+          to add memories for {recipient}.
         </p>
 
         <div className="mt-10 w-full rounded-3xl border border-[#ead8c9] bg-white p-6 shadow-sm">
