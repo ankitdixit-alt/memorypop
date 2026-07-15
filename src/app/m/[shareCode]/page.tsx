@@ -175,7 +175,7 @@ export default async function MemoryPopPage({
   const headersList = await headers();
   const host = headersList.get("host") || "localhost:3000";
   const protocol = host.includes("localhost") ? "http" : "https";
-  const shareLink = `${protocol}://${host}/m/${shareCode}`;
+  const shareLink = `${protocol}://${host}/m/${shareCode}/contribute`;
 
   // Get occasion-specific copy
   const occasionCopy = getOccasionCopy(data.occasion, data.recipient_name);
@@ -183,6 +183,23 @@ export default async function MemoryPopPage({
   return (
     <main className="min-h-screen bg-[#FFF8F2] px-6 py-12 text-[#2B1E18]">
       <div className="mx-auto max-w-2xl">
+
+        {/* Celebration Narrative Block - P0: Landing Page Context */}
+        <div className="mb-8 rounded-[2rem] bg-white p-8 shadow-xl text-center">
+          <p className="text-5xl">{occasionCopy.emoji}</p>
+          <div className="mt-6 space-y-4">
+            <p className="text-lg leading-relaxed text-[#2B1E18]">
+              {occasionCopy.landingNarrative?.line1}
+            </p>
+            <p className="text-lg leading-relaxed text-[#6B5B52]">
+              {occasionCopy.landingNarrative?.line2}
+            </p>
+            <p className="text-lg leading-relaxed font-semibold text-[#2B1E18]">
+              {occasionCopy.landingNarrative?.line3}
+            </p>
+          </div>
+        </div>
+
         <div className="flex flex-col items-center text-center">
           <p className="text-5xl">{occasionCopy.emoji}</p>
 
@@ -204,7 +221,7 @@ export default async function MemoryPopPage({
             href={`/m/${shareCode}/contribute`}
             className="mt-10 inline-block rounded-full bg-[#FF6B57] px-8 py-4 font-semibold text-white active:ring-2 active:ring-white active:ring-offset-2 transition-all"
           >
-            {occasionCopy.emoji} {occasionCopy.actionLabel}
+            {occasionCopy.emoji} {occasionCopy.contributeCTA}
           </a>
         </div>
 
@@ -218,6 +235,7 @@ export default async function MemoryPopPage({
             <ShareButtons
               shareLink={shareLink}
               recipient={data.recipient_name}
+              whatsappMessage={occasionCopy.whatsappMessage}
             />
           </div>
         </div>

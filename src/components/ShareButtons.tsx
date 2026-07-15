@@ -5,9 +5,11 @@ import { useState } from "react";
 export function ShareButtons({
   shareLink,
   recipient,
+  whatsappMessage,
 }: {
   shareLink: string;
   recipient: string;
+  whatsappMessage?: string;
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -25,9 +27,12 @@ export function ShareButtons({
   }
 
   function handleWhatsApp() {
-    // Tested format: Simple message without emoji (better mobile compatibility)
-    // Works on iPhone Safari → WhatsApp, Android Chrome → WhatsApp, Desktop → WhatsApp Web
-    const message = `I created a MemoryPop for ${recipient}. Add a memory for ${recipient} here: ${shareLink}`;
+    // v2: Use occasion-specific collaborative message if provided
+    // Falls back to original transactional message for backwards compatibility
+    const message = whatsappMessage
+      ? `${whatsappMessage} ${shareLink}`
+      : `I created a MemoryPop for ${recipient}. Add a memory for ${recipient} here: ${shareLink}`;
+
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
 
     // location.href is more reliable than window.open() on mobile devices

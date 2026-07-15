@@ -16,6 +16,7 @@ export default function ContributePage() {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [submitSuccess, setSubmitSuccess] = useState(false);
   const [occasionCopy, setOccasionCopy] = useState<OccasionCopy | null>(null);
   const [recipientName, setRecipientName] = useState<string>("");
   const [occasion, setOccasion] = useState<string>("");
@@ -122,136 +123,52 @@ export default function ContributePage() {
         return;
       }
 
-      // Redirect back to the view page
-      router.push(`/m/${shareCode}`);
+      // Show success state instead of immediate redirect
+      setSubmitSuccess(true);
+      setIsSubmitting(false);
     } catch (error) {
       setSubmitError("An error occurred");
       setIsSubmitting(false);
     }
   }
 
-  /**
-   * Generate celebration narrative based on occasion and recipient name(s)
-   * @param occasion - Celebration type (e.g., "Birthday", "Wedding")
-   * @param recipientName - Primary recipient name (may contain "and" for two names)
-   * @returns Object with emoji and three narrative lines
-   */
-  function generateNarrative(
-    occasion: string,
-    recipientName: string
-  ): {
-    emoji: string;
-    line1: string;
-    line2: string;
-    line3: string;
-  } {
-    const normalizedOccasion = occasion.toLowerCase().trim();
+  // v2: Use occasion-specific contribute narrative from occasions.ts
+  // This replaces the generateNarrative function with centralized copy
+  const narrative = occasionCopy?.contributeNarrative;
 
-    // Detect if we have two recipients (e.g., "Shagun and Arjun")
-    const hasTwoRecipients = recipientName.includes(" and ");
-
-    // For simplicity in v1, use gender-neutral "their" for all cases
-    // Future versions can add explicit gender handling
-
-    switch (normalizedOccasion) {
-      case "birthday":
-        return {
-          emoji: "🎂",
-          line1: recipientName
-            ? `${recipientName} is celebrating their birthday.`
-            : "We're celebrating a birthday.",
-          line2: "We're creating a surprise MemoryPop filled with birthday wishes, memories and photos.",
-          line3: "Add your memory and become part of the celebration."
-        };
-
-      case "wedding":
-        return {
-          emoji: "💍",
-          line1: recipientName
-            ? (hasTwoRecipients
-              ? `${recipientName} are getting married.`
-              : `${recipientName} is getting married.`)
-            : "We're celebrating a wedding.",
-          line2: `We're collecting heartfelt memories, wishes and photos from everyone who loves ${hasTwoRecipients ? "them" : "them"}.`,
-          line3: "Add your wedding message."
-        };
-
-      case "retirement":
-        return {
-          emoji: "🌟",
-          line1: recipientName
-            ? `${recipientName} is retiring after an incredible career.`
-            : "We're celebrating a retirement.",
-          line2: "Help us celebrate by sharing your favourite memory.",
-          line3: "Add your memory."
-        };
-
-      case "farewell":
-        return {
-          emoji: "👋",
-          line1: recipientName
-            ? `${recipientName} is beginning a new adventure.`
-            : "Someone special is beginning a new adventure.",
-          line2: "Leave a message they will always remember.",
-          line3: "Add your memory."
-        };
-
-      case "graduation":
-        return {
-          emoji: "🎓",
-          line1: recipientName
-            ? `${recipientName} has reached an incredible milestone.`
-            : "We're celebrating an incredible milestone.",
-          line2: "Celebrate this achievement by sharing your wishes and memories.",
-          line3: "Add your memory."
-        };
-
-      case "new baby":
-        return {
-          emoji: "👶",
-          line1: "A beautiful new chapter has begun.",
-          line2: "Welcome the newest member of the family with your message.",
-          line3: "Add your memory."
-        };
-
-      case "anniversary":
-        return {
-          emoji: "❤️",
-          line1: recipientName
-            ? (hasTwoRecipients
-              ? `${recipientName} are celebrating another beautiful year together.`
-              : `${recipientName} is celebrating their anniversary.`)
-            : "We're celebrating an anniversary.",
-          line2: "Share your favourite memory or wish for their journey ahead.",
-          line3: "Add your memory."
-        };
-
-      default:
-        return {
-          emoji: "❤️",
-          line1: "We're creating something special.",
-          line2: "Add your memory and become part of the celebration.",
-          line3: ""
-        };
-    }
+  // v2: Success state - show thank you message after contribution
+  if (submitSuccess && occasionCopy?.successMessage) {
+    return (
+      <main className="min-h-screen bg-[#FFF8F2] px-6 py-12 text-[#2B1E18]">
+        <div className="mx-auto max-w-2xl">
+          <div className="rounded-[2rem] bg-white p-8 shadow-xl text-center">
+            <p className="text-6xl mb-6">{occasionCopy.emoji}</p>
+            <h1 className="text-3xl font-bold text-[#2B1E18] mb-4">
+              {occasionCopy.successMessage.title}
+            </h1>
+            <p className="text-lg leading-relaxed text-[#6B5B52] mb-8">
+              {occasionCopy.successMessage.message}
+            </p>
+            <a
+              href={`/m/${shareCode}`}
+              className="inline-block rounded-full bg-[#FF6B57] px-8 py-4 font-semibold text-white active:ring-2 active:ring-white active:ring-offset-2 transition-all"
+            >
+              View All Memories
+            </a>
+          </div>
+        </div>
+      </main>
+    );
   }
-
-  // Generate narrative content
-  const narrative = useMemo(() => {
-    if (recipientName && occasion) {
-      return generateNarrative(occasion, recipientName);
-    }
-    return null;
-  }, [recipientName, occasion]);
 
   return (
     <main className="min-h-screen bg-[#FFF8F2] px-6 py-12 text-[#2B1E18]">
       <div className="mx-auto max-w-2xl">
 
-        {/* Narrative Block */}
+        {/* Narrative Block - v2: Enhanced with 4th line "why it matters" */}
         {narrative && (
           <div className="mb-8 rounded-[2rem] bg-white p-8 shadow-xl text-center">
-            <p className="text-5xl">{narrative.emoji}</p>
+            <p className="text-5xl">{occasionCopy?.emoji}</p>
             <div className="mt-6 space-y-4">
               <p className="text-lg leading-relaxed text-[#2B1E18]">
                 {narrative.line1}
@@ -262,6 +179,11 @@ export default function ContributePage() {
               {narrative.line3 && (
                 <p className="text-lg leading-relaxed font-semibold text-[#2B1E18]">
                   {narrative.line3}
+                </p>
+              )}
+              {narrative.line4 && (
+                <p className="text-lg leading-relaxed text-[#FF6B57] font-semibold">
+                  {narrative.line4}
                 </p>
               )}
             </div>
@@ -285,7 +207,7 @@ export default function ContributePage() {
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Mum"
+            placeholder={occasionCopy?.formPlaceholders?.name || "e.g. Mum"}
             className="mt-3 w-full rounded-2xl border border-[#F0DED2] px-5 py-4 outline-none focus:border-[#FF6B57] focus:ring-2 focus:ring-[#FF6B57] focus:ring-opacity-50"
           />
 
@@ -294,7 +216,7 @@ export default function ContributePage() {
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Write something heartfelt..."
+            placeholder={occasionCopy?.formPlaceholders?.message || "Write something heartfelt..."}
             className="mt-3 min-h-40 w-full rounded-2xl border border-[#F0DED2] px-5 py-4 outline-none focus:border-[#FF6B57] focus:ring-2 focus:ring-[#FF6B57] focus:ring-opacity-50"
           />
 
@@ -335,7 +257,7 @@ export default function ContributePage() {
             disabled={isSubmitting || !name || !message}
             className="mt-8 w-full rounded-full bg-[#FF6B57] px-8 py-4 font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed active:ring-2 active:ring-white active:ring-offset-2 transition-all"
           >
-            {isSubmitting ? "Saving..." : (recipientName ? `❤️ Add Memory for ${recipientName}` : "❤️ Submit Memory")}
+            {isSubmitting ? "Saving..." : `❤️ ${occasionCopy?.contributeCTA || "Add Memory"}`}
           </button>
         </div>
 

@@ -85,7 +85,7 @@ export default async function DashboardPage({
   const headersList = await headers();
   const host = headersList.get("host") || "localhost:3000";
   const protocol = host.includes("localhost") ? "http" : "https";
-  const shareLink = `${protocol}://${host}/m/${shareCode}`;
+  const shareLink = `${protocol}://${host}/m/${shareCode}/contribute`;
 
   // Get occasion-specific copy
   const occasionCopy = getOccasionCopy(memorypop.occasion, memorypop.recipient_name);
@@ -168,6 +168,7 @@ export default async function DashboardPage({
             <ShareButtons
               shareLink={shareLink}
               recipient={memorypop.recipient_name}
+              whatsappMessage={occasionCopy.whatsappMessage}
             />
 
             <Link

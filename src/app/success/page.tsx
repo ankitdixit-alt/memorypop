@@ -22,7 +22,7 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   const headersList = await headers();
   const host = headersList.get("host") || "localhost:3000";
   const protocol = host.includes("localhost") ? "http" : "https";
-  const shareLink = `${protocol}://${host}/m/${shareCode}`;
+  const shareLink = `${protocol}://${host}/m/${shareCode}/contribute`;
 
   // Get occasion-specific copy
   const occasionCopy = getOccasionCopy(occasion, recipient);
@@ -57,7 +57,11 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
           </p>
 
           <div className="flex justify-center">
-            <ShareButtons shareLink={shareLink} recipient={recipient} />
+            <ShareButtons
+              shareLink={shareLink}
+              recipient={recipient}
+              whatsappMessage={occasionCopy.whatsappMessage}
+            />
           </div>
         </div>
 
