@@ -4,6 +4,7 @@ import { ChangeEvent, useState, useEffect, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { getOccasionCopy, type OccasionCopy } from "@/lib/occasions";
+import { ShareButtons } from "@/components/ShareButtons";
 
 export default function ContributePage() {
   const params = useParams();
@@ -20,6 +21,7 @@ export default function ContributePage() {
   const [occasionCopy, setOccasionCopy] = useState<OccasionCopy | null>(null);
   const [recipientName, setRecipientName] = useState<string>("");
   const [occasion, setOccasion] = useState<string>("");
+  const [contributorCount, setContributorCount] = useState<number>(0);
 
   // Fetch occasion and recipient name for occasion-aware copy
   useEffect(() => {
@@ -123,6 +125,16 @@ export default function ContributePage() {
         return;
       }
 
+      // Fetch contributor count for progress display
+      const { count: memoryCount, error: countError } = await supabase
+        .from("memories")
+        .select("*", { count: "exact", head: true })
+        .eq("memorypop_id", memorypop.id);
+
+      if (!countError && typeof memoryCount === "number") {
+        setContributorCount(memoryCount);
+      }
+
       // Show success state instead of immediate redirect
       setSubmitSuccess(true);
       setIsSubmitting(false);
@@ -138,6 +150,20 @@ export default function ContributePage() {
 
   // v2: Success state - show thank you message after contribution
   if (submitSuccess && occasionCopy?.successMessage) {
+    let progressMessage = "";
+    let progressEmoji = "";
+
+    if (contributorCount === 1) {
+      progressEmoji = "🎉";
+      progressMessage = "You're the first contributor! Your memory started something special.";
+    } else if (contributorCount >= 2 && contributorCount <= 4) {
+      progressEmoji = "💕";
+      progressMessage = `You're contributor #${contributorCount}. ${contributorCount - 1} other ${contributorCount === 2 ? 'person has' : 'people have'} already shared memories.`;
+    } else if (contributorCount >= 5) {
+      progressEmoji = "❤️";
+      progressMessage = `${contributorCount} people have already contributed. This celebration is growing!`;
+    }
+
     return (
       <main className="min-h-screen bg-[#FFF8F2] px-6 py-12 text-[#2B1E18]">
         <div className="mx-auto max-w-2xl">
@@ -149,9 +175,38 @@ export default function ContributePage() {
             <p className="text-lg leading-relaxed text-[#6B5B52] mb-8">
               {occasionCopy.successMessage.message}
             </p>
+
+            {/* Progress Celebration */}
+            {contributorCount > 0 && progressMessage && (
+              <div className="mt-8 rounded-xl bg-[#FFF8F2] border border-[#F0DED2] p-6">
+                <p className="text-4xl mb-3">{progressEmoji}</p>
+                <p className="text-base leading-relaxed text-[#4A372F]">
+                  {progressMessage}
+                </p>
+              </div>
+            )}
+
+            {/* Viral Loop CTA */}
+            <div className="mt-10 rounded-xl bg-[#FFF1EC] border border-[#FFD4CC] p-6">
+              <p className="text-3xl mb-3">💌</p>
+              <h2 className="text-xl font-bold text-[#2B1E18] mb-2">
+                Invite Another Friend
+              </h2>
+              <p className="text-sm leading-relaxed text-[#6B5B52] mb-4">
+                Help make this celebration even more special by inviting someone else who knows {recipientName || 'them'}.
+              </p>
+              <div className="flex justify-center">
+                <ShareButtons
+                  shareLink={`${typeof window !== 'undefined' ? window.location.origin : ''}/m/${shareCode}/contribute`}
+                  recipient={recipientName}
+                  whatsappMessage={occasionCopy.whatsappMessage}
+                />
+              </div>
+            </div>
+
             <a
               href={`/m/${shareCode}`}
-              className="inline-block rounded-full bg-[#FF6B57] px-8 py-4 font-semibold text-white active:ring-2 active:ring-white active:ring-offset-2 transition-all"
+              className="mt-8 inline-block rounded-full bg-[#FF6B57] px-8 py-4 font-semibold text-white active:ring-2 active:ring-white active:ring-offset-2 transition-all"
             >
               View All Memories
             </a>
@@ -219,6 +274,37 @@ export default function ContributePage() {
             placeholder={occasionCopy?.formPlaceholders?.message || "Write something heartfelt..."}
             className="mt-3 min-h-40 w-full rounded-2xl border border-[#F0DED2] px-5 py-4 outline-none focus:border-[#FF6B57] focus:ring-2 focus:ring-[#FF6B57] focus:ring-opacity-50"
           />
+
+          {/* Message Starters - P0: Guided Contribution */}
+          {occasionCopy?.messageStarters && occasionCopy.messageStarters.length > 0 && (
+            <div className="mt-6">
+              <label className="block font-semibold text-sm text-[#6B5B52] mb-3">
+                Need inspiration? Try one of these:
+              </label>
+              <div className="space-y-2">
+                {occasionCopy.messageStarters.map((starter, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => {
+                      setMessage(starter);
+                      const textarea = document.querySelector('textarea');
+                      if (textarea) {
+                        textarea.focus();
+                        textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      }
+                    }}
+                    className="w-full text-left rounded-xl border border-[#F0DED2] bg-white px-4 py-3 text-[#4A372F] hover:border-[#FF6B57] hover:bg-[#FFF1EC] active:ring-2 active:ring-[#FF6B57] transition-all"
+                  >
+                    <span className="text-sm leading-relaxed">{starter}</span>
+                  </button>
+                ))}
+              </div>
+              <p className="mt-2 text-xs text-[#6B5B52] italic">
+                Click any message above to use it as a starting point. You can edit it to make it your own.
+              </p>
+            </div>
+          )}
 
           <label className="mt-8 block font-semibold">
             Add a favourite photo <span className="text-gray-400">(optional)</span>
