@@ -7,11 +7,13 @@ export function ShareButtons({
   shareLink,
   recipient,
   whatsappMessage,
+  mode = 'contributor',
   shareCode,
 }: {
   shareLink: string;
   recipient: string;
   whatsappMessage?: string;
+  mode?: 'contributor' | 'reveal';
   shareCode?: string;
 }) {
   const [copied, setCopied] = useState(false);
@@ -49,12 +51,17 @@ export function ShareButtons({
     trackEvent('memorypop_shared', {
       share_code: shareCode || 'unknown',
       share_method: 'whatsapp',
+      share_mode: mode,
       recipient_name: recipient,
     });
 
     // location.href is more reliable than window.open() on mobile devices
     window.location.href = whatsappUrl;
   }
+
+  const whatsappButtonLabel = mode === 'reveal'
+    ? '💬 Share on WhatsApp'
+    : 'Share on WhatsApp';
 
   return (
     <div className="flex flex-col gap-3 sm:flex-row">
@@ -69,7 +76,7 @@ export function ShareButtons({
         onClick={handleWhatsApp}
         className="rounded-full bg-[#25D366] px-7 py-4 font-semibold text-white transition-colors hover:bg-[#22c55e] active:ring-2 active:ring-white active:ring-offset-2 transition-all"
       >
-        Share on WhatsApp
+        {whatsappButtonLabel}
       </button>
     </div>
   );

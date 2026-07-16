@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { getOccasionCopy } from "@/lib/occasions";
 import { getCoverHeroStyle } from "@/lib/coverStyles";
 import { supabase } from "@/lib/supabase";
@@ -21,6 +22,7 @@ interface Props {
   memorypopId: string;
   celebrationDate?: string | null;
   coverStyle?: string | null;
+  shareCode: string;
 }
 
 export default function RevealExperience({
@@ -30,6 +32,7 @@ export default function RevealExperience({
   memorypopId,
   celebrationDate,
   coverStyle,
+  shareCode,
 }: Props) {
   const [currentStep, setCurrentStep] = useState(0);
   const [hasReacted, setHasReacted] = useState<boolean | null>(null); // null = loading, true/false = known
@@ -128,10 +131,11 @@ export default function RevealExperience({
       />
     );
   } else if (currentStep === memories.length + 3 && selectedReaction) {
-    // Show thank you screen after reaction
+    // Show thank you screen after reaction with ending options
     return (
       <ReactionThankYou
         reactionType={selectedReaction}
+        shareCode={shareCode}
       />
     );
   }
@@ -162,23 +166,37 @@ function WelcomeScreen({
       {/* Occasion emoji */}
       <div className="mb-8 text-7xl">{emoji}</div>
 
-      {/* Welcome message */}
+      {/* Gift message */}
       <h1 className="mb-4 text-center text-4xl font-bold text-[#3a241e]">
-        Welcome {recipientName}
+        {recipientName}, this MemoryPop was created especially for you
       </h1>
 
-      {/* Count message */}
-      <p className="mb-12 text-center text-xl text-[#856b5f]">
-        {memoryCount} {memoryCount === 1 ? "person" : "people"} came together to
-        celebrate you.
+      {/* Subtitle */}
+      <p className="mb-8 text-center text-xl text-[#856b5f] max-w-2xl">
+        Friends and family came together to share memories, photos, and wishes for your celebration.
       </p>
 
-      {/* Begin button */}
+      {/* Summary */}
+      <div className="mb-12 rounded-2xl bg-white/90 border border-[#F0DED2] p-6 shadow-sm max-w-md">
+        <ul className="space-y-2 text-center">
+          <li className="text-[#3a241e]">
+            <span className="font-semibold">{memoryCount}</span> {memoryCount === 1 ? 'person' : 'people'} contributed
+          </li>
+          <li className="text-[#3a241e]">
+            <span className="font-semibold">{memoryCount}</span> {memoryCount === 1 ? 'memory' : 'memories'} collected
+          </li>
+          <li className="text-[#856b5f] text-sm italic">
+            Created with love for your celebration
+          </li>
+        </ul>
+      </div>
+
+      {/* CTA */}
       <button
         onClick={onBegin}
-        className="rounded-full bg-[#ef6a57] px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2 transition-all"
+        className="rounded-full bg-[#ef6a57] px-10 py-5 text-xl font-semibold text-white transition-colors hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2 transition-all shadow-lg"
       >
-        Begin
+        Open My MemoryPop
       </button>
     </div>
   );

@@ -47,6 +47,7 @@ export default async function RevealPage({
       memorypopId={memoryPop.id}
       celebrationDate={memoryPop.celebration_date}
       coverStyle={memoryPop.cover_style}
+      shareCode={shareCode}
     />
   );
 }

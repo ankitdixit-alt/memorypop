@@ -43,6 +43,7 @@ export interface OccasionCopy {
   };
   contributeCTA?: string;           // Contribute button text
   whatsappMessage?: string;         // WhatsApp share message template
+  revealWhatsappMessage?: string;   // Recipient-focused reveal message
   successMessage?: {                // Post-contribution success state
     title: string;
     message: string;
@@ -132,6 +133,11 @@ function birthdayCopy(recipientName?: string): OccasionCopy {
     whatsappMessage: recipientName
       ? `Help us celebrate ${recipientName}'s birthday! We're creating a surprise MemoryPop filled with memories and photos. Add your birthday message here:`
       : "Help us celebrate a birthday! Add your message here:",
+
+    // v2: Reveal WhatsApp message
+    revealWhatsappMessage: recipientName
+      ? `🎂 Happy Birthday, ${recipientName}! Your friends and family made something special for you. Open your MemoryPop here:`
+      : "🎂 Happy Birthday! Your friends and family made something special for you. Open your MemoryPop here:",
 
     // v2: Success message
     successMessage: {
@@ -223,6 +229,11 @@ function weddingCopy(recipientName?: string): OccasionCopy {
       ? `Help us celebrate ${recipientName}'s wedding! We're creating a surprise MemoryPop with love and memories. Add your wedding message here:`
       : "Help us celebrate a wedding! Add your message here:",
 
+    // v2: Reveal WhatsApp message
+    revealWhatsappMessage: recipientName
+      ? `💍 ${recipientName}, congratulations on your special day! Your loved ones created something beautiful for you. Open your MemoryPop here:`
+      : "💍 Congratulations on your special day! Your loved ones created something beautiful for you. Open your MemoryPop here:",
+
     // v2: Success message
     successMessage: {
       title: recipientName ? `Thank you for celebrating ${recipientName}!` : "Thank you!",
@@ -304,6 +315,11 @@ function retirementCopy(recipientName?: string): OccasionCopy {
     whatsappMessage: recipientName
       ? `Help us celebrate ${recipientName}'s retirement! We're creating a MemoryPop filled with favourite memories. Add yours here:`
       : "Help us celebrate a retirement! Add your message here:",
+
+    // v2: Reveal WhatsApp message
+    revealWhatsappMessage: recipientName
+      ? `🌟 Congratulations on an incredible career, ${recipientName}! Your colleagues and friends created something special to honor your journey. Open your MemoryPop here:`
+      : "🌟 Congratulations on an incredible career! Your colleagues and friends created something special to honor your journey. Open your MemoryPop here:",
 
     // v2: Success message
     successMessage: {
@@ -388,6 +404,11 @@ function farewellCopy(recipientName?: string): OccasionCopy {
       ? `Help us say farewell to ${recipientName}! We're creating a MemoryPop with messages they'll always remember. Add yours here:`
       : "Help us say farewell! Add your message here:",
 
+    // v2: Reveal WhatsApp message
+    revealWhatsappMessage: recipientName
+      ? `👋 ${recipientName}, your friends created a special farewell gift for you. Open your MemoryPop here:`
+      : "👋 Your friends created a special farewell gift for you. Open your MemoryPop here:",
+
     // v2: Success message
     successMessage: {
       title: recipientName ? `Thank you for celebrating ${recipientName}!` : "Thank you!",
@@ -469,6 +490,11 @@ function graduationCopy(recipientName?: string): OccasionCopy {
     whatsappMessage: recipientName
       ? `Help us celebrate ${recipientName}'s graduation! We're creating a MemoryPop with wishes and memories. Add yours here:`
       : "Help us celebrate a graduation! Add your message here:",
+
+    // v2: Reveal WhatsApp message
+    revealWhatsappMessage: recipientName
+      ? `🎓 Congratulations on your graduation, ${recipientName}! Your loved ones came together to celebrate this milestone. Open your MemoryPop here:`
+      : "🎓 Congratulations on your graduation! Your loved ones came together to celebrate this milestone. Open your MemoryPop here:",
 
     // v2: Success message
     successMessage: {
@@ -552,6 +578,11 @@ function newBabyCopy(recipientName?: string): OccasionCopy {
       ? `Welcome ${recipientName} to the world! We're creating a MemoryPop with messages for the family. Add your wishes here:`
       : "Welcome a new baby! Add your wishes here:",
 
+    // v2: Reveal WhatsApp message
+    revealWhatsappMessage: recipientName
+      ? `👶 Welcome to the world, ${recipientName}! Your family and friends created something special for you. Open your MemoryPop here:`
+      : "👶 Welcome to the world! Your family and friends created something special for you. Open your MemoryPop here:",
+
     // v2: Success message
     successMessage: {
       title: "Thank you for welcoming this new life!",
@@ -634,6 +665,11 @@ function anniversaryCopy(recipientName?: string): OccasionCopy {
       ? `Help us celebrate ${recipientName}'s anniversary! We're creating a MemoryPop with memories and wishes. Add yours here:`
       : "Help us celebrate an anniversary! Add your message here:",
 
+    // v2: Reveal WhatsApp message
+    revealWhatsappMessage: recipientName
+      ? `💕 Happy Anniversary, ${recipientName}! Your friends and family created a celebration of your journey together. Open your MemoryPop here:`
+      : "💕 Happy Anniversary! Your friends and family created a celebration of your journey together. Open your MemoryPop here:",
+
     // v2: Success message
     successMessage: {
       title: recipientName ? `Thank you for celebrating ${recipientName}!` : "Thank you!",
@@ -705,6 +741,9 @@ function defaultCopy(recipientName?: string): OccasionCopy {
     },
     contributeCTA: "Share Your Memory",
     whatsappMessage: "Help us create something special! Add your memory here:",
+    revealWhatsappMessage: recipientName
+      ? `❤️ ${recipientName}, your friends wanted to say thank you in a special way. Open your MemoryPop here:`
+      : "❤️ Your friends created something special for you. Open your MemoryPop here:",
     successMessage: {
       title: "Thank you!",
       message: "Your memory will help make this celebration unforgettable."

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { ShareButtons } from "@/components/ShareButtons";
 import { DashboardPlusFeatures } from "@/components/DashboardPlusFeatures";
+import DashboardClientSection from "@/components/DashboardClientSection";
 import { Suspense } from "react";
 import Link from "next/link";
 import { getOccasionCopy } from "@/lib/occasions";
@@ -119,6 +120,7 @@ export default async function DashboardPage({
 
   // Get occasion-specific copy
   const occasionCopy = getOccasionCopy(memorypop.occasion, memorypop.recipient_name);
+  const revealWhatsappMessage = occasionCopy.revealWhatsappMessage || '';
 
   return (
     <main className="min-h-screen bg-[#fff8ef] px-6 py-12 text-[#3a241e]">
@@ -204,10 +206,13 @@ export default async function DashboardPage({
           </div>
         )}
 
-        {/* Quick Actions */}
+        {/* Quick Actions - Contributor Invitations */}
         <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm">
           <p className="mb-4 text-center text-sm font-semibold uppercase tracking-wide text-[#856b5f]">
             Invite Contributors
+          </p>
+          <p className="mb-4 text-center text-xs text-[#6B5B52] italic">
+            Share this link with friends and family to collect memories
           </p>
 
           <div className="flex flex-col gap-3">
@@ -215,6 +220,7 @@ export default async function DashboardPage({
               shareLink={shareLink}
               recipient={memorypop.recipient_name}
               whatsappMessage={occasionCopy.whatsappMessage}
+              mode="contributor"
               shareCode={memorypop.share_code}
             />
 
@@ -224,17 +230,20 @@ export default async function DashboardPage({
             >
               Preview MemoryPop
             </Link>
-
-            {memoryCount > 0 && (
-              <Link
-                href={`/m/${shareCode}/reveal`}
-                className="rounded-full bg-[#ef6a57] px-7 py-4 text-center font-semibold text-white transition-colors hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2 transition-all"
-              >
-                Reveal Celebration
-              </Link>
-            )}
           </div>
         </div>
+
+        {/* Reveal Workflow Section - Client Component */}
+        <Suspense fallback={null}>
+          <DashboardClientSection
+            memorypopId={memorypop.id}
+            shareCode={shareCode}
+            recipientName={memorypop.recipient_name}
+            memoryCount={memoryCount}
+            currentStatus={memorypop.status}
+            revealWhatsappMessage={revealWhatsappMessage}
+          />
+        </Suspense>
 
         {/* Story Card */}
         <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm">
