@@ -18,6 +18,7 @@ interface Props {
   occasion: string;
   memories: Memory[];
   memorypopId: string;
+  celebrationDate?: string | null;
 }
 
 export default function RevealExperience({
@@ -25,6 +26,7 @@ export default function RevealExperience({
   occasion,
   memories,
   memorypopId,
+  celebrationDate,
 }: Props) {
   const [currentStep, setCurrentStep] = useState(0);
   const [hasReacted, setHasReacted] = useState<boolean | null>(null); // null = loading, true/false = known
@@ -37,6 +39,27 @@ export default function RevealExperience({
   // Step memories.length + 3: ReactionThankYou (after reaction)
 
   const occasionCopy = getOccasionCopy(occasion, recipientName);
+
+  // Special messaging for celebration date
+  function getCelebrationMessage(dateString?: string | null): string | null {
+    if (!dateString) return null;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const celebration = new Date(dateString);
+    celebration.setHours(0, 0, 0, 0);
+
+    const diffTime = celebration.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) {
+      return "🎉 Today is the celebration!";
+    } else if (diffDays < 0) {
+      return "❤️ This celebration has been preserved forever.";
+    }
+    return null; // No special message for future dates
+  }
 
   // Calculate total steps based on whether user has reacted
   const totalSteps = hasReacted === null
@@ -91,7 +114,7 @@ export default function RevealExperience({
     const memoryIndex = currentStep - 1;
     return <MemoryScreen memory={memories[memoryIndex]} onNext={handleNext} />;
   } else if (currentStep === memories.length + 1) {
-    return <FinalScreen occasionCopy={occasionCopy} onNext={handleNext} />;
+    return <FinalScreen occasionCopy={occasionCopy} onNext={handleNext} celebrationDate={celebrationDate} getCelebrationMessage={getCelebrationMessage} />;
   } else if (currentStep === memories.length + 2 && hasReacted === false) {
     // Show reaction prompt if user hasn't reacted
     return (
@@ -110,7 +133,7 @@ export default function RevealExperience({
   }
 
   // Fallback (should not reach here)
-  return <FinalScreen occasionCopy={occasionCopy} onNext={handleNext} />;
+  return <FinalScreen occasionCopy={occasionCopy} onNext={handleNext} celebrationDate={celebrationDate} getCelebrationMessage={getCelebrationMessage} />;
 }
 
 // Welcome Screen (Step 0)
@@ -198,10 +221,16 @@ function MemoryScreen({
 function FinalScreen({
   occasionCopy,
   onNext,
+  celebrationDate,
+  getCelebrationMessage,
 }: {
   occasionCopy: { celebrationMessage: string; subMessage?: string; emoji: string };
   onNext?: () => void;
+  celebrationDate?: string | null;
+  getCelebrationMessage?: (dateString?: string | null) => string | null;
 }) {
+  const specialMessage = getCelebrationMessage ? getCelebrationMessage(celebrationDate) : null;
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#fff8ef] px-6">
       {/* Celebration emoji */}
@@ -217,6 +246,15 @@ function FinalScreen({
         <p className="mb-4 text-center text-xl text-[#856b5f]">
           {occasionCopy.subMessage}
         </p>
+      )}
+
+      {/* Special Celebration Message */}
+      {specialMessage && (
+        <div className="mb-6 rounded-2xl bg-[#FFF1EC] border-2 border-[#FFD4CC] p-6 text-center max-w-md">
+          <p className="text-2xl font-bold text-[#FF6B57]">
+            {specialMessage}
+          </p>
+        </div>
       )}
 
       {/* Thank you message */}

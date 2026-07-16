@@ -45,6 +45,7 @@ export default async function RevealPage({
       occasion={memoryPop.occasion}
       memories={memories || []}
       memorypopId={memoryPop.id}
+      celebrationDate={memoryPop.celebration_date}
     />
   );
 }

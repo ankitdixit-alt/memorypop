@@ -13,6 +13,7 @@ export default function CreatePage() {
   const [isCreating, setIsCreating] = useState(false);
   const [createError, setCreateError] = useState("");
   const [selectedCover, setSelectedCover] = useState("none");
+  const [celebrationDate, setCelebrationDate] = useState("");
 
   const progress = (step / 3) * 100;
 
@@ -42,6 +43,7 @@ async function saveMemoryPop() {
       tone,
       status: "collecting",
       share_code: crypto.randomUUID(),
+      celebration_date: celebrationDate || null,
     })
     .select()
     .single();
@@ -176,6 +178,22 @@ async function saveMemoryPop() {
               placeholder="e.g. He always brings the family together and makes everyone laugh."
               className="mt-8 min-h-40 w-full rounded-2xl border border-[#F0DED2] px-5 py-4 text-lg outline-none focus:border-[#FF6B57] focus:ring-2 focus:ring-[#FF6B57] focus:ring-opacity-50"
             />
+
+            {/* Celebration Date (Optional) */}
+            <div className="mt-6">
+              <label className="block font-semibold">
+                Celebration Date <span className="text-gray-400">(optional)</span>
+              </label>
+              <p className="mt-1 text-sm text-[#6B5B52]">
+                Helps contributors understand when the celebration takes place.
+              </p>
+              <input
+                type="date"
+                value={celebrationDate}
+                onChange={(e) => setCelebrationDate(e.target.value)}
+                className="mt-3 w-full rounded-2xl border border-[#F0DED2] px-5 py-4 text-lg outline-none focus:border-[#FF6B57] focus:ring-2 focus:ring-[#FF6B57] focus:ring-opacity-50"
+              />
+            </div>
 
             {/* Emoji Shortcuts */}
             {occasionCopy?.emojiShortcuts && (

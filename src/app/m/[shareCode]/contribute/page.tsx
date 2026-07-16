@@ -22,19 +22,21 @@ export default function ContributePage() {
   const [recipientName, setRecipientName] = useState<string>("");
   const [occasion, setOccasion] = useState<string>("");
   const [contributorCount, setContributorCount] = useState<number>(0);
+  const [celebrationDate, setCelebrationDate] = useState<string | null>(null);
 
   // Fetch occasion and recipient name for occasion-aware copy
   useEffect(() => {
     async function loadOccasionCopy() {
       const { data } = await supabase
         .from("memorypops")
-        .select("occasion, recipient_name")
+        .select("occasion, recipient_name, celebration_date")
         .eq("share_code", shareCode)
         .single();
 
       if (data) {
         setRecipientName(data.recipient_name);
         setOccasion(data.occasion);
+        setCelebrationDate(data.celebration_date);
         setOccasionCopy(getOccasionCopy(data.occasion, data.recipient_name));
       }
     }
@@ -144,6 +146,34 @@ export default function ContributePage() {
     }
   }
 
+  // Date formatting and calculation helpers
+  function formatCelebrationDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric'
+    });
+  }
+
+  function getTimelineMessage(dateString: string): string {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize to midnight
+
+    const celebration = new Date(dateString);
+    celebration.setHours(0, 0, 0, 0);
+
+    const diffTime = celebration.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays > 0) {
+      return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} until the celebration`;
+    } else if (diffDays === 0) {
+      return "Today is the celebration!";
+    } else {
+      return "This celebration has been preserved forever";
+    }
+  }
+
   // v2: Use occasion-specific contribute narrative from occasions.ts
   // This replaces the generateNarrative function with centralized copy
   const narrative = occasionCopy?.contributeNarrative;
@@ -219,6 +249,22 @@ export default function ContributePage() {
   return (
     <main className="min-h-screen bg-[#FFF8F2] px-6 py-12 text-[#2B1E18]">
       <div className="mx-auto max-w-2xl">
+
+        {/* Celebration Timeline */}
+        {celebrationDate && (
+          <div className="mb-8 rounded-[2rem] bg-white p-6 shadow-xl text-center border-2 border-[#F0DED2]">
+            <p className="text-3xl mb-2">{occasionCopy?.emoji || "🎉"}</p>
+            <p className="text-xl font-bold text-[#2B1E18]">
+              {recipientName}&apos;s {occasion.toLowerCase()}
+            </p>
+            <p className="text-lg text-[#6B5B52] mt-1">
+              {formatCelebrationDate(celebrationDate)}
+            </p>
+            <p className="text-md font-semibold text-[#FF6B57] mt-2">
+              {getTimelineMessage(celebrationDate)}
+            </p>
+          </div>
+        )}
 
         {/* Narrative Block - v2: Enhanced with 4th line "why it matters" */}
         {narrative && (

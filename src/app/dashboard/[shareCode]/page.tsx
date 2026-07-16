@@ -8,6 +8,35 @@ import Link from "next/link";
 import { getOccasionCopy } from "@/lib/occasions";
 import type { Metadata } from "next";
 
+// Date formatting and calculation helpers
+function formatCelebrationDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  });
+}
+
+function getTimelineMessage(dateString: string): string {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Normalize to midnight
+
+  const celebration = new Date(dateString);
+  celebration.setHours(0, 0, 0, 0);
+
+  const diffTime = celebration.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays > 0) {
+    return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} until the celebration`;
+  } else if (diffDays === 0) {
+    return "Today is the celebration!";
+  } else {
+    return "Celebration complete";
+  }
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -110,6 +139,19 @@ export default async function DashboardPage({
             )}
           </div>
         </div>
+
+        {/* Celebration Timeline Card */}
+        {memorypop.celebration_date && (
+          <div className="mt-8 rounded-2xl bg-white p-6 shadow-sm text-center">
+            <p className="text-3xl mb-3">{occasionCopy.emoji}</p>
+            <p className="text-xl font-bold text-[#3a241e]">
+              {formatCelebrationDate(memorypop.celebration_date)}
+            </p>
+            <p className="text-md text-[#FF6B57] font-semibold mt-2">
+              {getTimelineMessage(memorypop.celebration_date)}
+            </p>
+          </div>
+        )}
 
         {/* Plus Features (Welcome Message & Upgrade CTA) */}
         <Suspense fallback={null}>
