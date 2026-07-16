@@ -61,6 +61,7 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
               shareLink={shareLink}
               recipient={recipient}
               whatsappMessage={occasionCopy.whatsappMessage}
+              shareCode={shareCode}
             />
           </div>
         </div>

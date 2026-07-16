@@ -1,13 +1,23 @@
--- Migration: Add celebration date feature
+-- Migration: Add celebration date feature (IDEMPOTENT)
 -- Date: 2026-07-16
 -- Description: Add optional celebration date to MemoryPops for timeline and countdown display
+-- SAFE TO RUN MULTIPLE TIMES
 
--- Add celebration_date column (nullable DATE type)
-ALTER TABLE memorypops
-ADD COLUMN celebration_date DATE;
+-- Add celebration_date column if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_name = 'memorypops'
+    AND column_name = 'celebration_date'
+  ) THEN
+    ALTER TABLE memorypops ADD COLUMN celebration_date DATE;
+  END IF;
+END $$;
 
--- Add index for efficient date-based filtering (useful for future features)
-CREATE INDEX idx_memorypops_celebration_date
+-- Create index if it doesn't exist
+CREATE INDEX IF NOT EXISTS idx_memorypops_celebration_date
   ON memorypops(celebration_date)
   WHERE celebration_date IS NOT NULL;
 

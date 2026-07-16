@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { trackEvent } from "@/lib/analytics";
 
 export function ShareButtons({
   shareLink,
   recipient,
   whatsappMessage,
+  shareCode,
 }: {
   shareLink: string;
   recipient: string;
   whatsappMessage?: string;
+  shareCode?: string;
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -18,6 +21,13 @@ export function ShareButtons({
       await navigator.clipboard.writeText(shareLink);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+
+      // Track memorypop_shared event
+      trackEvent('memorypop_shared', {
+        share_code: shareCode || 'unknown',
+        share_method: 'copy_link',
+        recipient_name: recipient,
+      });
     } catch (error) {
       console.error("Failed to copy:", error);
       // Fallback: still show feedback
@@ -34,6 +44,13 @@ export function ShareButtons({
       : `I created a MemoryPop for ${recipient}. Add a memory for ${recipient} here: ${shareLink}`;
 
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+
+    // Track memorypop_shared event
+    trackEvent('memorypop_shared', {
+      share_code: shareCode || 'unknown',
+      share_method: 'whatsapp',
+      recipient_name: recipient,
+    });
 
     // location.href is more reliable than window.open() on mobile devices
     window.location.href = whatsappUrl;

@@ -1,8 +1,15 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
+import { trackEvent } from "@/lib/analytics";
 
 export default function PlusPage() {
+  useEffect(() => {
+    // Track plus_viewed event
+    trackEvent('plus_viewed', {});
+  }, []);
+
   const features = {
     availableToday: [
       {

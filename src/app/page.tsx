@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
+import { trackEvent } from "@/lib/analytics"
 
 /* -------------------------------------------------------------------------- */
 /*  Inline icons (no external icon library)                                   */
@@ -719,6 +720,19 @@ function SiteFooter() {
 /* -------------------------------------------------------------------------- */
 
 export default function Page() {
+  useEffect(() => {
+    // Track homepage view with UTM parameters (if present)
+    const urlParams = new URLSearchParams(window.location.search);
+    const utmParams: Record<string, string> = {};
+
+    ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(param => {
+      const value = urlParams.get(param);
+      if (value) utmParams[param] = value;
+    });
+
+    trackEvent('homepage_viewed', utmParams);
+  }, []);
+
   return (
     <main className="min-h-dvh bg-background">
       <SiteHeader />

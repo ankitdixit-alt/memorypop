@@ -6,6 +6,7 @@ import { DashboardPlusFeatures } from "@/components/DashboardPlusFeatures";
 import { Suspense } from "react";
 import Link from "next/link";
 import { getOccasionCopy } from "@/lib/occasions";
+import { getCoverHeroStyle } from "@/lib/coverStyles";
 import type { Metadata } from "next";
 
 // Date formatting and calculation helpers
@@ -142,7 +143,10 @@ export default async function DashboardPage({
 
         {/* Celebration Timeline Card */}
         {memorypop.celebration_date && (
-          <div className="mt-8 rounded-2xl bg-white p-6 shadow-sm text-center">
+          <div
+            className="mt-8 rounded-2xl p-6 shadow-sm text-center"
+            style={getCoverHeroStyle(memorypop.cover_style)}
+          >
             <p className="text-3xl mb-3">{occasionCopy.emoji}</p>
             <p className="text-xl font-bold text-[#3a241e]">
               {formatCelebrationDate(memorypop.celebration_date)}
@@ -211,6 +215,7 @@ export default async function DashboardPage({
               shareLink={shareLink}
               recipient={memorypop.recipient_name}
               whatsappMessage={occasionCopy.whatsappMessage}
+              shareCode={memorypop.share_code}
             />
 
             <Link

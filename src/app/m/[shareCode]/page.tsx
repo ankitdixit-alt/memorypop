@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { ShareButtons } from "@/components/ShareButtons";
 import { getOccasionCopy } from "@/lib/occasions";
+import { getCoverHeroStyle } from "@/lib/coverStyles";
 import type { Metadata } from "next";
 
 /**
@@ -185,7 +186,10 @@ export default async function MemoryPopPage({
       <div className="mx-auto max-w-2xl">
 
         {/* Celebration Narrative Block - P0: Landing Page Context */}
-        <div className="mb-8 rounded-[2rem] bg-white p-8 shadow-xl text-center">
+        <div
+          className="mb-8 rounded-[2rem] p-8 shadow-xl text-center"
+          style={getCoverHeroStyle(data.cover_style)}
+        >
           <p className="text-5xl">{occasionCopy.emoji}</p>
           <div className="mt-6 space-y-4">
             <p className="text-lg leading-relaxed text-[#2B1E18]">
@@ -236,6 +240,7 @@ export default async function MemoryPopPage({
               shareLink={shareLink}
               recipient={data.recipient_name}
               whatsappMessage={occasionCopy.whatsappMessage}
+              shareCode={shareCode}
             />
           </div>
         </div>

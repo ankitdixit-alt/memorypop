@@ -2,6 +2,7 @@
 import { supabase } from "@/lib/supabase";
 import { ChangeEvent, useState, useMemo } from "react";
 import { getOccasionCopy } from "@/lib/occasions";
+import { trackEvent } from "@/lib/analytics";
 
 export default function CreatePage() {
   const [step, setStep] = useState(1);
@@ -44,6 +45,7 @@ async function saveMemoryPop() {
       status: "collecting",
       share_code: crypto.randomUUID(),
       celebration_date: celebrationDate || null,
+      cover_style: selectedCover,
     })
     .select()
     .single();
@@ -53,6 +55,19 @@ async function saveMemoryPop() {
     setCreateError(error.message);
     return;
   }
+
+  // Track create_completed event
+  trackEvent('create_completed', {
+    share_code: data.share_code,
+    occasion: data.occasion,
+    recipient_name: data.recipient_name,
+    celebration_date: data.celebration_date || null,
+    tone: tone,
+    has_story: !!story,
+    has_photos: photos.length > 0,
+    photo_count: photos.length,
+    selected_cover: selectedCover,
+  });
 
   // Keep loading state true during redirect
   window.location.href = `/success?shareCode=${data.share_code}&recipient=${encodeURIComponent(

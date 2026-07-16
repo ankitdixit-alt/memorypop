@@ -1,0 +1,20 @@
+# MemoryPop Robots.txt
+# Controls search engine crawler access
+
+# Allow all crawlers to access public pages
+User-agent: *
+Allow: /
+Allow: /create
+Allow: /m/*/contribute
+
+# Disallow private pages from indexing
+Disallow: /dashboard/
+Disallow: /success
+Disallow: /api/
+Disallow: /plus
+
+# Sitemap location
+Sitemap: https://memorypop.com/sitemap.xml
+
+# Crawl-delay to prevent server overload (optional)
+Crawl-delay: 1

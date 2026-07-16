@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { OrganizationSchema } from "@/components/OrganizationSchema";
+import { AnalyticsInitializer } from "@/components/AnalyticsInitializer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,15 +24,15 @@ export const metadata: Metadata = {
   // Application metadata
   applicationName: 'MemoryPop',
 
-  // Title configuration
+  // Title configuration (SEO Foundation - Enhanced)
   title: {
     template: '%s | MemoryPop',
-    default: 'MemoryPop - Celebrate Together',
+    default: 'MemoryPop - Create Beautiful Online Memory Books for Every Celebration',
   },
 
-  // Description and keywords
-  description: 'Create one beautiful home for every celebration. Friends and family come together to share memories, photos, and heartfelt messages.',
-  keywords: ['celebration', 'memories', 'birthday', 'anniversary', 'farewell', 'graduation', 'wedding'],
+  // Description and keywords (SEO Foundation - Enhanced)
+  description: 'Create a beautiful online memory book for birthdays, weddings, farewells, and celebrations. Friends and family collaborate to share memories, photos, and heartfelt messages in one place.',
+  keywords: ['online memory book', 'group birthday card', 'collaborative celebration', 'digital memory album', 'birthday memories', 'wedding memory book', 'farewell messages', 'graduation wishes', 'celebration', 'memories'],
 
   // Authors and creator
   authors: [{ name: 'MemoryPop' }],
@@ -61,14 +63,14 @@ export const metadata: Metadata = {
   // Category
   category: 'lifestyle',
 
-  // OpenGraph (existing, keep as-is)
+  // OpenGraph (SEO Foundation - Enhanced)
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: '/',
     siteName: 'MemoryPop',
-    title: 'MemoryPop - Celebrate Together',
-    description: 'Create one beautiful home for every celebration. Friends and family come together to share memories, photos, and heartfelt messages.',
+    title: 'MemoryPop - Create Beautiful Online Memory Books for Every Celebration',
+    description: 'Create a beautiful online memory book for birthdays, weddings, farewells, and celebrations. Friends and family collaborate to share memories, photos, and heartfelt messages in one place.',
     images: [
       {
         url: '/og/default.png',
@@ -79,11 +81,11 @@ export const metadata: Metadata = {
     ],
   },
 
-  // Twitter (existing, keep as-is)
+  // Twitter (SEO Foundation - Enhanced)
   twitter: {
     card: 'summary_large_image',
-    title: 'MemoryPop - Celebrate Together',
-    description: 'Create one beautiful home for every celebration. Friends and family come together to share memories, photos, and heartfelt messages.',
+    title: 'MemoryPop - Create Beautiful Online Memory Books for Every Celebration',
+    description: 'Create a beautiful online memory book for birthdays, weddings, farewells, and celebrations. Friends and family collaborate to share memories, photos, and heartfelt messages in one place.',
     images: ['/og/default.png'],
     creator: '@memorypop',
   },
@@ -94,12 +96,23 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.com';
+
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <head>
+        {/* Canonical URL (SEO Foundation Quick Win #4) */}
+        <link rel="canonical" href={baseUrl} />
+        {/* Organization Schema (SEO Foundation Quick Win #2) */}
+        <OrganizationSchema />
+      </head>
+      <body className="min-h-full flex flex-col">
+        <AnalyticsInitializer />
+        {children}
+      </body>
     </html>
   );
 }

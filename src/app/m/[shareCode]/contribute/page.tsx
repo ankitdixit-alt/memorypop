@@ -5,6 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { getOccasionCopy, type OccasionCopy } from "@/lib/occasions";
 import { ShareButtons } from "@/components/ShareButtons";
+import { trackEvent } from "@/lib/analytics";
+import { getCoverGradient, getCoverHeroStyle } from "@/lib/coverStyles";
 
 export default function ContributePage() {
   const params = useParams();
@@ -23,13 +25,14 @@ export default function ContributePage() {
   const [occasion, setOccasion] = useState<string>("");
   const [contributorCount, setContributorCount] = useState<number>(0);
   const [celebrationDate, setCelebrationDate] = useState<string | null>(null);
+  const [coverStyle, setCoverStyle] = useState<string | null>(null);
 
   // Fetch occasion and recipient name for occasion-aware copy
   useEffect(() => {
     async function loadOccasionCopy() {
       const { data } = await supabase
         .from("memorypops")
-        .select("occasion, recipient_name, celebration_date")
+        .select("occasion, recipient_name, celebration_date, cover_style")
         .eq("share_code", shareCode)
         .single();
 
@@ -37,6 +40,7 @@ export default function ContributePage() {
         setRecipientName(data.recipient_name);
         setOccasion(data.occasion);
         setCelebrationDate(data.celebration_date);
+        setCoverStyle(data.cover_style);
         setOccasionCopy(getOccasionCopy(data.occasion, data.recipient_name));
       }
     }
@@ -137,6 +141,18 @@ export default function ContributePage() {
         setContributorCount(memoryCount);
       }
 
+      // Track contribution_submitted event
+      trackEvent('contribution_submitted', {
+        share_code: shareCode,
+        memorypop_id: memorypop.id,
+        occasion: occasion,
+        recipient_name: recipientName,
+        contributor_name: name,
+        has_photo: !!photoUrl,
+        message_length: message.length,
+        contributor_count: memoryCount || 1,
+      });
+
       // Show success state instead of immediate redirect
       setSubmitSuccess(true);
       setIsSubmitting(false);
@@ -230,6 +246,7 @@ export default function ContributePage() {
                   shareLink={`${typeof window !== 'undefined' ? window.location.origin : ''}/m/${shareCode}/contribute`}
                   recipient={recipientName}
                   whatsappMessage={occasionCopy.whatsappMessage}
+                  shareCode={shareCode}
                 />
               </div>
             </div>
@@ -252,7 +269,10 @@ export default function ContributePage() {
 
         {/* Celebration Timeline */}
         {celebrationDate && (
-          <div className="mb-8 rounded-[2rem] bg-white p-6 shadow-xl text-center border-2 border-[#F0DED2]">
+          <div
+            className="mb-8 rounded-[2rem] p-6 shadow-xl text-center border-2 border-[#F0DED2]"
+            style={getCoverHeroStyle(coverStyle)}
+          >
             <p className="text-3xl mb-2">{occasionCopy?.emoji || "🎉"}</p>
             <p className="text-xl font-bold text-[#2B1E18]">
               {recipientName}&apos;s {occasion.toLowerCase()}
@@ -268,7 +288,10 @@ export default function ContributePage() {
 
         {/* Narrative Block - v2: Enhanced with 4th line "why it matters" */}
         {narrative && (
-          <div className="mb-8 rounded-[2rem] bg-white p-8 shadow-xl text-center">
+          <div
+            className="mb-8 rounded-[2rem] p-8 shadow-xl text-center"
+            style={getCoverHeroStyle(coverStyle)}
+          >
             <p className="text-5xl">{occasionCopy?.emoji}</p>
             <div className="mt-6 space-y-4">
               <p className="text-lg leading-relaxed text-[#2B1E18]">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { getOccasionCopy } from "@/lib/occasions";
+import { getCoverHeroStyle } from "@/lib/coverStyles";
 import { supabase } from "@/lib/supabase";
 import ReactionPrompt from "./ReactionPrompt";
 import ReactionThankYou from "./ReactionThankYou";
@@ -19,6 +20,7 @@ interface Props {
   memories: Memory[];
   memorypopId: string;
   celebrationDate?: string | null;
+  coverStyle?: string | null;
 }
 
 export default function RevealExperience({
@@ -27,6 +29,7 @@ export default function RevealExperience({
   memories,
   memorypopId,
   celebrationDate,
+  coverStyle,
 }: Props) {
   const [currentStep, setCurrentStep] = useState(0);
   const [hasReacted, setHasReacted] = useState<boolean | null>(null); // null = loading, true/false = known
@@ -108,13 +111,14 @@ export default function RevealExperience({
         memoryCount={memories.length}
         onBegin={handleNext}
         emoji={occasionCopy.emoji}
+        coverStyle={coverStyle}
       />
     );
   } else if (currentStep <= memories.length) {
     const memoryIndex = currentStep - 1;
     return <MemoryScreen memory={memories[memoryIndex]} onNext={handleNext} />;
   } else if (currentStep === memories.length + 1) {
-    return <FinalScreen occasionCopy={occasionCopy} onNext={handleNext} celebrationDate={celebrationDate} getCelebrationMessage={getCelebrationMessage} />;
+    return <FinalScreen occasionCopy={occasionCopy} onNext={handleNext} celebrationDate={celebrationDate} getCelebrationMessage={getCelebrationMessage} coverStyle={coverStyle} />;
   } else if (currentStep === memories.length + 2 && hasReacted === false) {
     // Show reaction prompt if user hasn't reacted
     return (
@@ -133,7 +137,7 @@ export default function RevealExperience({
   }
 
   // Fallback (should not reach here)
-  return <FinalScreen occasionCopy={occasionCopy} onNext={handleNext} celebrationDate={celebrationDate} getCelebrationMessage={getCelebrationMessage} />;
+  return <FinalScreen occasionCopy={occasionCopy} onNext={handleNext} celebrationDate={celebrationDate} getCelebrationMessage={getCelebrationMessage} coverStyle={coverStyle} />;
 }
 
 // Welcome Screen (Step 0)
@@ -142,14 +146,19 @@ function WelcomeScreen({
   memoryCount,
   onBegin,
   emoji,
+  coverStyle,
 }: {
   recipientName: string;
   memoryCount: number;
   onBegin: () => void;
   emoji: string;
+  coverStyle?: string | null;
 }) {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#fff8ef] px-6">
+    <div
+      className="flex min-h-screen flex-col items-center justify-center px-6"
+      style={getCoverHeroStyle(coverStyle)}
+    >
       {/* Occasion emoji */}
       <div className="mb-8 text-7xl">{emoji}</div>
 
@@ -223,16 +232,21 @@ function FinalScreen({
   onNext,
   celebrationDate,
   getCelebrationMessage,
+  coverStyle,
 }: {
   occasionCopy: { celebrationMessage: string; subMessage?: string; emoji: string };
   onNext?: () => void;
   celebrationDate?: string | null;
   getCelebrationMessage?: (dateString?: string | null) => string | null;
+  coverStyle?: string | null;
 }) {
   const specialMessage = getCelebrationMessage ? getCelebrationMessage(celebrationDate) : null;
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#fff8ef] px-6">
+    <div
+      className="flex min-h-screen flex-col items-center justify-center px-6"
+      style={getCoverHeroStyle(coverStyle)}
+    >
       {/* Celebration emoji */}
       <div className="mb-8 text-7xl">{occasionCopy.emoji}</div>
 
