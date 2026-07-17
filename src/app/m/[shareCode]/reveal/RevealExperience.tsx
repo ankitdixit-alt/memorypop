@@ -11,7 +11,7 @@ import ReactionThankYou from "./ReactionThankYou";
 interface Memory {
   id: string;
   contributor_name: string;
-  memory: string;
+  message: string;  // Fixed: Database column is 'message', not 'memory'
   photo_url: string | null;
 }
 
@@ -230,7 +230,14 @@ function MemoryScreen({
 
       {/* Memory text */}
       <div className="mb-12 max-h-64 max-w-2xl overflow-y-auto rounded-lg bg-white p-6 text-center text-lg leading-relaxed text-[#3a241e]">
-        {memory.memory}
+        {memory.message || (
+          <span className="text-[#856b5f] italic">
+            {memory.photo_url
+              ? `${memory.contributor_name} shared a photo for you.`
+              : `${memory.contributor_name} left a memory.`
+            }
+          </span>
+        )}
       </div>
 
       {/* Next button */}
