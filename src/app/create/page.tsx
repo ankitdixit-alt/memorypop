@@ -247,7 +247,7 @@ async function saveMemoryPop() {
               </div>
             )}
 
-            <label className="mt-6 block font-semibold">Choose the feeling</label>
+            <label className="mt-6 block font-semibold">Choose the mood of this MemoryPop</label>
             <div className="mt-3 grid grid-cols-2 gap-3">
               {["Heartfelt", "Funny", "Emotional", "Simple"].map((item) => (
                 <button

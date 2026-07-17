@@ -4,9 +4,11 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { getOccasionCopy } from "@/lib/occasions";
 import { getCoverHeroStyle } from "@/lib/coverStyles";
+import { getCoverTheme } from "@/lib/coverTheme";
 import { supabase } from "@/lib/supabase";
 import ReactionPrompt from "./ReactionPrompt";
 import ReactionThankYou from "./ReactionThankYou";
+import { getMoodConfig } from "@/lib/celebrationMood";
 
 interface Memory {
   id: string;
@@ -23,6 +25,7 @@ interface Props {
   celebrationDate?: string | null;
   coverStyle?: string | null;
   shareCode: string;
+  mood?: string | null;
 }
 
 export default function RevealExperience({
@@ -33,18 +36,21 @@ export default function RevealExperience({
   celebrationDate,
   coverStyle,
   shareCode,
+  mood,
 }: Props) {
   const [currentStep, setCurrentStep] = useState(0);
   const [hasReacted, setHasReacted] = useState<boolean | null>(null); // null = loading, true/false = known
   const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
 
   // Step 0: Welcome
+  // Step 0.5: Mood Introduction (NEW)
   // Steps 1 to memories.length: Individual memories
   // Step memories.length + 1: Final celebration
   // Step memories.length + 2: ReactionPrompt (if not reacted)
   // Step memories.length + 3: ReactionThankYou (after reaction)
 
   const occasionCopy = getOccasionCopy(occasion, recipientName);
+  const moodConfig = getMoodConfig(mood);
 
   // Special messaging for celebration date
   function getCelebrationMessage(dateString?: string | null): string | null {
@@ -115,6 +121,7 @@ export default function RevealExperience({
         onBegin={handleNext}
         emoji={occasionCopy.emoji}
         coverStyle={coverStyle}
+        moodIntroduction={moodConfig.revealIntroduction}
       />
     );
   } else if (currentStep <= memories.length) {
@@ -160,13 +167,17 @@ function WelcomeScreen({
   onBegin,
   emoji,
   coverStyle,
+  moodIntroduction,
 }: {
   recipientName: string;
   memoryCount: number;
   onBegin: () => void;
   emoji: string;
   coverStyle?: string | null;
+  moodIntroduction: string;
 }) {
+  const theme = getCoverTheme(coverStyle);
+
   return (
     <div
       className="flex min-h-screen flex-col items-center justify-center px-6"
@@ -176,12 +187,26 @@ function WelcomeScreen({
       <div className="mb-8 text-7xl">{emoji}</div>
 
       {/* Gift message */}
-      <h1 className="mb-4 text-center text-4xl font-bold text-[#3a241e]">
+      <h1
+        className="mb-4 text-center text-4xl font-bold"
+        style={{ color: theme.primaryText }}
+      >
         {recipientName}, this MemoryPop was created especially for you
       </h1>
 
+      {/* Mood Introduction */}
+      <p
+        className="mb-4 text-center text-xl font-semibold max-w-2xl"
+        style={{ color: theme.accentText }}
+      >
+        {moodIntroduction}
+      </p>
+
       {/* Subtitle */}
-      <p className="mb-8 text-center text-xl text-[#856b5f] max-w-2xl">
+      <p
+        className="mb-8 text-center text-lg max-w-2xl"
+        style={{ color: theme.secondaryText }}
+      >
         Friends and family came together to share memories, photos, and wishes for your celebration.
       </p>
 
@@ -203,7 +228,11 @@ function WelcomeScreen({
       {/* CTA */}
       <button
         onClick={onBegin}
-        className="rounded-full bg-[#ef6a57] px-10 py-5 text-xl font-semibold text-white transition-colors hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2 transition-all shadow-lg"
+        className="rounded-full px-10 py-5 text-xl font-semibold transition-colors hover:opacity-90 active:ring-2 active:ring-white active:ring-offset-2 transition-all shadow-lg"
+        style={{
+          backgroundColor: theme.buttonBg,
+          color: theme.buttonText,
+        }}
       >
         Open My MemoryPop
       </button>
@@ -275,6 +304,7 @@ function FinalScreen({
   coverStyle?: string | null;
 }) {
   const specialMessage = getCelebrationMessage ? getCelebrationMessage(celebrationDate) : null;
+  const theme = getCoverTheme(coverStyle);
 
   return (
     <div
@@ -285,13 +315,19 @@ function FinalScreen({
       <div className="mb-8 text-7xl">{occasionCopy.emoji}</div>
 
       {/* Celebration message */}
-      <h1 className="mb-4 text-center text-4xl font-bold text-[#3a241e]">
+      <h1
+        className="mb-4 text-center text-4xl font-bold"
+        style={{ color: theme.primaryText }}
+      >
         {occasionCopy.celebrationMessage}
       </h1>
 
       {/* Optional sub-message (for Farewell, etc.) */}
       {occasionCopy.subMessage && (
-        <p className="mb-4 text-center text-xl text-[#856b5f]">
+        <p
+          className="mb-4 text-center text-xl"
+          style={{ color: theme.secondaryText }}
+        >
           {occasionCopy.subMessage}
         </p>
       )}
@@ -306,7 +342,10 @@ function FinalScreen({
       )}
 
       {/* Thank you message */}
-      <p className="mb-12 text-center text-xl text-[#856b5f]">
+      <p
+        className="mb-12 text-center text-xl"
+        style={{ color: theme.secondaryText }}
+      >
         Thank you to everyone who made this celebration possible.
       </p>
 
@@ -314,7 +353,11 @@ function FinalScreen({
       {onNext && (
         <button
           onClick={onNext}
-          className="rounded-full bg-[#ef6a57] px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2 transition-all"
+          className="rounded-full px-8 py-4 text-lg font-semibold transition-colors hover:opacity-90 active:ring-2 active:ring-white active:ring-offset-2 transition-all"
+          style={{
+            backgroundColor: theme.buttonBg,
+            color: theme.buttonText,
+          }}
         >
           Continue
         </button>

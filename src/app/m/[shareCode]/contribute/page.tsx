@@ -7,6 +7,7 @@ import { getOccasionCopy, type OccasionCopy } from "@/lib/occasions";
 import { ShareButtons } from "@/components/ShareButtons";
 import { trackEvent } from "@/lib/analytics";
 import { getCoverGradient, getCoverHeroStyle } from "@/lib/coverStyles";
+import { getMoodConfig, type MoodConfig } from "@/lib/celebrationMood";
 
 export default function ContributePage() {
   const params = useParams();
@@ -26,13 +27,14 @@ export default function ContributePage() {
   const [contributorCount, setContributorCount] = useState<number>(0);
   const [celebrationDate, setCelebrationDate] = useState<string | null>(null);
   const [coverStyle, setCoverStyle] = useState<string | null>(null);
+  const [moodConfig, setMoodConfig] = useState<MoodConfig>(getMoodConfig(null));
 
   // Fetch occasion and recipient name for occasion-aware copy
   useEffect(() => {
     async function loadOccasionCopy() {
       const { data } = await supabase
         .from("memorypops")
-        .select("occasion, recipient_name, celebration_date, cover_style")
+        .select("occasion, recipient_name, celebration_date, cover_style, tone")
         .eq("share_code", shareCode)
         .single();
 
@@ -42,6 +44,7 @@ export default function ContributePage() {
         setCelebrationDate(data.celebration_date);
         setCoverStyle(data.cover_style);
         setOccasionCopy(getOccasionCopy(data.occasion, data.recipient_name));
+        setMoodConfig(getMoodConfig(data.tone));
       }
     }
     loadOccasionCopy();
@@ -319,11 +322,11 @@ export default function ContributePage() {
           <p className="text-center text-5xl">{occasionCopy?.emoji || "❤️"}</p>
 
           <h1 className="mt-6 text-center text-4xl font-bold">
-            {occasionCopy?.actionLabel || (recipientName ? `Add a memory for ${recipientName}` : "Add a memory")}
+            {moodConfig.contributorHeadline}
           </h1>
 
           <p className="mt-4 text-center text-[#6B5B52]">
-            Write something that will make them smile.
+            {moodConfig.contributorSupportingText}
           </p>
 
           <label className="mt-8 block font-semibold">Your Name</label>
@@ -335,12 +338,12 @@ export default function ContributePage() {
             className="mt-3 w-full rounded-2xl border border-[#F0DED2] px-5 py-4 outline-none focus:border-[#FF6B57] focus:ring-2 focus:ring-[#FF6B57] focus:ring-opacity-50"
           />
 
-          <label className="mt-8 block font-semibold">Your Memory</label>
+          <label className="mt-8 block font-semibold">{moodConfig.contributorPrompt}</label>
 
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder={occasionCopy?.formPlaceholders?.message || "Write something heartfelt..."}
+            placeholder={moodConfig.contributorPlaceholder}
             className="mt-3 min-h-40 w-full rounded-2xl border border-[#F0DED2] px-5 py-4 outline-none focus:border-[#FF6B57] focus:ring-2 focus:ring-[#FF6B57] focus:ring-opacity-50"
           />
 
