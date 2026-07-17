@@ -71,8 +71,8 @@ export default function RevealExperience({
   const totalSteps = hasReacted === null
     ? memories.length + 4 // loading state, assume reaction screens needed
     : hasReacted
-      ? memories.length + 2 // skip reaction steps if already reacted
-      : memories.length + 4; // include reaction + thank you steps
+      ? memories.length + 3 // already reacted: welcome + memories + final + thank you
+      : memories.length + 4; // not reacted: welcome + memories + final + reaction + thank you
 
   // Check if user already reacted (run on mount)
   useEffect(() => {
@@ -128,6 +128,14 @@ export default function RevealExperience({
       <ReactionPrompt
         memorypopId={memorypopId}
         onReactionSelect={handleReactionSelect}
+      />
+    );
+  } else if (currentStep === memories.length + 2 && hasReacted) {
+    // User already reacted in previous session - show thank you with navigation
+    return (
+      <ReactionThankYou
+        reactionType="loved_it" // Default for returning users
+        shareCode={shareCode}
       />
     );
   } else if (currentStep === memories.length + 3 && selectedReaction) {
