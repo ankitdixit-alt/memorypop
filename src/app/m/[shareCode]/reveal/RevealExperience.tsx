@@ -69,7 +69,7 @@ export default function RevealExperience({
 
   // Calculate total steps based on whether user has reacted
   const totalSteps = hasReacted === null
-    ? memories.length + 2 // loading state, default to no reactions
+    ? memories.length + 4 // loading state, assume reaction screens needed
     : hasReacted
       ? memories.length + 2 // skip reaction steps if already reacted
       : memories.length + 4; // include reaction + thank you steps
@@ -122,8 +122,8 @@ export default function RevealExperience({
     return <MemoryScreen memory={memories[memoryIndex]} onNext={handleNext} />;
   } else if (currentStep === memories.length + 1) {
     return <FinalScreen occasionCopy={occasionCopy} onNext={handleNext} celebrationDate={celebrationDate} getCelebrationMessage={getCelebrationMessage} coverStyle={coverStyle} />;
-  } else if (currentStep === memories.length + 2 && hasReacted === false) {
-    // Show reaction prompt if user hasn't reacted
+  } else if (currentStep === memories.length + 2 && !hasReacted) {
+    // Show reaction prompt if user hasn't reacted (or still loading)
     return (
       <ReactionPrompt
         memorypopId={memorypopId}
