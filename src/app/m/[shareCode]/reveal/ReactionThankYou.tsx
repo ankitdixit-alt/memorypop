@@ -5,6 +5,7 @@ import Link from "next/link";
 interface Props {
   reactionType: string;
   shareCode: string;
+  isReturningUser?: boolean;
 }
 
 const REACTION_DISPLAY: Record<string, { emoji: string; label: string }> = {
@@ -13,7 +14,7 @@ const REACTION_DISPLAY: Record<string, { emoji: string; label: string }> = {
   made_me_laugh: { emoji: "😂", label: "it made you laugh" },
 };
 
-export default function ReactionThankYou({ reactionType, shareCode }: Props) {
+export default function ReactionThankYou({ reactionType, shareCode, isReturningUser = false }: Props) {
   const reaction = REACTION_DISPLAY[reactionType] || { emoji: "❤️", label: "loved it" };
 
   return (
@@ -21,14 +22,17 @@ export default function ReactionThankYou({ reactionType, shareCode }: Props) {
       {/* Emoji */}
       <div className="text-7xl mb-6">{reaction.emoji}</div>
 
-      {/* Thank you message */}
+      {/* Heading - different for returning vs first-time users */}
       <h1 className="mb-4 text-center text-3xl font-bold text-[#3a241e]">
-        Thank You
+        {isReturningUser ? "Your Reaction" : "Thank You"}
       </h1>
 
-      {/* Personalized confirmation */}
+      {/* Message - different for returning vs first-time users */}
       <p className="mb-12 text-center text-xl text-[#856b5f] max-w-md">
-        Your reaction has been shared with everyone who contributed to this MemoryPop.
+        {isReturningUser
+          ? `You ${reaction.label} when you first experienced this MemoryPop.`
+          : "Your reaction has been shared with everyone who contributed to this MemoryPop."
+        }
       </p>
 
       {/* Ending Options */}

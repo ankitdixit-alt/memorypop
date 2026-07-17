@@ -85,7 +85,7 @@ export default function RevealExperience({
 
       if (data) {
         setHasReacted(true);
-        // Don't show reaction steps if already reacted
+        setSelectedReaction(data.reaction_type); // Store actual reaction for returning users
       } else {
         setHasReacted(false);
       }
@@ -130,12 +130,13 @@ export default function RevealExperience({
         onReactionSelect={handleReactionSelect}
       />
     );
-  } else if (currentStep === memories.length + 2 && hasReacted) {
-    // User already reacted in previous session - show thank you with navigation
+  } else if (currentStep === memories.length + 2 && hasReacted && selectedReaction) {
+    // User already reacted in previous session - show their actual reaction
     return (
       <ReactionThankYou
-        reactionType="loved_it" // Default for returning users
+        reactionType={selectedReaction}
         shareCode={shareCode}
+        isReturningUser={true}
       />
     );
   } else if (currentStep === memories.length + 3 && selectedReaction) {
