@@ -1,6 +1,6 @@
 "use client";
 import { supabase } from "@/lib/supabase";
-import { ChangeEvent, useState, useMemo } from "react";
+import { ChangeEvent, useState, useMemo, useEffect } from "react";
 import { getOccasionCopy } from "@/lib/occasions";
 import { trackEvent } from "@/lib/analytics";
 
@@ -17,6 +17,14 @@ export default function CreatePage() {
   const [celebrationDate, setCelebrationDate] = useState("");
 
   const progress = (step / 3) * 100;
+
+  // Track creation funnel entry
+  useEffect(() => {
+    trackEvent('create_started', {
+      page_path: '/create',
+      source_page: document.referrer || undefined,
+    });
+  }, []);
 
   // Get occasion-specific copy
   const occasionCopy = useMemo(() => {

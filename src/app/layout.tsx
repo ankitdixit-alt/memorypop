@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { OrganizationSchema } from "@/components/OrganizationSchema";
 import { AnalyticsInitializer } from "@/components/AnalyticsInitializer";
+import CookieConsent from "@/components/CookieConsent";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -119,6 +120,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <AnalyticsInitializer />
         {children}
+        <CookieConsent />
       </body>
     </html>
   );

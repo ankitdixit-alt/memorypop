@@ -721,16 +721,17 @@ function SiteFooter() {
 
 export default function Page() {
   useEffect(() => {
-    // Track homepage view with UTM parameters (if present)
+    // Track homepage view with UTM parameters and referrer
     const urlParams = new URLSearchParams(window.location.search);
-    const utmParams: Record<string, string> = {};
 
-    ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(param => {
-      const value = urlParams.get(param);
-      if (value) utmParams[param] = value;
+    trackEvent('homepage_viewed', {
+      utm_source: urlParams.get('utm_source') || undefined,
+      utm_medium: urlParams.get('utm_medium') || undefined,
+      utm_campaign: urlParams.get('utm_campaign') || undefined,
+      utm_content: urlParams.get('utm_content') || undefined,
+      utm_term: urlParams.get('utm_term') || undefined,
+      referrer: document.referrer || undefined,
     });
-
-    trackEvent('homepage_viewed', utmParams);
   }, []);
 
   return (
