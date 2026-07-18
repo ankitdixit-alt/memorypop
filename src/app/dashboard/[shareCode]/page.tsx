@@ -8,6 +8,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { getOccasionCopy } from "@/lib/occasions";
 import { getCoverHeroStyle } from "@/lib/coverStyles";
+import { getCoverTheme } from "@/lib/coverTheme";
 import type { Metadata } from "next";
 
 // Date formatting and calculation helpers
@@ -138,6 +139,10 @@ export default async function DashboardPage({
   const occasionCopy = getOccasionCopy(memorypop.occasion, memorypop.recipient_name);
   const revealWhatsappMessage = occasionCopy.revealWhatsappMessage || '';
 
+  // Get adaptive theme for timeline card
+  // This ensures text is readable on both light and dark gradients
+  const timelineTheme = getCoverTheme(memorypop.cover_style);
+
   return (
     <main className="min-h-screen bg-[#fff8ef] px-6 py-12 text-[#3a241e]">
       <div className="mx-auto max-w-3xl">
@@ -166,10 +171,16 @@ export default async function DashboardPage({
             style={getCoverHeroStyle(memorypop.cover_style)}
           >
             <p className="text-3xl mb-3">{occasionCopy.emoji}</p>
-            <p className="text-xl font-bold text-[#3a241e]">
+            <p
+              className="text-xl font-bold"
+              style={{ color: timelineTheme.primaryText }}
+            >
               {formatCelebrationDate(memorypop.celebration_date)}
             </p>
-            <p className="text-md text-[#FF6B57] font-semibold mt-2">
+            <p
+              className="text-md font-semibold mt-2"
+              style={{ color: timelineTheme.accentText }}
+            >
               {getTimelineMessage(memorypop.celebration_date)}
             </p>
           </div>

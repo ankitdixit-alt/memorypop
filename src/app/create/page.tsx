@@ -2,6 +2,7 @@
 import { supabase } from "@/lib/supabase";
 import { ChangeEvent, useState, useMemo, useEffect } from "react";
 import { getOccasionCopy } from "@/lib/occasions";
+import { getCoverTheme } from "@/lib/coverTheme";
 import { trackEvent } from "@/lib/analytics";
 
 export default function CreatePage() {
@@ -33,6 +34,12 @@ export default function CreatePage() {
     }
     return null;
   }, [occasion, recipient]);
+
+  // Get adaptive theme for preview
+  // Text colors adapt to selected cover style background
+  const previewTheme = useMemo(() => {
+    return getCoverTheme(selectedCover);
+  }, [selectedCover]);
 
   function handlePhotoUpload(event: ChangeEvent<HTMLInputElement>) {
     const files = Array.from(event.target.files || []).slice(0, 3);
@@ -120,8 +127,8 @@ async function saveMemoryPop() {
             <h1 className="text-4xl font-bold">Start a MemoryPop</h1>
             <p className="mt-4 text-gray-600">
               {recipient
-                ? `Let’s create one beautiful celebration ${recipient} will never forget.`
-                : (occasionCopy?.helperText || "Let’s create one beautiful celebration your loved one will never forget.")}
+                ? `Let's create one beautiful celebration ${recipient} will never forget.`
+                : (occasionCopy?.helperText || "Let's create one beautiful celebration your loved one will never forget.")}
             </p>
 
             <label className="mt-8 block font-semibold">What are we celebrating?</label>
@@ -149,7 +156,7 @@ async function saveMemoryPop() {
               ))}
             </div>
 
-            <label className="mt-8 block font-semibold">Who’s today’s star?</label>
+            <label className="mt-8 block font-semibold">Who's today's star?</label>
             <input
               value={recipient}
               onChange={(e) => setRecipient(e.target.value)}
@@ -346,7 +353,7 @@ async function saveMemoryPop() {
           <section className="rounded-[2rem] bg-white p-8 shadow-xl">
             <p className="text-4xl">🎁</p>
             <h1 className="mt-4 text-4xl font-bold">
-              Here’s your MemoryPop for {recipient}
+              Here's your MemoryPop for {recipient}
             </h1>
 
             <div
@@ -356,14 +363,25 @@ async function saveMemoryPop() {
                   'linear-gradient(135deg, #FFE1D6 0%, #FFF3C7 50%, #E5D4FF 100%)'
               }}
             >
-              <p className="text-sm font-semibold uppercase tracking-wide text-[#6B5B52]">
+              <p
+                className="text-sm font-semibold uppercase tracking-wide"
+                style={{ color: previewTheme.secondaryText }}
+              >
                 {occasion} MemoryPop
               </p>
 
-              <h2 className="mt-3 text-4xl font-bold">For {recipient} ❤️</h2>
+              <h2
+                className="mt-3 text-4xl font-bold"
+                style={{ color: previewTheme.primaryText }}
+              >
+                For {recipient} ❤️
+              </h2>
 
-              <p className="mt-6 text-xl leading-9 text-[#4A372F]">
-                “{story}”
+              <p
+                className="mt-6 text-xl leading-9"
+                style={{ color: previewTheme.primaryText }}
+              >
+                &ldquo;{story}&rdquo;
               </p>
 
               {photos.length > 0 && (
