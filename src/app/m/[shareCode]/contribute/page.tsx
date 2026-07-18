@@ -7,6 +7,7 @@ import { getOccasionCopy, type OccasionCopy } from "@/lib/occasions";
 import { ShareButtons } from "@/components/ShareButtons";
 import { trackEvent } from "@/lib/analytics";
 import { getCoverGradient, getCoverHeroStyle } from "@/lib/coverStyles";
+import { getCoverTheme } from "@/lib/coverTheme";
 import { getMoodConfig, type MoodConfig } from "@/lib/celebrationMood";
 
 export default function ContributePage() {
@@ -49,6 +50,12 @@ export default function ContributePage() {
     }
     loadOccasionCopy();
   }, [shareCode]);
+
+  // Get adaptive theme for celebration timeline and narrative
+  // This ensures text is readable on both light and dark gradients
+  const contributorTheme = useMemo(() => {
+    return getCoverTheme(coverStyle);
+  }, [coverStyle]);
 
   function handlePhotoUpload(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -277,13 +284,22 @@ export default function ContributePage() {
             style={getCoverHeroStyle(coverStyle)}
           >
             <p className="text-3xl mb-2">{occasionCopy?.emoji || "🎉"}</p>
-            <p className="text-xl font-bold text-[#2B1E18]">
+            <p
+              className="text-xl font-bold"
+              style={{ color: contributorTheme.primaryText }}
+            >
               {recipientName}&apos;s {occasion.toLowerCase()}
             </p>
-            <p className="text-lg text-[#6B5B52] mt-1">
+            <p
+              className="text-lg mt-1"
+              style={{ color: contributorTheme.secondaryText }}
+            >
               {formatCelebrationDate(celebrationDate)}
             </p>
-            <p className="text-md font-semibold text-[#FF6B57] mt-2">
+            <p
+              className="text-md font-semibold mt-2"
+              style={{ color: contributorTheme.accentText }}
+            >
               {getTimelineMessage(celebrationDate)}
             </p>
           </div>
@@ -297,19 +313,31 @@ export default function ContributePage() {
           >
             <p className="text-5xl">{occasionCopy?.emoji}</p>
             <div className="mt-6 space-y-4">
-              <p className="text-lg leading-relaxed text-[#2B1E18]">
+              <p
+                className="text-lg leading-relaxed"
+                style={{ color: contributorTheme.primaryText }}
+              >
                 {narrative.line1}
               </p>
-              <p className="text-lg leading-relaxed text-[#6B5B52]">
+              <p
+                className="text-lg leading-relaxed"
+                style={{ color: contributorTheme.secondaryText }}
+              >
                 {narrative.line2}
               </p>
               {narrative.line3 && (
-                <p className="text-lg leading-relaxed font-semibold text-[#2B1E18]">
+                <p
+                  className="text-lg leading-relaxed font-semibold"
+                  style={{ color: contributorTheme.primaryText }}
+                >
                   {narrative.line3}
                 </p>
               )}
               {narrative.line4 && (
-                <p className="text-lg leading-relaxed text-[#FF6B57] font-semibold">
+                <p
+                  className="text-lg leading-relaxed font-semibold"
+                  style={{ color: contributorTheme.accentText }}
+                >
                   {narrative.line4}
                 </p>
               )}

@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { ShareButtons } from "@/components/ShareButtons";
 import { getOccasionCopy } from "@/lib/occasions";
 import { getCoverHeroStyle } from "@/lib/coverStyles";
+import { getCoverTheme } from "@/lib/coverTheme";
 import type { Metadata } from "next";
 
 /**
@@ -190,6 +191,10 @@ export default async function MemoryPopPage({
   // Get occasion-specific copy
   const occasionCopy = getOccasionCopy(data.occasion, data.recipient_name);
 
+  // Get adaptive theme for celebration narrative
+  // This ensures text is readable on both light and dark gradients
+  const previewTheme = getCoverTheme(data.cover_style);
+
   return (
     <main className="min-h-screen bg-[#FFF8F2] px-6 py-12 text-[#2B1E18]">
       <div className="mx-auto max-w-2xl">
@@ -201,13 +206,22 @@ export default async function MemoryPopPage({
         >
           <p className="text-5xl">{occasionCopy.emoji}</p>
           <div className="mt-6 space-y-4">
-            <p className="text-lg leading-relaxed text-[#2B1E18]">
+            <p
+              className="text-lg leading-relaxed"
+              style={{ color: previewTheme.primaryText }}
+            >
               {occasionCopy.landingNarrative?.line1}
             </p>
-            <p className="text-lg leading-relaxed text-[#6B5B52]">
+            <p
+              className="text-lg leading-relaxed"
+              style={{ color: previewTheme.secondaryText }}
+            >
               {occasionCopy.landingNarrative?.line2}
             </p>
-            <p className="text-lg leading-relaxed font-semibold text-[#2B1E18]">
+            <p
+              className="text-lg leading-relaxed font-semibold"
+              style={{ color: previewTheme.primaryText }}
+            >
               {occasionCopy.landingNarrative?.line3}
             </p>
           </div>
