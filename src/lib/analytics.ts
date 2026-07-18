@@ -26,6 +26,7 @@ export function initializeAnalytics(): void {
 
   try {
     mixpanel.init(MIXPANEL_TOKEN, {
+      api_host: 'https://api-eu.mixpanel.com',
       debug: process.env.NODE_ENV === 'development',
       track_pageview: false, // We'll track manually
       persistence: 'localStorage',
