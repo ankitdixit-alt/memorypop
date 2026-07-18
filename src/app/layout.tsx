@@ -34,9 +34,15 @@ export const metadata: Metadata = {
   description: 'Create a beautiful online memory book for birthdays, weddings, farewells, and celebrations. Friends and family collaborate to share memories, photos, and heartfelt messages in one place.',
   keywords: ['online memory book', 'group birthday card', 'collaborative celebration', 'digital memory album', 'birthday memories', 'wedding memory book', 'farewell messages', 'graduation wishes', 'celebration', 'memories'],
 
-  // Authors and creator
+  // Authors and creator (SEO Foundation Phase 1 - Task 5)
   authors: [{ name: 'MemoryPop' }],
   creator: 'MemoryPop',
+  publisher: 'MemoryPop',
+
+  // Canonical URL (SEO Foundation Phase 1 - Task 3)
+  alternates: {
+    canonical: '/',
+  },
 
   // PWA manifest
   manifest: '/site.webmanifest',
@@ -81,9 +87,10 @@ export const metadata: Metadata = {
     ],
   },
 
-  // Twitter (SEO Foundation - Enhanced)
+  // Twitter (SEO Foundation - Enhanced + Task 5)
   twitter: {
     card: 'summary_large_image',
+    site: '@memorypop',
     title: 'MemoryPop - Create Beautiful Online Memory Books for Every Celebration',
     description: 'Create a beautiful online memory book for birthdays, weddings, farewells, and celebrations. Friends and family collaborate to share memories, photos, and heartfelt messages in one place.',
     images: ['/og/default.png'],

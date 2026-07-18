@@ -45,6 +45,7 @@ export async function generateMetadata({
   params: Promise<{ shareCode: string }>;
 }): Promise<Metadata> {
   const { shareCode } = await params;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.com';
 
   // Fetch MemoryPop to get recipient name
   const { data: memorypop } = await supabase
@@ -57,11 +58,26 @@ export async function generateMetadata({
     return {
       title: `${memorypop.recipient_name}'s ${memorypop.occasion}`,
       description: `View and share memories for ${memorypop.recipient_name}'s ${memorypop.occasion.toLowerCase()} celebration on MemoryPop.`,
+      // SEO Foundation Phase 1 - Task 3 & 4: Dashboard is private
+      robots: {
+        index: false,
+        follow: false,
+      },
+      alternates: {
+        canonical: `${baseUrl}/dashboard/${shareCode}`,
+      },
     };
   }
 
   return {
     title: 'Dashboard',
+    robots: {
+      index: false,
+      follow: false,
+    },
+    alternates: {
+      canonical: `${baseUrl}/dashboard/${shareCode}`,
+    },
   };
 }
 

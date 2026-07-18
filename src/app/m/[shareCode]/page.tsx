@@ -45,6 +45,7 @@ export async function generateMetadata({
   params: Promise<{ shareCode: string }>;
 }): Promise<Metadata> {
   const { shareCode } = await params;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.com';
 
   // Set 5-second timeout for metadata fetch
   const METADATA_TIMEOUT = 5000;
@@ -54,6 +55,10 @@ export async function generateMetadata({
     title: "MemoryPop - Celebrate Together",
     description:
       "Friends and family are creating something special. Add your memory and be part of the celebration.",
+    // SEO Foundation Phase 1 - Task 3: Canonical URL
+    alternates: {
+      canonical: `${baseUrl}/m/${shareCode}`,
+    },
     openGraph: {
       title: "MemoryPop - Celebrate Together",
       description:
@@ -113,6 +118,10 @@ export async function generateMetadata({
     return {
       title,
       description,
+      // SEO Foundation Phase 1 - Task 3: Canonical URL
+      alternates: {
+        canonical: `${baseUrl}/m/${shareCode}`,
+      },
       openGraph: {
         title,
         description,

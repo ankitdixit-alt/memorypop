@@ -2,6 +2,23 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { ShareButtons } from "@/components/ShareButtons";
 import { getOccasionCopy } from "@/lib/occasions";
+import type { Metadata } from "next";
+
+/**
+ * SEO Foundation Phase 1 - Task 3 & 4
+ * Success page should not be indexed (transactional page)
+ */
+export const metadata: Metadata = {
+  title: 'Success',
+  description: 'Your MemoryPop has been created successfully.',
+  robots: {
+    index: false,
+    follow: false,
+  },
+  alternates: {
+    canonical: '/success',
+  },
+};
 
 type SuccessPageProps = {
   searchParams: Promise<{

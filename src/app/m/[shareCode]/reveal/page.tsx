@@ -1,6 +1,53 @@
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import RevealExperience from "./RevealExperience";
+import type { Metadata } from "next";
+
+/**
+ * SEO Foundation Phase 1 - Task 3 & 4
+ * Reveal page metadata with noindex/follow
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ shareCode: string }>;
+}): Promise<Metadata> {
+  const { shareCode } = await params;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.com';
+
+  // Fetch MemoryPop for personalized title
+  const { data: memorypop } = await supabase
+    .from("memorypops")
+    .select("recipient_name, occasion")
+    .eq("share_code", shareCode)
+    .single();
+
+  if (memorypop) {
+    return {
+      title: `${memorypop.recipient_name}'s ${memorypop.occasion} - Reveal`,
+      description: `Experience ${memorypop.recipient_name}'s special celebration reveal.`,
+      // Reveal pages should not be indexed (pre-date private experience)
+      robots: {
+        index: false,
+        follow: true,
+      },
+      alternates: {
+        canonical: `${baseUrl}/m/${shareCode}/reveal`,
+      },
+    };
+  }
+
+  return {
+    title: 'Reveal Experience',
+    robots: {
+      index: false,
+      follow: true,
+    },
+    alternates: {
+      canonical: `${baseUrl}/m/${shareCode}/reveal`,
+    },
+  };
+}
 
 export default async function RevealPage({
   params,
