@@ -55,6 +55,80 @@ export interface OccasionCopy {
 }
 
 /**
+ * Occasion Architecture v3 - Unified Configuration
+ *
+ * GUARDRAILS:
+ * #1: Preserves both Occasion and Mood as separate dimensions
+ * #7: No new occasions, no copy rewrites (consolidation only)
+ */
+
+export type OccasionCategory = 'celebrate' | 'love' | 'family' | 'milestones' | 'support';
+
+export interface OccasionMetadata {
+  // Identity (selector metadata)
+  id: string;                          // e.g., "promotion"
+  label: string;                       // e.g., "Promotion"
+  emoji: string;                       // e.g., "🎊"
+  category: OccasionCategory;          // e.g., "celebrate"
+
+  // Core celebration context
+  celebrationMessage: string | ((name?: string) => string);
+
+  // Creator journey
+  helperText?: string;
+  progressLabel?: string;
+  actionLabel?: string;
+  emptyStateMessage?: string;
+  sharePrompt?: string;
+
+  // Inspiration
+  messageStarters?: string[];
+  emojiShortcuts?: string[];
+  coverPresets?: CoverPreset[];
+
+  // Narratives
+  landingNarrative?: {
+    line1: string;
+    line2: string;
+    line3: string;
+  };
+  contributeNarrative?: {
+    line1: string;
+    line2: string;
+    line3: string;
+    line4: string;
+  };
+
+  // Actions
+  contributeCTA?: string;
+  whatsappMessage?: string;
+  revealWhatsappMessage?: string;
+
+  // Success states
+  successMessage?: {
+    title: string;
+    message: string;
+  };
+
+  // Form guidance
+  formPlaceholders?: {
+    name: string;
+    message: string;
+  };
+
+  // OPTIONAL: Targeted safety overrides for incompatible mood combinations
+  // Use ONLY for occasions where generic mood cannot provide appropriate tone
+  // GUARDRAIL #3: Targeted safety, not blanket overrides
+  safetyOverrides?: {
+    contributorHeadline?: string;
+    contributorSupportingText?: string;
+    contributorPrompt?: string;
+    contributorPlaceholder?: string;
+    revealIntroduction?: string;
+  };
+}
+
+/**
  * Get occasion-specific copy for any celebration type
  *
  * @param occasion - The celebration type (e.g., "Birthday", "Farewell")
@@ -1424,4 +1498,767 @@ function defaultCopy(recipientName?: string): OccasionCopy {
       message: "Share your memory..."
     }
   };
+}
+/**
+ * Occasion Architecture v3 - Unified Configuration
+ * 
+ * GUARDRAILS:
+ * #1: Preserves Occasion as separate dimension from Mood
+ * #7: No new occasions, no copy rewrites (consolidation only)
+ * 
+ * All 15 occasions consolidated into single source of truth.
+ * Each occasion defines WHAT is celebrated.
+ * Mood system (celebrationMood.ts) defines HOW it feels.
+ */
+
+export const OCCASION_CATEGORIES: Record<OccasionCategory, { label: string; emoji: string }> = {
+  celebrate: { label: "Celebrate", emoji: "🎉" },
+  love: { label: "Love & Romance", emoji: "❤️" },
+  family: { label: "Family", emoji: "👨‍👩‍👧‍👦" },
+  milestones: { label: "Milestones", emoji: "🌟" },
+  support: { label: "Support", emoji: "🤝" },
+};
+
+export const OCCASIONS: Record<string, OccasionMetadata> = {
+  birthday: {
+    id: "birthday",
+    label: "Birthday",
+    emoji: "🎂",
+    category: "celebrate",
+    celebrationMessage: (name?: string) => name ? `Happy Birthday ${name}!` : "Happy Birthday!",
+    helperText: "Create one beautiful birthday celebration your loved one will never forget.",
+    progressLabel: "Starting the birthday celebration",
+    actionLabel: "Add a memory",
+    emptyStateMessage: "Be the first to add a birthday memory. Every memory makes this celebration more special.",
+    sharePrompt: "Invite others to add memories",
+    landingNarrative: {
+      line1: "Help us surprise someone special on their birthday.",
+      line2: "Friends and family are creating a MemoryPop filled with birthday wishes, favourite memories and photos.",
+      line3: "Share your birthday message below and become part of the celebration."
+    },
+    contributeNarrative: {
+      line1: "We're celebrating a birthday.",
+      line2: "We're creating a surprise MemoryPop filled with birthday wishes, memories and photos.",
+      line3: "Add your memory and become part of the celebration.",
+      line4: "Your memory will help make this birthday unforgettable."
+    },
+    contributeCTA: "Share Birthday Memory",
+    whatsappMessage: "Help us celebrate a birthday! Add your message here:",
+    revealWhatsappMessage: "🎂 Happy Birthday! Your friends and family made something special for you. Open your MemoryPop here:",
+    successMessage: {
+      title: "Thank you!",
+      message: "Your birthday memory will help make their day unforgettable."
+    },
+    formPlaceholders: {
+      name: "e.g. Mum",
+      message: "Share your favourite birthday memory or wish..."
+    },
+    messageStarters: [
+      "Happy birthday! You always make every day brighter.",
+      "You have this incredible way of bringing joy to everyone around you.",
+      "Celebrating you today and all the amazing memories we've shared."
+    ],
+    emojiShortcuts: ["❤️", "🎉", "🥳", "🎂", "😂", "🙌", "🎈", "💕"],
+    coverPresets: [
+      { id: "confetti", label: "Confetti", description: "Festive confetti celebration", gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
+      { id: "cake", label: "Birthday Cake", description: "Sweet celebration", gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" },
+      { id: "balloons", label: "Balloons", description: "Colorful balloons", gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)" },
+      { id: "none", label: "No Cover", description: "Use my own photos or keep it simple", gradient: "linear-gradient(135deg, #FFE1D6 0%, #FFF3C7 50%, #E5D4FF 100%)" }
+    ]
+  },
+
+  wedding: {
+    id: "wedding",
+    label: "Wedding",
+    emoji: "💍",
+    category: "love",
+    celebrationMessage: (name?: string) => name ? `Congratulations ${name}!` : "Congratulations!",
+    helperText: "Create one beautiful wedding celebration your loved one will never forget.",
+    progressLabel: "Starting the wedding celebration",
+    actionLabel: "Add a memory",
+    emptyStateMessage: "Be the first to add a wedding memory. Every memory makes this celebration more special.",
+    sharePrompt: "Invite guests to add memories",
+    landingNarrative: {
+      line1: "Help us celebrate a wedding.",
+      line2: "We're creating a surprise MemoryPop filled with love, memories and heartfelt wishes.",
+      line3: "Share your wedding message and help make this celebration unforgettable."
+    },
+    contributeNarrative: {
+      line1: "We're celebrating a wedding.",
+      line2: "We're collecting heartfelt memories, wishes and photos from everyone who loves them.",
+      line3: "Add your wedding message.",
+      line4: "Your memory will help make their special day even more meaningful."
+    },
+    contributeCTA: "Share Wedding Memory",
+    whatsappMessage: "Help us celebrate a wedding! Add your message here:",
+    revealWhatsappMessage: "💍 Congratulations on your special day! Your loved ones created something beautiful for you. Open your MemoryPop here:",
+    successMessage: {
+      title: "Thank you!",
+      message: "Your wedding memory will help make their day unforgettable."
+    },
+    formPlaceholders: {
+      name: "e.g. Sarah",
+      message: "Share your favourite memory or wedding wish..."
+    },
+    messageStarters: [
+      "Congratulations! Wishing you a lifetime of love and happiness.",
+      "So excited to celebrate this beautiful new chapter with you.",
+      "May your marriage be filled with joy and adventure."
+    ],
+    emojiShortcuts: ["❤️", "💍", "🥂", "💐", "🎊", "👰", "✨", "💕"],
+    coverPresets: [
+      { id: "floral", label: "Floral", gradient: "linear-gradient(135deg, #fff1eb 0%, #ace0f9 100%)" },
+      { id: "romantic", label: "Romantic", gradient: "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)" },
+      { id: "elegant", label: "Elegant", gradient: "linear-gradient(135deg, #d299c2 0%, #fef9d7 100%)" },
+      { id: "none", label: "No Cover", gradient: "linear-gradient(135deg, #FFE1D6 0%, #FFF3C7 50%, #E5D4FF 100%)" }
+    ]
+  },
+
+  retirement: {
+    id: "retirement",
+    label: "Retirement",
+    emoji: "🌟",
+    category: "milestones",
+    celebrationMessage: "Congratulations on an Incredible Career",
+    helperText: "Create one beautiful retirement celebration they will never forget.",
+    progressLabel: "Starting the retirement celebration",
+    actionLabel: "Add a memory",
+    emptyStateMessage: "Be the first to add a retirement memory. Every memory makes this celebration more special.",
+    sharePrompt: "Invite others to celebrate",
+    landingNarrative: {
+      line1: "Let's celebrate an incredible career.",
+      line2: "Share your favourite memory together.",
+      line3: "Add your memory below and become part of the celebration."
+    },
+    contributeNarrative: {
+      line1: "We're celebrating a retirement.",
+      line2: "Help us celebrate by sharing your favourite memory.",
+      line3: "Add your memory.",
+      line4: "Your memory will help make this retirement celebration unforgettable."
+    },
+    contributeCTA: "Share Retirement Memory",
+    whatsappMessage: "Help us celebrate a retirement! Add your message here:",
+    revealWhatsappMessage: "🌟 Congratulations on an incredible career! Your colleagues and friends created something special to honor your journey. Open your MemoryPop here:",
+    successMessage: {
+      title: "Thank you!",
+      message: "Your retirement memory will help make their celebration unforgettable."
+    },
+    formPlaceholders: {
+      name: "e.g. John",
+      message: "Share your favourite retirement memory..."
+    },
+    messageStarters: [
+      "Congratulations on an incredible career! Enjoy this well-deserved new chapter.",
+      "Thank you for years of dedication and inspiration.",
+      "Wishing you an amazing retirement filled with joy and adventure."
+    ],
+    emojiShortcuts: ["🎉", "🌟", "🏖️", "✨", "🥳", "🎊", "💐", "🙌"],
+    coverPresets: [
+      { id: "celebration", label: "Celebration", gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
+      { id: "journey", label: "New Journey", gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)" },
+      { id: "gratitude", label: "Gratitude", gradient: "linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)" },
+      { id: "none", label: "No Cover", gradient: "linear-gradient(135deg, #FFE1D6 0%, #FFF3C7 50%, #E5D4FF 100%)" }
+    ]
+  },
+
+  farewell: {
+    id: "farewell",
+    label: "Farewell",
+    emoji: "👋",
+    category: "support",
+    celebrationMessage: "Thank You",
+    helperText: "Create one beautiful farewell celebration they will never forget.",
+    progressLabel: "Starting the farewell celebration",
+    actionLabel: "Add a memory",
+    emptyStateMessage: "Be the first to add a farewell memory. Every memory makes this celebration more special.",
+    sharePrompt: "Invite others to add memories",
+    landingNarrative: {
+      line1: "Someone special is beginning a new chapter.",
+      line2: "Leave a message and favourite memory they'll always remember.",
+      line3: "Add your memory below and become part of the celebration."
+    },
+    contributeNarrative: {
+      line1: "Someone special is beginning a new adventure.",
+      line2: "Leave a message they will always remember.",
+      line3: "Add your memory.",
+      line4: "Your memory will help them remember this special time."
+    },
+    contributeCTA: "Share Farewell Memory",
+    whatsappMessage: "Help us say farewell! Add your message here:",
+    revealWhatsappMessage: "👋 Your friends created a special farewell gift for you. Open your MemoryPop here:",
+    successMessage: {
+      title: "Thank you!",
+      message: "Your farewell memory will be treasured."
+    },
+    formPlaceholders: {
+      name: "e.g. Alex",
+      message: "Share your favourite farewell memory..."
+    },
+    messageStarters: [
+      "Thank you! You've made such a positive impact.",
+      "We'll miss you so much. Best wishes on your next adventure!",
+      "You'll always be remembered for the joy you brought."
+    ],
+    emojiShortcuts: ["❤️", "🥲", "🌟", "✨", "💕", "🫂", "🌈", "🙏"],
+    coverPresets: [
+      { id: "warm", label: "Warm", gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)" },
+      { id: "heartfelt", label: "Heartfelt", gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" },
+      { id: "grateful", label: "Grateful", gradient: "linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)" },
+      { id: "none", label: "No Cover", gradient: "linear-gradient(135deg, #FFE1D6 0%, #FFF3C7 50%, #E5D4FF 100%)" }
+    ]
+  },
+
+  graduation: {
+    id: "graduation",
+    label: "Graduation",
+    emoji: "🎓",
+    category: "milestones",
+    celebrationMessage: "Congratulations Graduate!",
+    helperText: "Create one beautiful graduation celebration your loved one will never forget.",
+    progressLabel: "Starting the graduation celebration",
+    actionLabel: "Add a memory",
+    emptyStateMessage: "Be the first to add a graduation memory. Every memory makes this celebration more special.",
+    sharePrompt: "Invite others to celebrate",
+    landingNarrative: {
+      line1: "Celebrate an amazing achievement.",
+      line2: "Share your wishes, advice or favourite memory.",
+      line3: "Add your message below and become part of the celebration."
+    },
+    contributeNarrative: {
+      line1: "We're celebrating an incredible milestone.",
+      line2: "Celebrate this achievement by sharing your wishes and memories.",
+      line3: "Add your memory.",
+      line4: "Your memory will help make this graduation unforgettable."
+    },
+    contributeCTA: "Share Graduation Memory",
+    whatsappMessage: "Help us celebrate a graduation! Add your message here:",
+    revealWhatsappMessage: "🎓 Congratulations on your graduation! Your loved ones came together to celebrate this milestone. Open your MemoryPop here:",
+    successMessage: {
+      title: "Thank you!",
+      message: "Your graduation memory will help make their day unforgettable."
+    },
+    formPlaceholders: {
+      name: "e.g. Sarah",
+      message: "Share your wishes, advice or favourite memory..."
+    },
+    messageStarters: [
+      "Congratulations graduate! So proud of all you've accomplished.",
+      "This is just the beginning of amazing things ahead!",
+      "Your hard work and dedication have truly paid off."
+    ],
+    emojiShortcuts: ["🎓", "🎉", "🌟", "📚", "🎊", "💪", "✨", "🏆"],
+    coverPresets: [
+      { id: "celebration", label: "Celebration", gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
+      { id: "achievement", label: "Achievement", gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" },
+      { id: "future", label: "Bright Future", gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)" },
+      { id: "none", label: "No Cover", gradient: "linear-gradient(135deg, #FFE1D6 0%, #FFF3C7 50%, #E5D4FF 100%)" }
+    ]
+  },
+
+  newbaby: {
+    id: "newbaby",
+    label: "New Baby",
+    emoji: "👶",
+    category: "family",
+    celebrationMessage: "Welcome to the World",
+    helperText: "Create one beautiful celebration for the new arrival.",
+    progressLabel: "Starting the celebration",
+    actionLabel: "Add a memory",
+    emptyStateMessage: "Be the first to add a welcome message. Every memory makes this celebration more special.",
+    sharePrompt: "Invite others to add memories",
+    landingNarrative: {
+      line1: "Welcome a beautiful new life.",
+      line2: "Leave your wishes for the newest member of the family.",
+      line3: "Add your message below and become part of the celebration."
+    },
+    contributeNarrative: {
+      line1: "A beautiful new chapter has begun.",
+      line2: "Welcome the newest member of the family with your message.",
+      line3: "Add your memory.",
+      line4: "Your wishes will become a treasured keepsake for the family."
+    },
+    contributeCTA: "Share Welcome Message",
+    whatsappMessage: "Welcome a new baby! Add your wishes here:",
+    revealWhatsappMessage: "👶 Welcome to the world! Your family and friends created something special for you. Open your MemoryPop here:",
+    successMessage: {
+      title: "Thank you for welcoming this new life!",
+      message: "Your message will become a treasured keepsake for the family."
+    },
+    formPlaceholders: {
+      name: "e.g. Emma",
+      message: "Share your wishes for the new arrival and family..."
+    },
+    messageStarters: [
+      "Welcome to the world! So excited to meet this little one.",
+      "Congratulations on your beautiful new arrival!",
+      "Can't wait to watch this precious baby grow."
+    ],
+    emojiShortcuts: ["👶", "🍼", "💕", "🎈", "🌟", "💙", "💗", "✨"],
+    coverPresets: [
+      { id: "soft", label: "Soft & Sweet", gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)" },
+      { id: "pastel", label: "Pastel", gradient: "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)" },
+      { id: "gentle", label: "Gentle", gradient: "linear-gradient(135deg, #ffd3a5 0%, #fd6585 100%)" },
+      { id: "none", label: "No Cover", gradient: "linear-gradient(135deg, #FFE1D6 0%, #FFF3C7 50%, #E5D4FF 100%)" }
+    ]
+  },
+
+  anniversary: {
+    id: "anniversary",
+    label: "Anniversary",
+    emoji: "❤️",
+    category: "love",
+    celebrationMessage: (name?: string) => name ? `Happy Anniversary ${name}!` : "Happy Anniversary!",
+    helperText: "Create one beautiful anniversary celebration your loved one will never forget.",
+    progressLabel: "Starting the anniversary celebration",
+    actionLabel: "Add a memory",
+    emptyStateMessage: "Be the first to add an anniversary memory. Every memory makes this celebration more special.",
+    sharePrompt: "Invite others to celebrate",
+    landingNarrative: {
+      line1: "Help celebrate another beautiful year together.",
+      line2: "Share your favourite memory or wish.",
+      line3: "Add your message below and become part of the celebration."
+    },
+    contributeNarrative: {
+      line1: "We're celebrating an anniversary.",
+      line2: "Share your favourite memory or wish for their journey ahead.",
+      line3: "Add your memory.",
+      line4: "Your memory will help make this anniversary unforgettable."
+    },
+    contributeCTA: "Share Anniversary Memory",
+    whatsappMessage: "Help us celebrate an anniversary! Add your message here:",
+    revealWhatsappMessage: "💕 Happy Anniversary! Your friends and family created a celebration of your journey together. Open your MemoryPop here:",
+    successMessage: {
+      title: "Thank you!",
+      message: "Your anniversary memory will help make their day unforgettable."
+    },
+    formPlaceholders: {
+      name: "e.g. Claire",
+      message: "Share your favourite anniversary memory or wish..."
+    },
+    messageStarters: [
+      "Happy anniversary! Your love story inspires everyone.",
+      "Watching your journey together has been beautiful.",
+      "Celebrating the love and commitment you both share."
+    ],
+    emojiShortcuts: ["❤️", "💕", "💍", "🥂", "🎊", "💐", "✨", "💑"],
+    coverPresets: [
+      { id: "hearts", label: "Hearts", gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" },
+      { id: "romantic", label: "Romantic", gradient: "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)" },
+      { id: "elegant", label: "Elegant", gradient: "linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)" },
+      { id: "none", label: "No Cover", gradient: "linear-gradient(135deg, #FFE1D6 0%, #FFF3C7 50%, #E5D4FF 100%)" }
+    ]
+  },
+
+  congratulations: {
+    id: "congratulations",
+    label: "Congratulations",
+    emoji: "🎉",
+    category: "celebrate",
+    celebrationMessage: (name?: string) => name ? `Congratulations ${name}!` : "Congratulations!",
+    helperText: "Create one beautiful celebration your loved one will never forget.",
+    progressLabel: "Starting the celebration",
+    actionLabel: "Add a memory",
+    emptyStateMessage: "Be the first to add a congratulations message. Every memory makes this celebration more special.",
+    sharePrompt: "Invite others to celebrate",
+    landingNarrative: {
+      line1: "Let's celebrate an amazing achievement.",
+      line2: "Share your excitement and well wishes.",
+      line3: "Add your message below and become part of the celebration."
+    },
+    contributeNarrative: {
+      line1: "We're celebrating something amazing.",
+      line2: "Share your excitement and congratulations.",
+      line3: "Add your memory.",
+      line4: "Your message will help make this celebration unforgettable."
+    },
+    contributeCTA: "Share Congratulations",
+    whatsappMessage: "Help us celebrate! Add your message here:",
+    revealWhatsappMessage: "🎉 Congratulations! Your friends and family created something special to celebrate with you. Open your MemoryPop here:",
+    successMessage: {
+      title: "Thank you!",
+      message: "Your message will help make this celebration unforgettable."
+    },
+    formPlaceholders: {
+      name: "e.g. Sarah",
+      message: "Share your congratulations..."
+    },
+    messageStarters: [
+      "Congratulations! This is such exciting news!",
+      "So proud of everything you've accomplished.",
+      "This is just the beginning of amazing things ahead!"
+    ],
+    emojiShortcuts: ["🎉", "🎊", "🥳", "🌟", "✨", "👏", "💪", "🙌"],
+    coverPresets: [
+      { id: "celebration", label: "Celebration", gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
+      { id: "confetti", label: "Confetti", gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" },
+      { id: "bright", label: "Bright", gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)" },
+      { id: "none", label: "No Cover", gradient: "linear-gradient(135deg, #FFE1D6 0%, #FFF3C7 50%, #E5D4FF 100%)" }
+    ]
+  },
+
+  housewarming: {
+    id: "housewarming",
+    label: "Housewarming",
+    emoji: "🏠",
+    category: "milestones",
+    celebrationMessage: (name?: string) => name ? `Welcome Home ${name}!` : "Welcome Home!",
+    helperText: "Create one beautiful housewarming celebration they will never forget.",
+    progressLabel: "Starting the housewarming celebration",
+    actionLabel: "Add a memory",
+    emptyStateMessage: "Be the first to add a housewarming message. Every memory makes this celebration more special.",
+    sharePrompt: "Invite others to celebrate",
+    landingNarrative: {
+      line1: "Someone special has a beautiful new home.",
+      line2: "Share your warm wishes and excitement for this new chapter.",
+      line3: "Add your message below and become part of the celebration."
+    },
+    contributeNarrative: {
+      line1: "We're celebrating a new home.",
+      line2: "Share your warm wishes for their new beginning.",
+      line3: "Add your memory.",
+      line4: "Your message will help make this housewarming unforgettable."
+    },
+    contributeCTA: "Share Housewarming Wishes",
+    whatsappMessage: "Help us celebrate a new home! Add your message here:",
+    revealWhatsappMessage: "🏠 Welcome home! Your friends created something special for your new beginning. Open your MemoryPop here:",
+    successMessage: {
+      title: "Thank you!",
+      message: "Your housewarming message will help make this new beginning unforgettable."
+    },
+    formPlaceholders: {
+      name: "e.g. Emma",
+      message: "Share your warm wishes for their new home..."
+    },
+    messageStarters: [
+      "Congratulations on your new home! May it be filled with love and laughter.",
+      "Wishing you countless happy memories in your beautiful new space.",
+      "So excited for this new chapter! Here's to making your house a home."
+    ],
+    emojiShortcuts: ["🏠", "🏡", "🔑", "🎉", "❤️", "✨", "🌟", "🥳"],
+    coverPresets: [
+      { id: "home", label: "Home Sweet Home", gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)" },
+      { id: "cozy", label: "Cozy", gradient: "linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)" },
+      { id: "warm", label: "Warm", gradient: "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)" },
+      { id: "none", label: "No Cover", gradient: "linear-gradient(135deg, #FFE1D6 0%, #FFF3C7 50%, #E5D4FF 100%)" }
+    ]
+  },
+
+  promotion: {
+    id: "promotion",
+    label: "Promotion",
+    emoji: "🎊",
+    category: "celebrate",
+    celebrationMessage: (name?: string) => name ? `Congratulations ${name}!` : "Congratulations on Your Promotion!",
+    helperText: "Create one beautiful celebration they will never forget.",
+    progressLabel: "Starting the promotion celebration",
+    actionLabel: "Add a memory",
+    emptyStateMessage: "Be the first to add a promotion message. Every memory makes this celebration more special.",
+    sharePrompt: "Invite others to celebrate",
+    landingNarrative: {
+      line1: "Someone special has earned an amazing promotion.",
+      line2: "Share your pride and excitement for their well-deserved success.",
+      line3: "Add your message below and become part of the celebration."
+    },
+    contributeNarrative: {
+      line1: "We're celebrating a well-deserved promotion.",
+      line2: "Share your pride and congratulations.",
+      line3: "Add your memory.",
+      line4: "Your message will help make this celebration unforgettable."
+    },
+    contributeCTA: "Share Congratulations",
+    whatsappMessage: "Help us celebrate a promotion! Add your message here:",
+    revealWhatsappMessage: "🎊 Congratulations on your promotion! Your team created something special to celebrate your success. Open your MemoryPop here:",
+    successMessage: {
+      title: "Thank you!",
+      message: "Your message will help make this celebration unforgettable."
+    },
+    formPlaceholders: {
+      name: "e.g. Michael",
+      message: "Share your congratulations..."
+    },
+    messageStarters: [
+      "Congratulations! This promotion is so well-deserved.",
+      "Your hard work and dedication have truly paid off.",
+      "Excited to see all the amazing things you'll accomplish in this new role!"
+    ],
+    emojiShortcuts: ["🎊", "🎉", "👏", "🌟", "💪", "🚀", "✨", "🏆"],
+    coverPresets: [
+      { id: "success", label: "Success", gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
+      { id: "achievement", label: "Achievement", gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" },
+      { id: "growth", label: "Growth", gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)" },
+      { id: "none", label: "No Cover", gradient: "linear-gradient(135deg, #FFE1D6 0%, #FFF3C7 50%, #E5D4FF 100%)" }
+    ]
+  },
+
+  engagement: {
+    id: "engagement",
+    label: "Engagement",
+    emoji: "💝",
+    category: "love",
+    celebrationMessage: (name?: string) => name ? `Congratulations ${name}!` : "Congratulations on Your Engagement!",
+    helperText: "Create one beautiful engagement celebration they will never forget.",
+    progressLabel: "Starting the engagement celebration",
+    actionLabel: "Add a memory",
+    emptyStateMessage: "Be the first to add an engagement message. Every memory makes this celebration more special.",
+    sharePrompt: "Invite others to celebrate",
+    landingNarrative: {
+      line1: "Someone special is engaged!",
+      line2: "Share your joy and excitement for their beautiful new chapter.",
+      line3: "Add your message below and become part of the celebration."
+    },
+    contributeNarrative: {
+      line1: "We're celebrating an engagement.",
+      line2: "Share your excitement and well wishes for their journey ahead.",
+      line3: "Add your memory.",
+      line4: "Your message will help make this celebration unforgettable."
+    },
+    contributeCTA: "Share Engagement Wishes",
+    whatsappMessage: "Help us celebrate an engagement! Add your message here:",
+    revealWhatsappMessage: "💝 Congratulations on your engagement! Your friends created something special to celebrate your love. Open your MemoryPop here:",
+    successMessage: {
+      title: "Thank you!",
+      message: "Your engagement message will help make this celebration unforgettable."
+    },
+    formPlaceholders: {
+      name: "e.g. Alex",
+      message: "Share your excitement and wishes..."
+    },
+    messageStarters: [
+      "Congratulations! So excited for your beautiful journey together.",
+      "Wishing you a lifetime of love, laughter and happiness.",
+      "Your love story is just beginning. Can't wait to celebrate with you!"
+    ],
+    emojiShortcuts: ["💝", "💍", "❤️", "💕", "🥂", "✨", "🎉", "💐"],
+    coverPresets: [
+      { id: "romantic", label: "Romantic", gradient: "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)" },
+      { id: "love", label: "Love", gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" },
+      { id: "elegant", label: "Elegant", gradient: "linear-gradient(135deg, #d299c2 0%, #fef9d7 100%)" },
+      { id: "none", label: "No Cover", gradient: "linear-gradient(135deg, #FFE1D6 0%, #FFF3C7 50%, #E5D4FF 100%)" }
+    ]
+  },
+
+  valentines: {
+    id: "valentines",
+    label: "Valentine's Day",
+    emoji: "❤️",
+    category: "love",
+    celebrationMessage: (name?: string) => name ? `Happy Valentine's Day ${name}!` : "Happy Valentine's Day!",
+    helperText: "Create one beautiful Valentine's celebration they will never forget.",
+    progressLabel: "Starting the Valentine's celebration",
+    actionLabel: "Add a memory",
+    emptyStateMessage: "Be the first to add a Valentine's message. Every memory makes this celebration more special.",
+    sharePrompt: "Invite others to celebrate",
+    landingNarrative: {
+      line1: "Celebrate love and appreciation this Valentine's Day.",
+      line2: "Share your heartfelt message.",
+      line3: "Add your message below and become part of the celebration."
+    },
+    contributeNarrative: {
+      line1: "We're celebrating Valentine's Day.",
+      line2: "Share your love, appreciation and favourite memories.",
+      line3: "Add your memory.",
+      line4: "Your message will help make this Valentine's Day unforgettable."
+    },
+    contributeCTA: "Share Valentine's Message",
+    whatsappMessage: "Help us celebrate Valentine's Day! Add your message here:",
+    revealWhatsappMessage: "❤️ Happy Valentine's Day! Your loved ones created something special for you. Open your MemoryPop here:",
+    successMessage: {
+      title: "Thank you!",
+      message: "Your Valentine's message will help make this day unforgettable."
+    },
+    formPlaceholders: {
+      name: "e.g. Jamie",
+      message: "Share your Valentine's message..."
+    },
+    messageStarters: [
+      "Happy Valentine's Day! You mean the world to me.",
+      "Thank you for filling my life with so much love and joy.",
+      "Grateful for every moment we share together."
+    ],
+    emojiShortcuts: ["❤️", "💕", "💖", "💝", "🌹", "💐", "😍", "💑"],
+    coverPresets: [
+      { id: "hearts", label: "Hearts", gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" },
+      { id: "romantic", label: "Romantic", gradient: "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)" },
+      { id: "love", label: "Love", gradient: "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)" },
+      { id: "none", label: "No Cover", gradient: "linear-gradient(135deg, #FFE1D6 0%, #FFF3C7 50%, #E5D4FF 100%)" }
+    ]
+  },
+
+  getwellsoon: {
+    id: "getwellsoon",
+    label: "Get Well Soon",
+    emoji: "🌻",
+    category: "support",
+    celebrationMessage: (name?: string) => name ? `Get Well Soon ${name}` : "Get Well Soon",
+    helperText: "Send comforting messages and warm wishes.",
+    progressLabel: "Sending warm wishes",
+    actionLabel: "Add a message",
+    emptyStateMessage: "Be the first to add a get well message. Every message brings comfort and support.",
+    sharePrompt: "Invite others to send wishes",
+    landingNarrative: {
+      line1: "Someone special could use some extra love right now.",
+      line2: "Share your warm wishes and positive thoughts.",
+      line3: "Add your message below to send comfort and support."
+    },
+    contributeNarrative: {
+      line1: "We're sending warm wishes.",
+      line2: "Share your comforting message and positive thoughts.",
+      line3: "Add your message.",
+      line4: "Your words will bring comfort."
+    },
+    contributeCTA: "Send Get Well Wishes",
+    whatsappMessage: "Help us send warm wishes! Add your message here:",
+    revealWhatsappMessage: "🌻 Your friends are thinking of you and sending love. Open your MemoryPop here:",
+    successMessage: {
+      title: "Thank you!",
+      message: "Your message will bring comfort."
+    },
+    formPlaceholders: {
+      name: "e.g. Chris",
+      message: "Share your warm wishes..."
+    },
+    messageStarters: [
+      "Thinking of you. Sending love and healing thoughts your way.",
+      "Hope you feel better soon. You're in my thoughts.",
+      "Wishing you a speedy recovery and brighter days ahead."
+    ],
+    emojiShortcuts: ["🌻", "💐", "🌸", "💛", "🌈", "☀️", "💕", "🤗"],
+    coverPresets: [
+      { id: "sunshine", label: "Sunshine", gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)" },
+      { id: "calm", label: "Calm", gradient: "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)" },
+      { id: "gentle", label: "Gentle", gradient: "linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)" },
+      { id: "none", label: "No Cover", gradient: "linear-gradient(135deg, #FFE1D6 0%, #FFF3C7 50%, #E5D4FF 100%)" }
+    ]
+  },
+
+  thankyou: {
+    id: "thankyou",
+    label: "Thank You",
+    emoji: "💛",
+    category: "support",
+    celebrationMessage: (name?: string) => name ? `Thank You ${name}` : "Thank You",
+    helperText: "Express your heartfelt thanks and appreciation.",
+    progressLabel: "Expressing gratitude",
+    actionLabel: "Add a message",
+    emptyStateMessage: "Be the first to add a thank you message. Every message shows appreciation.",
+    sharePrompt: "Invite others to say thank you",
+    landingNarrative: {
+      line1: "Someone special deserves to know they're appreciated.",
+      line2: "Share your gratitude and thanks.",
+      line3: "Add your message below to show your appreciation."
+    },
+    contributeNarrative: {
+      line1: "We're expressing gratitude.",
+      line2: "Share what you're thankful for.",
+      line3: "Add your message.",
+      line4: "Your gratitude will mean the world."
+    },
+    contributeCTA: "Say Thank You",
+    whatsappMessage: "Help us say thank you! Add your message here:",
+    revealWhatsappMessage: "💛 Your friends wanted to say thank you in a special way. Open your MemoryPop here:",
+    successMessage: {
+      title: "Thank you!",
+      message: "Your message will mean the world."
+    },
+    formPlaceholders: {
+      name: "e.g. Taylor",
+      message: "Share what you're thankful for..."
+    },
+    messageStarters: [
+      "Thank you for everything you do. You make such a difference.",
+      "Your kindness and support mean more than you know.",
+      "Grateful to have you in my life. Thank you for being you."
+    ],
+    emojiShortcuts: ["💛", "🙏", "🌟", "💕", "✨", "🤗", "🌻", "❤️"],
+    coverPresets: [
+      { id: "grateful", label: "Grateful", gradient: "linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)" },
+      { id: "warm", label: "Warm", gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)" },
+      { id: "heartfelt", label: "Heartfelt", gradient: "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)" },
+      { id: "none", label: "No Cover", gradient: "linear-gradient(135deg, #FFE1D6 0%, #FFF3C7 50%, #E5D4FF 100%)" }
+    ]
+  },
+
+  sympathy: {
+    id: "sympathy",
+    label: "Sympathy",
+    emoji: "🕊️",
+    category: "support",
+    celebrationMessage: (name?: string) => name ? `Thinking of You ${name}` : "With Deepest Sympathy",
+    helperText: "Share comforting words and support during this difficult time.",
+    progressLabel: "Sending comfort",
+    actionLabel: "Add a message",
+    emptyStateMessage: "Be the first to add a sympathy message. Every message brings comfort.",
+    sharePrompt: "Invite others to send support",
+    landingNarrative: {
+      line1: "Someone special needs our love and support.",
+      line2: "Share your comforting words and memories.",
+      line3: "Add your message below to show you care."
+    },
+    contributeNarrative: {
+      line1: "We're offering comfort and support.",
+      line2: "Share your sympathy and support.",
+      line3: "Add your message.",
+      line4: "Your words will bring comfort."
+    },
+    contributeCTA: "Send Support",
+    whatsappMessage: "Help us offer support during this difficult time. Add your message here:",
+    revealWhatsappMessage: "🕊️ Thinking of you and sending love during this difficult time. Open your MemoryPop here:",
+    successMessage: {
+      title: "Thank you",
+      message: "Your message will bring comfort during this difficult time."
+    },
+    formPlaceholders: {
+      name: "e.g. Jordan",
+      message: "Share your comforting message..."
+    },
+    messageStarters: [
+      "Thinking of you. Sending love and strength during this difficult time.",
+      "My heart goes out to you. You're in my thoughts and prayers.",
+      "Wishing you peace and comfort. I'm here if you need anything."
+    ],
+    emojiShortcuts: ["🕊️", "💙", "🤍", "🌸", "💐", "🙏", "💕", "🌟"],
+    coverPresets: [
+      { id: "peaceful", label: "Peaceful", gradient: "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)" },
+      { id: "gentle", label: "Gentle", gradient: "linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%)" },
+      { id: "serene", label: "Serene", gradient: "linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)" },
+      { id: "none", label: "No Cover", gradient: "linear-gradient(135deg, #FFE1D6 0%, #FFF3C7 50%, #E5D4FF 100%)" }
+    ],
+    // GUARDRAIL #3: Targeted safety overrides for Sympathy + Funny/Emotional combinations
+    safetyOverrides: {
+      contributorHeadline: "Share your support and comfort.",
+      contributorSupportingText: "Let them know you're thinking of them during this difficult time.",
+      contributorPrompt: "What would you like to say?",
+      contributorPlaceholder: "Share your comforting message...",
+      revealIntroduction: "Messages of love and support from people who care about you."
+    }
+  }
+};
+
+/**
+ * Normalize occasion value for composition layer
+ *
+ * GUARDRAIL #5: Legacy value compatibility
+ * Handles: "Valentine's Day" → "valentines", "Get Well Soon" → "getwellsoon", null → "birthday"
+ *
+ * @param occasion - Occasion value (may be display name or null)
+ * @returns Normalized occasion ID
+ */
+export function normalizeOccasion(occasion: string | null | undefined): string {
+  if (!occasion) return 'birthday'; // default fallback
+
+  const normalized = occasion.toLowerCase().trim().replace(/\s+/g, '');
+
+  // Alias mapping for display names
+  const aliases: Record<string, string> = {
+    "valentine'sday": 'valentines',
+    'valentinesday': 'valentines',
+    'getwellsoon': 'getwellsoon',
+    'thankyou': 'thankyou',
+    'newbaby': 'newbaby',
+  };
+
+  const mapped = aliases[normalized] || normalized;
+
+  // Verify occasion exists in OCCASIONS, fallback to birthday
+  return OCCASIONS[mapped] ? mapped : 'birthday';
 }

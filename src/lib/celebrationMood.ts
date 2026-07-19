@@ -84,3 +84,16 @@ export function getMoodType(tone: string | null | undefined): CelebrationMood {
 
   return "simple";
 }
+
+/**
+ * Normalize mood value for composition layer
+ *
+ * GUARDRAIL #5: Legacy value compatibility
+ * Handles: Heartfelt/heartfelt/HEARTFELT → heartfelt, null → simple
+ *
+ * @param mood - Mood value (may be capitalized or null)
+ * @returns Normalized CelebrationMood
+ */
+export function normalizeMood(mood: string | null | undefined): CelebrationMood {
+  return getMoodType(mood);
+}
