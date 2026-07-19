@@ -3,12 +3,11 @@
 import { ChangeEvent, useState, useEffect, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { getOccasionCopy, type OccasionCopy } from "@/lib/occasions";
+import { getCelebrationExperience, type CelebrationExperience } from "@/lib/celebrationExperience";
 import { ShareButtons } from "@/components/ShareButtons";
 import { trackEvent } from "@/lib/analytics";
 import { getCoverGradient, getCoverHeroStyle } from "@/lib/coverStyles";
 import { getCoverTheme } from "@/lib/coverTheme";
-import { getMoodConfig, type MoodConfig } from "@/lib/celebrationMood";
 
 export default function ContributePage() {
   const params = useParams();
@@ -22,17 +21,16 @@ export default function ContributePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [occasionCopy, setOccasionCopy] = useState<OccasionCopy | null>(null);
+  const [celebrationExperience, setCelebrationExperience] = useState<CelebrationExperience | null>(null);
   const [recipientName, setRecipientName] = useState<string>("");
   const [occasion, setOccasion] = useState<string>("");
   const [contributorCount, setContributorCount] = useState<number>(0);
   const [celebrationDate, setCelebrationDate] = useState<string | null>(null);
   const [coverStyle, setCoverStyle] = useState<string | null>(null);
-  const [moodConfig, setMoodConfig] = useState<MoodConfig>(getMoodConfig(null));
 
-  // Fetch occasion and recipient name for occasion-aware copy
+  // Fetch occasion and recipient name for celebration experience
   useEffect(() => {
-    async function loadOccasionCopy() {
+    async function loadCelebrationExperience() {
       const { data } = await supabase
         .from("memorypops")
         .select("occasion, recipient_name, celebration_date, cover_style, tone")
@@ -44,11 +42,16 @@ export default function ContributePage() {
         setOccasion(data.occasion);
         setCelebrationDate(data.celebration_date);
         setCoverStyle(data.cover_style);
-        setOccasionCopy(getOccasionCopy(data.occasion, data.recipient_name));
-        setMoodConfig(getMoodConfig(data.tone));
+        setCelebrationExperience(
+          getCelebrationExperience({
+            occasion: data.occasion,
+            mood: data.tone,
+            recipientName: data.recipient_name
+          })
+        );
       }
     }
-    loadOccasionCopy();
+    loadCelebrationExperience();
   }, [shareCode]);
 
   // Get adaptive theme for celebration timeline and narrative
@@ -200,12 +203,12 @@ export default function ContributePage() {
     }
   }
 
-  // v2: Use occasion-specific contribute narrative from occasions.ts
+  // v2: Use occasion-specific contribute narrative from composition layer
   // This replaces the generateNarrative function with centralized copy
-  const narrative = occasionCopy?.contributeNarrative;
+  const narrative = celebrationExperience?.contributeNarrative;
 
   // v2: Success state - show thank you message after contribution
-  if (submitSuccess && occasionCopy?.successMessage) {
+  if (submitSuccess && celebrationExperience?.successMessage) {
     let progressMessage = "";
     let progressEmoji = "";
 
@@ -224,12 +227,12 @@ export default function ContributePage() {
       <main className="min-h-screen bg-[#FFF8F2] px-6 py-12 text-[#2B1E18]">
         <div className="mx-auto max-w-2xl">
           <div className="rounded-[2rem] bg-white p-8 shadow-xl text-center">
-            <p className="text-6xl mb-6">{occasionCopy.emoji}</p>
+            <p className="text-6xl mb-6">{celebrationExperience.emoji}</p>
             <h1 className="text-3xl font-bold text-[#2B1E18] mb-4">
-              {occasionCopy.successMessage.title}
+              {celebrationExperience.successMessage.title}
             </h1>
             <p className="text-lg leading-relaxed text-[#6B5B52] mb-8">
-              {occasionCopy.successMessage.message}
+              {celebrationExperience.successMessage.message}
             </p>
 
             {/* Progress Celebration */}
@@ -255,7 +258,7 @@ export default function ContributePage() {
                 <ShareButtons
                   shareLink={`${typeof window !== 'undefined' ? window.location.origin : ''}/m/${shareCode}/contribute`}
                   recipient={recipientName}
-                  whatsappMessage={occasionCopy.whatsappMessage}
+                  whatsappMessage={celebrationExperience.whatsappMessage}
                   shareCode={shareCode}
                 />
               </div>
@@ -283,7 +286,7 @@ export default function ContributePage() {
             className="mb-8 rounded-[2rem] p-6 shadow-xl text-center border-2 border-[#F0DED2]"
             style={getCoverHeroStyle(coverStyle)}
           >
-            <p className="text-3xl mb-2">{occasionCopy?.emoji || "🎉"}</p>
+            <p className="text-3xl mb-2">{celebrationExperience?.emoji || "🎉"}</p>
             <p
               className="text-xl font-bold"
               style={{ color: contributorTheme.primaryText }}
@@ -311,7 +314,7 @@ export default function ContributePage() {
             className="mb-8 rounded-[2rem] p-8 shadow-xl text-center"
             style={getCoverHeroStyle(coverStyle)}
           >
-            <p className="text-5xl">{occasionCopy?.emoji}</p>
+            <p className="text-5xl">{celebrationExperience?.emoji}</p>
             <div className="mt-6 space-y-4">
               <p
                 className="text-lg leading-relaxed"
@@ -347,14 +350,14 @@ export default function ContributePage() {
 
         {/* Contribution Form */}
         <div className="rounded-[2rem] bg-white p-8 shadow-xl">
-          <p className="text-center text-5xl">{occasionCopy?.emoji || "❤️"}</p>
+          <p className="text-center text-5xl">{celebrationExperience?.emoji || "❤️"}</p>
 
           <h1 className="mt-6 text-center text-4xl font-bold">
-            {moodConfig.contributorHeadline}
+            {celebrationExperience?.contributorHeadline}
           </h1>
 
           <p className="mt-4 text-center text-[#6B5B52]">
-            {moodConfig.contributorSupportingText}
+            {celebrationExperience?.contributorSupportingText}
           </p>
 
           <label className="mt-8 block font-semibold">Your Name</label>
@@ -362,27 +365,27 @@ export default function ContributePage() {
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder={occasionCopy?.formPlaceholders?.name || "e.g. Mum"}
+            placeholder={celebrationExperience?.formPlaceholders?.name || "e.g. Mum"}
             className="mt-3 w-full rounded-2xl border border-[#F0DED2] px-5 py-4 outline-none focus:border-[#FF6B57] focus:ring-2 focus:ring-[#FF6B57] focus:ring-opacity-50"
           />
 
-          <label className="mt-8 block font-semibold">{moodConfig.contributorPrompt}</label>
+          <label className="mt-8 block font-semibold">{celebrationExperience?.contributorPrompt}</label>
 
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder={occasionCopy?.formPlaceholders?.message || moodConfig.contributorPlaceholder}
+            placeholder={celebrationExperience?.formPlaceholders?.message || celebrationExperience?.contributorPlaceholder}
             className="mt-3 min-h-40 w-full rounded-2xl border border-[#F0DED2] px-5 py-4 outline-none focus:border-[#FF6B57] focus:ring-2 focus:ring-[#FF6B57] focus:ring-opacity-50"
           />
 
           {/* Message Starters - P0: Guided Contribution */}
-          {occasionCopy?.messageStarters && occasionCopy.messageStarters.length > 0 && (
+          {celebrationExperience?.messageStarters && celebrationExperience.messageStarters.length > 0 && (
             <div className="mt-6">
               <label className="block font-semibold text-sm text-[#6B5B52] mb-3">
                 Need inspiration? Try one of these:
               </label>
               <div className="space-y-2">
-                {occasionCopy.messageStarters.map((starter, idx) => (
+                {celebrationExperience.messageStarters.map((starter, idx) => (
                   <button
                     key={idx}
                     type="button"
@@ -443,7 +446,7 @@ export default function ContributePage() {
             disabled={isSubmitting || !name || !message}
             className="mt-8 w-full rounded-full bg-[#FF6B57] px-8 py-4 font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed active:ring-2 active:ring-white active:ring-offset-2 transition-all"
           >
-            {isSubmitting ? "Saving..." : `❤️ ${occasionCopy?.contributeCTA || "Add Memory"}`}
+            {isSubmitting ? "Saving..." : `❤️ ${celebrationExperience?.contributeCTA || "Add Memory"}`}
           </button>
         </div>
 

@@ -1,7 +1,7 @@
 "use client";
 import { supabase } from "@/lib/supabase";
 import { ChangeEvent, useState, useMemo, useEffect } from "react";
-import { getOccasionCopy } from "@/lib/occasions";
+import { getCelebrationExperience } from "@/lib/celebrationExperience";
 import { getCoverTheme } from "@/lib/coverTheme";
 import { trackEvent } from "@/lib/analytics";
 import OccasionSelector from "@/components/OccasionSelector";
@@ -29,13 +29,17 @@ export default function CreatePage() {
     });
   }, []);
 
-  // Get occasion-specific copy
-  const occasionCopy = useMemo(() => {
+  // Get composed celebration experience (occasion + mood)
+  const celebrationExperience = useMemo(() => {
     if (occasion && recipient) {
-      return getOccasionCopy(occasion, recipient);
+      return getCelebrationExperience({
+        occasion,
+        mood: tone,
+        recipientName: recipient
+      });
     }
     return null;
-  }, [occasion, recipient]);
+  }, [occasion, tone, recipient]);
 
   // Get adaptive theme for preview
   // Text colors adapt to selected cover style background
@@ -109,7 +113,7 @@ async function saveMemoryPop() {
           )}
 
           <p className="text-sm font-semibold text-[#FF6B57]">
-            {step === 1 && (occasionCopy?.progressLabel || "🌱 Starting the celebration")}
+            {step === 1 && (celebrationExperience?.progressLabel || "🌱 Starting the celebration")}
             {step === 2 && "💛 Making it personal"}
             {step === 3 && "🎉 Ready to celebrate"}
           </p>
@@ -130,7 +134,7 @@ async function saveMemoryPop() {
             <p className="mt-4 text-gray-600">
               {recipient
                 ? `Let's create one beautiful celebration ${recipient} will never forget.`
-                : (occasionCopy?.helperText || "Let's create one beautiful celebration your loved one will never forget.")}
+                : (celebrationExperience?.helperText || "Let's create one beautiful celebration your loved one will never forget.")}
             </p>
 
             <label className="mt-8 block font-semibold">What are we celebrating?</label>
@@ -204,13 +208,13 @@ async function saveMemoryPop() {
             </p>
 
             {/* Message Starters */}
-            {occasionCopy?.messageStarters && (
+            {celebrationExperience?.messageStarters && (
               <div className="mt-6 mb-4">
                 <label className="block font-semibold text-sm text-[#6B5B52] mb-2">
                   Need inspiration? Try one of these messages about {recipient}:
                 </label>
                 <div className="flex flex-col gap-2">
-                  {occasionCopy.messageStarters.map((starter, idx) => (
+                  {celebrationExperience.messageStarters.map((starter, idx) => (
                     <button
                       key={idx}
                       type="button"
@@ -227,7 +231,7 @@ async function saveMemoryPop() {
             <textarea
               value={story}
               onChange={(e) => setStory(e.target.value)}
-              placeholder={occasionCopy?.formPlaceholders?.message || "Share your message..."}
+              placeholder={celebrationExperience?.formPlaceholders?.message || "Share your message..."}
               className="mt-8 min-h-40 w-full rounded-2xl border border-[#F0DED2] px-5 py-4 text-lg outline-none focus:border-[#FF6B57] focus:ring-2 focus:ring-[#FF6B57] focus:ring-opacity-50"
             />
 
@@ -248,13 +252,13 @@ async function saveMemoryPop() {
             </div>
 
             {/* Emoji Shortcuts */}
-            {occasionCopy?.emojiShortcuts && (
+            {celebrationExperience?.emojiShortcuts && (
               <div className="mt-4">
                 <label className="block font-semibold text-sm text-[#6B5B52] mb-2">
                   Add some emotion:
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {occasionCopy.emojiShortcuts.map((emoji, idx) => (
+                  {celebrationExperience.emojiShortcuts.map((emoji, idx) => (
                     <button
                       key={idx}
                       type="button"
@@ -302,13 +306,13 @@ async function saveMemoryPop() {
             </div>
 
             {/* Cover Presets */}
-            {occasionCopy?.coverPresets && (
+            {celebrationExperience?.coverPresets && (
               <div className="mt-6">
                 <label className="block font-semibold mb-2">
                   Choose a cover style <span className="text-gray-400">(optional)</span>
                 </label>
                 <div className="grid grid-cols-2 gap-3">
-                  {occasionCopy.coverPresets.map((preset) => (
+                  {celebrationExperience.coverPresets.map((preset) => (
                     <button
                       key={preset.id}
                       type="button"
@@ -381,7 +385,7 @@ async function saveMemoryPop() {
             <div
               className="mt-8 overflow-hidden rounded-[1.7rem] p-8 shadow-inner"
               style={{
-                background: occasionCopy?.coverPresets?.find(p => p.id === selectedCover)?.gradient ||
+                background: celebrationExperience?.coverPresets?.find(p => p.id === selectedCover)?.gradient ||
                   'linear-gradient(135deg, #FFE1D6 0%, #FFF3C7 50%, #E5D4FF 100%)'
               }}
             >
