@@ -4,6 +4,7 @@ import { ChangeEvent, useState, useMemo, useEffect } from "react";
 import { getOccasionCopy } from "@/lib/occasions";
 import { getCoverTheme } from "@/lib/coverTheme";
 import { trackEvent } from "@/lib/analytics";
+import OccasionSelector from "@/components/OccasionSelector";
 
 export default function CreatePage() {
   const [step, setStep] = useState(1);
@@ -16,6 +17,7 @@ export default function CreatePage() {
   const [createError, setCreateError] = useState("");
   const [selectedCover, setSelectedCover] = useState("none");
   const [celebrationDate, setCelebrationDate] = useState("");
+  const [showOccasionSelector, setShowOccasionSelector] = useState(false);
 
   const progress = (step / 3) * 100;
 
@@ -155,6 +157,26 @@ async function saveMemoryPop() {
                 </button>
               ))}
             </div>
+
+            {/* View All Occasions Button */}
+            <button
+              type="button"
+              onClick={() => setShowOccasionSelector(true)}
+              className="mt-4 w-full rounded-2xl border border-[#F0DED2] bg-white p-4 text-center font-semibold text-[#6B5B52] hover:border-[#FF6B57] hover:bg-[#FFF1EC] hover:text-[#FF6B57] active:ring-2 active:ring-[#FF6B57] transition-all"
+            >
+              View All Occasions →
+            </button>
+
+            {/* Occasion Selector Modal */}
+            <OccasionSelector
+              isOpen={showOccasionSelector}
+              onClose={() => setShowOccasionSelector(false)}
+              onSelect={(selectedOccasion) => {
+                setOccasion(selectedOccasion);
+                setShowOccasionSelector(false);
+              }}
+              currentOccasion={occasion}
+            />
 
             <label className="mt-8 block font-semibold">Who's today's star?</label>
             <input
