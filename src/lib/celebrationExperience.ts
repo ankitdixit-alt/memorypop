@@ -25,6 +25,7 @@ export interface CelebrationExperience {
   emoji: string;
   category: OccasionCategory;
   celebrationMessage: string;
+  subMessage?: string;
   helperText?: string;
   progressLabel?: string;
   actionLabel?: string;
@@ -93,6 +94,7 @@ export function getCelebrationExperience({
     celebrationMessage: typeof occasionConfig.celebrationMessage === 'function'
       ? occasionConfig.celebrationMessage(recipientName)
       : occasionConfig.celebrationMessage,
+    subMessage: occasionConfig.subMessage,
     helperText: occasionConfig.helperText,
     progressLabel: occasionConfig.progressLabel,
     actionLabel: occasionConfig.actionLabel,

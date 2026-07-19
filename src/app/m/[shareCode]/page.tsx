@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { ShareButtons } from "@/components/ShareButtons";
-import { getOccasionCopy } from "@/lib/occasions";
+import { getCelebrationExperience } from "@/lib/celebrationExperience";
 import { getCoverHeroStyle } from "@/lib/coverStyles";
 import { getCoverTheme } from "@/lib/coverTheme";
 import type { Metadata } from "next";
@@ -188,8 +188,12 @@ export default async function MemoryPopPage({
   const protocol = host.includes("localhost") ? "http" : "https";
   const shareLink = `${protocol}://${host}/m/${shareCode}/contribute`;
 
-  // Get occasion-specific copy
-  const occasionCopy = getOccasionCopy(data.occasion, data.recipient_name);
+  // Get celebration experience (occasion + mood composition)
+  const celebrationExperience = getCelebrationExperience({
+    occasion: data.occasion,
+    mood: data.tone,
+    recipientName: data.recipient_name
+  });
 
   // Get adaptive theme for celebration narrative
   // This ensures text is readable on both light and dark gradients
@@ -204,39 +208,39 @@ export default async function MemoryPopPage({
           className="mb-8 rounded-[2rem] p-8 shadow-xl text-center"
           style={getCoverHeroStyle(data.cover_style)}
         >
-          <p className="text-5xl">{occasionCopy.emoji}</p>
+          <p className="text-5xl">{celebrationExperience.emoji}</p>
           <div className="mt-6 space-y-4">
             <p
               className="text-lg leading-relaxed"
               style={{ color: previewTheme.primaryText }}
             >
-              {occasionCopy.landingNarrative?.line1}
+              {celebrationExperience.landingNarrative?.line1}
             </p>
             <p
               className="text-lg leading-relaxed"
               style={{ color: previewTheme.secondaryText }}
             >
-              {occasionCopy.landingNarrative?.line2}
+              {celebrationExperience.landingNarrative?.line2}
             </p>
             <p
               className="text-lg leading-relaxed font-semibold"
               style={{ color: previewTheme.primaryText }}
             >
-              {occasionCopy.landingNarrative?.line3}
+              {celebrationExperience.landingNarrative?.line3}
             </p>
           </div>
         </div>
 
         <div className="flex flex-col items-center text-center">
-          <p className="text-5xl">{occasionCopy.emoji}</p>
+          <p className="text-5xl">{celebrationExperience.emoji}</p>
 
           <h1 className="mt-6 text-4xl font-bold">
-            {occasionCopy.celebrationMessage}
+            {celebrationExperience.celebrationMessage}
           </h1>
 
-          {occasionCopy.subMessage && (
+          {celebrationExperience.subMessage && (
             <p className="mt-2 text-lg text-[#6B5B52]">
-              {occasionCopy.subMessage}
+              {celebrationExperience.subMessage}
             </p>
           )}
 
@@ -248,21 +252,21 @@ export default async function MemoryPopPage({
             href={`/m/${shareCode}/contribute`}
             className="mt-10 inline-block rounded-full bg-[#FF6B57] px-8 py-4 font-semibold text-white active:ring-2 active:ring-white active:ring-offset-2 transition-all"
           >
-            {occasionCopy.emoji} {occasionCopy.contributeCTA}
+            {celebrationExperience.emoji} {celebrationExperience.contributeCTA}
           </a>
         </div>
 
         {/* Share Section */}
         <div className="mt-8 rounded-2xl border border-[#F0DED2] bg-white p-6 shadow-sm">
           <p className="mb-4 text-center text-sm font-semibold uppercase tracking-wide text-[#6B5B52]">
-            {occasionCopy.sharePrompt}
+            {celebrationExperience.sharePrompt}
           </p>
 
           <div className="flex justify-center">
             <ShareButtons
               shareLink={shareLink}
               recipient={data.recipient_name}
-              whatsappMessage={occasionCopy.whatsappMessage}
+              whatsappMessage={celebrationExperience.whatsappMessage}
               shareCode={shareCode}
             />
           </div>
@@ -275,7 +279,7 @@ export default async function MemoryPopPage({
           {!memories || memories.length === 0 ? (
             <div className="mt-8 rounded-2xl bg-white p-8 text-center shadow-sm">
               <p className="text-[#6B5B52]">
-                {occasionCopy.emptyStateMessage}
+                {celebrationExperience.emptyStateMessage}
               </p>
             </div>
           ) : (

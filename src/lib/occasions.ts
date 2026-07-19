@@ -73,6 +73,7 @@ export interface OccasionMetadata {
 
   // Core celebration context
   celebrationMessage: string | ((name?: string) => string);
+  subMessage?: string;
 
   // Creator journey
   helperText?: string;
@@ -130,6 +131,19 @@ export interface OccasionMetadata {
 
 /**
  * Get occasion-specific copy for any celebration type
+ *
+ * @deprecated This function is deprecated as of Checkpoint 3 (2026-07-19).
+ * Use getCelebrationExperience() from @/lib/celebrationExperience instead,
+ * which combines occasion and mood into a unified experience.
+ *
+ * All consumer pages have been migrated:
+ * - /create (Checkpoint 2)
+ * - /contribute (Checkpoint 2)
+ * - /reveal (Checkpoint 3)
+ * - /dashboard (Checkpoint 3)
+ * - /m/[shareCode] landing page (Checkpoint 4)
+ * - /success (Checkpoint 4)
+ * - OccasionSelector component (Checkpoint 3)
  *
  * @param occasion - The celebration type (e.g., "Birthday", "Farewell")
  * @param recipientName - Optional recipient name for personalization

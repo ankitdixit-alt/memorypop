@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { headers } from "next/headers";
 import { ShareButtons } from "@/components/ShareButtons";
-import { getOccasionCopy } from "@/lib/occasions";
+import { getCelebrationExperience } from "@/lib/celebrationExperience";
 import type { Metadata } from "next";
 
 /**
@@ -41,25 +41,28 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   const protocol = host.includes("localhost") ? "http" : "https";
   const shareLink = `${protocol}://${host}/m/${shareCode}/contribute`;
 
-  // Get occasion-specific copy
-  const occasionCopy = getOccasionCopy(occasion, recipient);
+  // Get celebration experience (occasion + default mood composition)
+  const celebrationExperience = getCelebrationExperience({
+    occasion,
+    recipientName: recipient
+  });
 
   return (
     <main className="min-h-screen bg-[#FFF8F2] px-6 py-12 text-[#2B1E18]">
       <div className="mx-auto flex min-h-[80vh] max-w-2xl flex-col items-center justify-center text-center">
-        <p className="text-5xl">{occasionCopy.emoji}</p>
+        <p className="text-5xl">{celebrationExperience.emoji}</p>
 
         <h1 className="mt-6 text-4xl font-bold">
           {recipient}'s MemoryPop is Ready!
         </h1>
 
         <p className="mt-3 text-lg text-[#6B5B52]">
-          {occasionCopy.celebrationMessage}
+          {celebrationExperience.celebrationMessage}
         </p>
 
-        {occasionCopy.subMessage && (
+        {celebrationExperience.subMessage && (
           <p className="mt-2 text-lg text-[#6B5B52]">
-            {occasionCopy.subMessage}
+            {celebrationExperience.subMessage}
           </p>
         )}
 
@@ -70,14 +73,14 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
 
         <div className="mt-10 w-full rounded-3xl border border-[#ead8c9] bg-white p-6 shadow-sm">
           <p className="mb-6 text-center text-sm font-semibold uppercase tracking-wide text-[#856b5f]">
-            {occasionCopy.sharePrompt}
+            {celebrationExperience.sharePrompt}
           </p>
 
           <div className="flex justify-center">
             <ShareButtons
               shareLink={shareLink}
               recipient={recipient}
-              whatsappMessage={occasionCopy.whatsappMessage}
+              whatsappMessage={celebrationExperience.whatsappMessage}
               shareCode={shareCode}
             />
           </div>
