@@ -2,13 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { getOccasionCopy } from "@/lib/occasions";
+import { getCelebrationExperience } from "@/lib/celebrationExperience";
 import { getCoverHeroStyle } from "@/lib/coverStyles";
 import { getCoverTheme } from "@/lib/coverTheme";
 import { supabase } from "@/lib/supabase";
 import ReactionPrompt from "./ReactionPrompt";
 import ReactionThankYou from "./ReactionThankYou";
-import { getMoodConfig } from "@/lib/celebrationMood";
 
 interface Memory {
   id: string;
@@ -49,8 +48,11 @@ export default function RevealExperience({
   // Step memories.length + 2: ReactionPrompt (if not reacted)
   // Step memories.length + 3: ReactionThankYou (after reaction)
 
-  const occasionCopy = getOccasionCopy(occasion, recipientName);
-  const moodConfig = getMoodConfig(mood);
+  const celebrationExperience = getCelebrationExperience({
+    occasion,
+    mood,
+    recipientName
+  });
 
   // Special messaging for celebration date
   function getCelebrationMessage(dateString?: string | null): string | null {
@@ -119,16 +121,16 @@ export default function RevealExperience({
         recipientName={recipientName}
         memoryCount={memories.length}
         onBegin={handleNext}
-        emoji={occasionCopy.emoji}
+        emoji={celebrationExperience.emoji}
         coverStyle={coverStyle}
-        moodIntroduction={moodConfig.revealIntroduction}
+        moodIntroduction={celebrationExperience.revealIntroduction}
       />
     );
   } else if (currentStep <= memories.length) {
     const memoryIndex = currentStep - 1;
     return <MemoryScreen memory={memories[memoryIndex]} onNext={handleNext} />;
   } else if (currentStep === memories.length + 1) {
-    return <FinalScreen occasionCopy={occasionCopy} onNext={handleNext} celebrationDate={celebrationDate} getCelebrationMessage={getCelebrationMessage} coverStyle={coverStyle} />;
+    return <FinalScreen celebrationExperience={celebrationExperience} onNext={handleNext} celebrationDate={celebrationDate} getCelebrationMessage={getCelebrationMessage} coverStyle={coverStyle} />;
   } else if (currentStep === memories.length + 2 && !hasReacted) {
     // Show reaction prompt if user hasn't reacted (or still loading)
     return (
@@ -157,7 +159,7 @@ export default function RevealExperience({
   }
 
   // Fallback (should not reach here)
-  return <FinalScreen occasionCopy={occasionCopy} onNext={handleNext} celebrationDate={celebrationDate} getCelebrationMessage={getCelebrationMessage} coverStyle={coverStyle} />;
+  return <FinalScreen celebrationExperience={celebrationExperience} onNext={handleNext} celebrationDate={celebrationDate} getCelebrationMessage={getCelebrationMessage} coverStyle={coverStyle} />;
 }
 
 // Welcome Screen (Step 0)
@@ -291,13 +293,13 @@ function MemoryScreen({
 
 // Final Screen (Step n+1)
 function FinalScreen({
-  occasionCopy,
+  celebrationExperience,
   onNext,
   celebrationDate,
   getCelebrationMessage,
   coverStyle,
 }: {
-  occasionCopy: { celebrationMessage: string; subMessage?: string; emoji: string };
+  celebrationExperience: { celebrationMessage: string; subMessage?: string; emoji: string };
   onNext?: () => void;
   celebrationDate?: string | null;
   getCelebrationMessage?: (dateString?: string | null) => string | null;
@@ -312,23 +314,23 @@ function FinalScreen({
       style={getCoverHeroStyle(coverStyle)}
     >
       {/* Celebration emoji */}
-      <div className="mb-8 text-7xl">{occasionCopy.emoji}</div>
+      <div className="mb-8 text-7xl">{celebrationExperience.emoji}</div>
 
       {/* Celebration message */}
       <h1
         className="mb-4 text-center text-4xl font-bold"
         style={{ color: theme.primaryText }}
       >
-        {occasionCopy.celebrationMessage}
+        {celebrationExperience.celebrationMessage}
       </h1>
 
       {/* Optional sub-message (for Farewell, etc.) */}
-      {occasionCopy.subMessage && (
+      {celebrationExperience.subMessage && (
         <p
           className="mb-4 text-center text-xl"
           style={{ color: theme.secondaryText }}
         >
-          {occasionCopy.subMessage}
+          {celebrationExperience.subMessage}
         </p>
       )}
 

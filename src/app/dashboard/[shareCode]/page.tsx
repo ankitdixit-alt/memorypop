@@ -6,7 +6,7 @@ import { DashboardPlusFeatures } from "@/components/DashboardPlusFeatures";
 import DashboardClientSection from "@/components/DashboardClientSection";
 import { Suspense } from "react";
 import Link from "next/link";
-import { getOccasionCopy } from "@/lib/occasions";
+import { getCelebrationExperience } from "@/lib/celebrationExperience";
 import { getCoverHeroStyle } from "@/lib/coverStyles";
 import { getCoverTheme } from "@/lib/coverTheme";
 import type { Metadata } from "next";
@@ -135,9 +135,13 @@ export default async function DashboardPage({
   const protocol = host.includes("localhost") ? "http" : "https";
   const shareLink = `${protocol}://${host}/m/${shareCode}/contribute`;
 
-  // Get occasion-specific copy
-  const occasionCopy = getOccasionCopy(memorypop.occasion, memorypop.recipient_name);
-  const revealWhatsappMessage = occasionCopy.revealWhatsappMessage || '';
+  // Get celebration experience (occasion + mood composition)
+  const celebrationExperience = getCelebrationExperience({
+    occasion: memorypop.occasion,
+    mood: memorypop.tone,
+    recipientName: memorypop.recipient_name
+  });
+  const revealWhatsappMessage = celebrationExperience.revealWhatsappMessage || '';
 
   // Get adaptive theme for timeline card
   // This ensures text is readable on both light and dark gradients
@@ -170,7 +174,7 @@ export default async function DashboardPage({
             className="mt-8 rounded-2xl p-6 shadow-sm text-center"
             style={getCoverHeroStyle(memorypop.cover_style)}
           >
-            <p className="text-3xl mb-3">{occasionCopy.emoji}</p>
+            <p className="text-3xl mb-3">{celebrationExperience.emoji}</p>
             <p
               className="text-xl font-bold"
               style={{ color: timelineTheme.primaryText }}
@@ -246,7 +250,7 @@ export default async function DashboardPage({
             <ShareButtons
               shareLink={shareLink}
               recipient={memorypop.recipient_name}
-              whatsappMessage={occasionCopy.whatsappMessage}
+              whatsappMessage={celebrationExperience.whatsappMessage}
               mode="contributor"
               shareCode={memorypop.share_code}
             />
@@ -325,7 +329,7 @@ export default async function DashboardPage({
           </div>
         ) : (
           <div className="mt-6 rounded-2xl bg-white p-8 text-center shadow-sm">
-            <div className="text-5xl mb-4">{occasionCopy.emoji}</div>
+            <div className="text-5xl mb-4">{celebrationExperience.emoji}</div>
             <p className="text-lg text-[#3a241e] mb-2">No memories yet.</p>
             <p className="text-[#856b5f]">
               Share the link above to invite friends and family to add memories for {memorypop.recipient_name}.

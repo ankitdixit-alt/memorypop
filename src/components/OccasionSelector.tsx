@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+import { OCCASIONS, type OccasionCategory as CategoryType } from "@/lib/occasions";
 
 interface Occasion {
   id: string;
@@ -9,7 +10,7 @@ interface Occasion {
 }
 
 interface OccasionCategory {
-  id: string;
+  id: CategoryType;
   label: string;
   emoji: string;
   occasions: Occasion[];
@@ -22,58 +23,14 @@ interface OccasionSelectorProps {
   currentOccasion?: string;
 }
 
-const OCCASION_CATEGORIES: OccasionCategory[] = [
-  {
-    id: 'celebrate',
-    label: 'Celebrate',
-    emoji: '🎉',
-    occasions: [
-      { id: 'birthday', label: 'Birthday', emoji: '🎂' },
-      { id: 'anniversary', label: 'Anniversary', emoji: '💍' },
-      { id: 'congratulations', label: 'Congratulations', emoji: '🎉' },
-      { id: 'housewarming', label: 'Housewarming', emoji: '🏠' },
-      { id: 'promotion', label: 'Promotion', emoji: '🎊' },
-    ]
-  },
-  {
-    id: 'love',
-    label: 'Love',
-    emoji: '❤️',
-    occasions: [
-      { id: 'wedding', label: 'Wedding', emoji: '👰' },
-      { id: 'engagement', label: 'Engagement', emoji: '💝' },
-      { id: 'valentines', label: "Valentine's Day", emoji: '❤️' },
-    ]
-  },
-  {
-    id: 'family',
-    label: 'Family',
-    emoji: '👶',
-    occasions: [
-      { id: 'newbaby', label: 'New Baby', emoji: '👶' },
-      { id: 'graduation', label: 'Graduation', emoji: '🎓' },
-    ]
-  },
-  {
-    id: 'milestones',
-    label: 'Milestones',
-    emoji: '🌴',
-    occasions: [
-      { id: 'farewell', label: 'Farewell', emoji: '👋' },
-      { id: 'retirement', label: 'Retirement', emoji: '🌴' },
-    ]
-  },
-  {
-    id: 'support',
-    label: 'Support',
-    emoji: '💛',
-    occasions: [
-      { id: 'getwellsoon', label: 'Get Well Soon', emoji: '🌻' },
-      { id: 'thankyou', label: 'Thank You', emoji: '💛' },
-      { id: 'sympathy', label: 'Sympathy', emoji: '🕊️' },
-    ]
-  }
-];
+// Category metadata
+const CATEGORY_METADATA: Record<CategoryType, { label: string; emoji: string }> = {
+  celebrate: { label: 'Celebrate', emoji: '🎉' },
+  love: { label: 'Love', emoji: '❤️' },
+  family: { label: 'Family', emoji: '👶' },
+  milestones: { label: 'Milestones', emoji: '🌴' },
+  support: { label: 'Support', emoji: '💛' },
+};
 
 export default function OccasionSelector({
   isOpen,
@@ -81,6 +38,28 @@ export default function OccasionSelector({
   onSelect,
   currentOccasion
 }: OccasionSelectorProps) {
+  // Build grouped categories from OCCASIONS object
+  const OCCASION_CATEGORIES = useMemo(() => {
+    const categoryMap: Record<CategoryType, OccasionCategory> = {
+      celebrate: { id: 'celebrate', ...CATEGORY_METADATA.celebrate, occasions: [] },
+      love: { id: 'love', ...CATEGORY_METADATA.love, occasions: [] },
+      family: { id: 'family', ...CATEGORY_METADATA.family, occasions: [] },
+      milestones: { id: 'milestones', ...CATEGORY_METADATA.milestones, occasions: [] },
+      support: { id: 'support', ...CATEGORY_METADATA.support, occasions: [] },
+    };
+
+    // Group occasions by category
+    Object.values(OCCASIONS).forEach(occasion => {
+      categoryMap[occasion.category].occasions.push({
+        id: occasion.id,
+        label: occasion.label,
+        emoji: occasion.emoji,
+      });
+    });
+
+    return Object.values(categoryMap);
+  }, []);
+
   // Close on ESC key
   useEffect(() => {
     if (!isOpen) return;
