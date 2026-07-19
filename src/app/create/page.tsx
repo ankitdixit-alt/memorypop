@@ -109,7 +109,7 @@ async function saveMemoryPop() {
           )}
 
           <p className="text-sm font-semibold text-[#FF6B57]">
-            {step === 1 && "🌱 Starting the celebration"}
+            {step === 1 && (occasionCopy?.progressLabel || "🌱 Starting the celebration")}
             {step === 2 && "💛 Making it personal"}
             {step === 3 && "🎉 Ready to celebrate"}
           </p>
@@ -227,7 +227,7 @@ async function saveMemoryPop() {
             <textarea
               value={story}
               onChange={(e) => setStory(e.target.value)}
-              placeholder="e.g. He always brings the family together and makes everyone laugh."
+              placeholder={occasionCopy?.formPlaceholders?.message || "Share your message..."}
               className="mt-8 min-h-40 w-full rounded-2xl border border-[#F0DED2] px-5 py-4 text-lg outline-none focus:border-[#FF6B57] focus:ring-2 focus:ring-[#FF6B57] focus:ring-opacity-50"
             />
 

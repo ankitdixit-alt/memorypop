@@ -371,7 +371,7 @@ export default function ContributePage() {
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder={moodConfig.contributorPlaceholder}
+            placeholder={occasionCopy?.formPlaceholders?.message || moodConfig.contributorPlaceholder}
             className="mt-3 min-h-40 w-full rounded-2xl border border-[#F0DED2] px-5 py-4 outline-none focus:border-[#FF6B57] focus:ring-2 focus:ring-[#FF6B57] focus:ring-opacity-50"
           />
 
