@@ -42,7 +42,7 @@
 **WhatsApp Status**: Installed
 
 **Test Steps**:
-1. Open dashboard in Safari: `https://memorypop.com/dashboard/[shareCode]`
+1. Open dashboard in Safari: `https://memorypop.app/dashboard/[shareCode]`
 2. Tap "Share on WhatsApp" button
 3. Observe what happens
 4. Check if WhatsApp opens
@@ -81,7 +81,7 @@
 **WhatsApp Status**: Installed
 
 **Test Steps**:
-1. Open dashboard in Chrome: `https://memorypop.com/dashboard/[shareCode]`
+1. Open dashboard in Chrome: `https://memorypop.app/dashboard/[shareCode]`
 2. Tap "Share on WhatsApp" button
 3. Observe what happens
 4. Check if WhatsApp opens
@@ -120,7 +120,7 @@
 **Operating System**: ***\_\_***_
 
 **Test Steps**:
-1. Open dashboard in Chrome: `https://memorypop.com/dashboard/[shareCode]`
+1. Open dashboard in Chrome: `https://memorypop.app/dashboard/[shareCode]`
 2. Click "Share on WhatsApp" button
 3. Observe what happens
 4. Check if WhatsApp Web opens

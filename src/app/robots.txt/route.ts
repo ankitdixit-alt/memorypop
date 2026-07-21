@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
  * Priority: P0 (Critical for crawler control)
  */
 export async function GET() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.com';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.app';
 
   const robotsTxt = `# MemoryPop Robots.txt
 # Last Updated: ${new Date().toISOString().split('T')[0]}

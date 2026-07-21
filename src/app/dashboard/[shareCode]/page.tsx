@@ -1,8 +1,10 @@
 import { supabase } from "@/lib/supabase";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { isCreatorAuthorized } from "@/lib/creatorSession";
 import { headers } from "next/headers";
 import { ShareButtons } from "@/components/ShareButtons";
 import { DashboardPlusFeatures } from "@/components/DashboardPlusFeatures";
+import { EmailCaptureReminder } from "@/components/EmailCaptureReminder";
 import DashboardClientSection from "@/components/DashboardClientSection";
 import { Suspense } from "react";
 import Link from "next/link";
@@ -46,7 +48,7 @@ export async function generateMetadata({
   params: Promise<{ shareCode: string }>;
 }): Promise<Metadata> {
   const { shareCode } = await params;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.com';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.app';
 
   // Fetch MemoryPop to get recipient name
   const { data: memorypop } = await supabase
@@ -88,6 +90,15 @@ export default async function DashboardPage({
   params: Promise<{ shareCode: string }>;
 }) {
   const { shareCode } = await params;
+
+  // CRITICAL: Check creator authorization
+  // Only creators with valid session can access dashboard
+  const authorized = await isCreatorAuthorized(shareCode);
+
+  if (!authorized) {
+    // Not authorized - redirect to unauthorized page
+    redirect(`/unauthorized?return=${encodeURIComponent(`/dashboard/${shareCode}`)}`);
+  }
 
   // Fetch MemoryPop
   const { data: memorypop, error } = await supabase
@@ -147,6 +158,10 @@ export default async function DashboardPage({
   // This ensures text is readable on both light and dark gradients
   const timelineTheme = getCoverTheme(memorypop.cover_style);
 
+  // Check if email feature is enabled and if creator has provided email
+  const isEmailFeatureEnabled = process.env.CREATOR_EMAIL_ENABLED === 'true';
+  const hasCreatorEmail = !!memorypop.creator_email;
+
   return (
     <main className="min-h-screen bg-[#fff8ef] px-6 py-12 text-[#3a241e]">
       <div className="mx-auto max-w-3xl">
@@ -188,6 +203,16 @@ export default async function DashboardPage({
               {getTimelineMessage(memorypop.celebration_date)}
             </p>
           </div>
+        )}
+
+        {/* Email Capture Reminder - Sprint 1 */}
+        {isEmailFeatureEnabled && (
+          <Suspense fallback={null}>
+            <EmailCaptureReminder
+              shareCode={shareCode}
+              hasEmail={hasCreatorEmail}
+            />
+          </Suspense>
         )}
 
         {/* Plus Features (Welcome Message & Upgrade CTA) */}

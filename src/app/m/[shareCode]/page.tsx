@@ -46,7 +46,7 @@ export async function generateMetadata({
   params: Promise<{ shareCode: string }>;
 }): Promise<Metadata> {
   const { shareCode } = await params;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.com';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.app';
 
   // Set 5-second timeout for metadata fetch
   const METADATA_TIMEOUT = 5000;
@@ -99,7 +99,7 @@ export async function generateMetadata({
     const { data, error } = await Promise.race([
       fetchPromise,
       timeoutPromise,
-    ]) as { data: { recipient_name: string; occasion: string } | null; error: any };
+    ]) as { data: { recipient_name: string; occasion: string } | null; error: Error | null };
 
     if (error || !data) {
       console.error("Metadata fetch error:", error);

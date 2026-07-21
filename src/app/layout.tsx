@@ -20,7 +20,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.app'),
 
   // Application metadata
   applicationName: 'MemoryPop',
@@ -104,7 +104,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.com';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.app';
 
   return (
     <html

@@ -1,5 +1,4 @@
 "use client";
-import { supabase } from "@/lib/supabase";
 import { ChangeEvent, useState, useMemo, useEffect } from "react";
 import { getCelebrationExperience } from "@/lib/celebrationExperience";
 import { getCoverTheme } from "@/lib/coverTheme";
@@ -53,47 +52,59 @@ export default function CreatePage() {
     setPhotos(photoUrls);
   }
 async function saveMemoryPop() {
-  setCreateError(""); // Clear any previous errors
+  setCreateError("");
   setIsCreating(true);
 
-  const { data, error} = await supabase
-    .from("memorypops")
-    .insert({
+  // Call server-side API instead of direct Supabase insert
+  try {
+    const response = await fetch('/api/memorypops/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        recipient_name: recipient,
+        occasion,
+        story,
+        tone,
+        celebration_date: celebrationDate || null,
+        cover_style: selectedCover,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      setIsCreating(false);
+      setCreateError(result.error || 'Failed to create MemoryPop');
+      return;
+    }
+
+    // Track create_completed event
+    trackEvent('create_completed', {
+      share_code: result.shareCode,
+      occasion: occasion,
       recipient_name: recipient,
-      occasion,
-      story,
-      tone,
-      status: "collecting",
-      share_code: crypto.randomUUID(),
       celebration_date: celebrationDate || null,
-      cover_style: selectedCover,
-    })
-    .select()
-    .single();
+      tone: tone,
+      has_story: !!story,
+      has_photos: photos.length > 0,
+      photo_count: photos.length,
+      selected_cover: selectedCover,
+    });
 
-  if (error) {
+    // Redirect to success page
+    // Session cookie already established by server
+    // No managementToken in URL (uses session instead)
+    window.location.href = `/success?shareCode=${result.shareCode}&recipient=${encodeURIComponent(
+      recipient
+    )}&occasion=${encodeURIComponent(occasion)}`;
+
+  } catch (error) {
     setIsCreating(false);
-    setCreateError(error.message);
-    return;
+    setCreateError('Network error. Please try again.');
+    console.error('Create error:', error);
   }
-
-  // Track create_completed event
-  trackEvent('create_completed', {
-    share_code: data.share_code,
-    occasion: data.occasion,
-    recipient_name: data.recipient_name,
-    celebration_date: data.celebration_date || null,
-    tone: tone,
-    has_story: !!story,
-    has_photos: photos.length > 0,
-    photo_count: photos.length,
-    selected_cover: selectedCover,
-  });
-
-  // Keep loading state true during redirect
-  window.location.href = `/success?shareCode=${data.share_code}&recipient=${encodeURIComponent(
-    data.recipient_name
-  )}&occasion=${encodeURIComponent(data.occasion)}`;
 }
   function goBack() {
     if (step > 1) setStep(step - 1);
@@ -182,7 +193,7 @@ async function saveMemoryPop() {
               currentOccasion={occasion}
             />
 
-            <label className="mt-8 block font-semibold">Who's today's star?</label>
+            <label className="mt-8 block font-semibold">Who&apos;s today&apos;s star?</label>
             <input
               value={recipient}
               onChange={(e) => setRecipient(e.target.value)}
@@ -379,7 +390,7 @@ async function saveMemoryPop() {
           <section className="rounded-[2rem] bg-white p-8 shadow-xl">
             <p className="text-4xl">🎁</p>
             <h1 className="mt-4 text-4xl font-bold">
-              Here's your MemoryPop for {recipient}
+              Here&apos;s your MemoryPop for {recipient}
             </h1>
 
             <div

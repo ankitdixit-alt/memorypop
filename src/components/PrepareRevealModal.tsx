@@ -31,7 +31,7 @@ export default function PrepareRevealModal({
 
         <div className="space-y-4 text-[#6B5B52] mb-8">
           <p className="leading-relaxed">
-            You've collected <strong>{memoryCount} {memoryCount === 1 ? 'memory' : 'memories'}</strong> for {recipientName}.
+            You&apos;ve collected <strong>{memoryCount} {memoryCount === 1 ? 'memory' : 'memories'}</strong> for {recipientName}.
           </p>
 
           <div className="rounded-xl bg-[#FFF8F2] border border-[#F0DED2] p-4">
@@ -41,7 +41,7 @@ export default function PrepareRevealModal({
             <ul className="space-y-2 text-sm">
               <li className="flex items-start gap-2">
                 <span className="text-[#FF6B57]">•</span>
-                <span>You'll get a special <strong>reveal link</strong> to share with {recipientName}</span>
+                <span>You&apos;ll get a special <strong>reveal link</strong> to share with {recipientName}</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-[#FF6B57]">•</span>
@@ -59,7 +59,7 @@ export default function PrepareRevealModal({
           </div>
 
           <p className="text-sm italic">
-            Don't worry - you can share the reveal link whenever you're ready.
+            Don&apos;t worry - you can share the reveal link whenever you&apos;re ready.
           </p>
         </div>
 

@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { ShareButtons } from "@/components/ShareButtons";
+import { EmailCaptureForm } from "@/components/EmailCaptureForm";
 import { getCelebrationExperience } from "@/lib/celebrationExperience";
+import { isCreatorAuthorized } from "@/lib/creatorSession";
+import { trackEvent } from "@/lib/analytics";
 import type { Metadata } from "next";
 
 /**
@@ -35,6 +39,16 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   const occasion = params.occasion || "Celebration";
   const shareCode = params.shareCode || "";
 
+  // Verify creator session exists
+  // If no session, creator somehow bypassed creation flow
+  if (shareCode) {
+    const authorized = await isCreatorAuthorized(shareCode);
+    if (!authorized) {
+      // No session - suspicious, redirect to create
+      redirect('/create');
+    }
+  }
+
   // Get current host for dynamic URL generation
   const headersList = await headers();
   const host = headersList.get("host") || "localhost:3000";
@@ -47,13 +61,16 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
     recipientName: recipient
   });
 
+  // Check if email feature is enabled
+  const isEmailFeatureEnabled = process.env.CREATOR_EMAIL_ENABLED === 'true';
+
   return (
     <main className="min-h-screen bg-[#FFF8F2] px-6 py-12 text-[#2B1E18]">
       <div className="mx-auto flex min-h-[80vh] max-w-2xl flex-col items-center justify-center text-center">
         <p className="text-5xl">{celebrationExperience.emoji}</p>
 
         <h1 className="mt-6 text-4xl font-bold">
-          {recipient}'s MemoryPop is Ready!
+          {recipient}&apos;s MemoryPop is Ready!
         </h1>
 
         <p className="mt-3 text-lg text-[#6B5B52]">
@@ -67,7 +84,7 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
         )}
 
         <p className="mt-5 max-w-xl text-lg leading-8 text-[#6B5B52]">
-          {recipient}'s celebration has been safely saved. Now invite friends and family
+          {recipient}&apos;s celebration has been safely saved. Now invite friends and family
           to add memories for {recipient}.
         </p>
 
@@ -85,6 +102,23 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
             />
           </div>
         </div>
+
+        {/* Email Capture Section - Sprint 1 */}
+        {isEmailFeatureEnabled && (
+          <>
+            <div className="mt-10 w-full border-t border-[#ead8c9]"></div>
+
+            <div className="mt-10 w-full rounded-3xl border border-[#ead8c9] bg-white p-6 shadow-sm">
+              <p className="mb-4 text-center text-sm font-semibold uppercase tracking-wide text-[#856b5f]">
+                💌 Save Your Links via Email
+              </p>
+              <p className="mb-4 text-center text-sm text-[#6B5B52]">
+                We&apos;ll email you both links so you never lose access to {recipient}&apos;s MemoryPop.
+              </p>
+              <EmailCaptureForm shareCode={shareCode} />
+            </div>
+          </>
+        )}
 
         <div className="mt-10 w-full border-t border-[#ead8c9]"></div>
 

@@ -13,8 +13,8 @@ export function OrganizationSchema() {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "MemoryPop",
-    "url": "https://memorypop.com",
-    "logo": "https://memorypop.com/apple-touch-icon.png",
+    "url": "https://memorypop.app",
+    "logo": "https://memorypop.app/apple-touch-icon.png",
     "description": "Create one beautiful home for every celebration. MemoryPop brings friends and family together to share memories, photos, and heartfelt messages for birthdays, weddings, farewells, and more.",
     "foundingDate": "2026",
     "sameAs": [
@@ -26,7 +26,7 @@ export function OrganizationSchema() {
     "contactPoint": {
       "@type": "ContactPoint",
       "contactType": "Customer Support",
-      "email": "support@memorypop.com",
+      "email": "support@memorypop.app",
       "availableLanguage": ["English"]
     }
   };

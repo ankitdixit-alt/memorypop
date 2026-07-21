@@ -4,17 +4,11 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { grantConsent, revokeConsent, shouldShowConsentBanner } from '@/lib/analytics';
 
 export default function CookieConsent() {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    // Check if banner should be shown
-    const shouldShow = shouldShowConsentBanner();
-    setIsVisible(shouldShow);
-  }, []);
+  const [isVisible, setIsVisible] = useState(() => shouldShowConsentBanner());
 
   const handleAccept = () => {
     grantConsent();
@@ -38,7 +32,7 @@ export default function CookieConsent() {
           <div className="flex-1 text-sm text-gray-700">
             <p>
               We use cookies to understand how you use MemoryPop and improve your experience.
-              By clicking "Accept", you consent to our use of analytics cookies.
+              By clicking &quot;Accept&quot;, you consent to our use of analytics cookies.
             </p>
           </div>
 

@@ -15,7 +15,7 @@ export default function NotFound() {
 
           {/* Message */}
           <p className="mt-4 text-lg text-[#6B5B52]">
-            We couldn't find the page you're looking for. It may have been moved or deleted.
+            We couldn&apos;t find the page you&apos;re looking for. It may have been moved or deleted.
           </p>
 
           {/* Action */}

@@ -1,3 +1,5 @@
+import type { SupabaseClient } from '@supabase/supabase-js';
+
 export type MemoryPopStatus = 'collecting' | 'ready' | 'revealed';
 
 const VALID_STATUSES: MemoryPopStatus[] = ['collecting', 'ready', 'revealed'];
@@ -7,10 +9,10 @@ export function isValidStatus(status: string): status is MemoryPopStatus {
 }
 
 export async function transitionToReady(
-  supabase: any,
+  supabase: SupabaseClient,
   memorypopId: string
 ): Promise<{ success: boolean; error?: string }> {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('memorypops')
     .update({ status: 'ready' })
     .eq('id', memorypopId)
@@ -25,10 +27,10 @@ export async function transitionToReady(
 }
 
 export async function transitionToRevealed(
-  supabase: any,
+  supabase: SupabaseClient,
   memorypopId: string
 ): Promise<{ success: boolean; error?: string }> {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('memorypops')
     .update({ status: 'revealed' })
     .eq('id', memorypopId)

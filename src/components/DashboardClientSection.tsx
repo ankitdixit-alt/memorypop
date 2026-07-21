@@ -54,7 +54,7 @@ export default function DashboardClientSection({
               Ready to share with {recipientName}?
             </h2>
             <p className="text-[#856b5f] mb-6">
-              You've collected {memoryCount} {memoryCount === 1 ? 'memory' : 'memories'}. Prepare the reveal to get your shareable link.
+              You&apos;ve collected {memoryCount} {memoryCount === 1 ? 'memory' : 'memories'}. Prepare the reveal to get your shareable link.
             </p>
             <button
               onClick={() => setShowModal(true)}
@@ -94,7 +94,7 @@ export default function DashboardClientSection({
             Your MemoryPop is ready to share with {recipientName}
           </h2>
           <p className="text-[#856b5f]">
-            Use the reveal link below when you're ready to share the celebration.
+            Use the reveal link below when you&apos;re ready to share the celebration.
           </p>
         </div>
 
