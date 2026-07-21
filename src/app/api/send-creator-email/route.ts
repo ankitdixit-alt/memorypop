@@ -1,25 +1,32 @@
 /**
- * API Route: Send Creator Email
- * Sprint 1: Creator Email Capture & Recovery
+ * API Route: Send Creator Welcome Email
+ * Private Beta: Optional Email Convenience Feature
  *
  * Endpoint: POST /api/send-creator-email
- * Purpose: Capture creator email, send confirmation with dashboard + contributor links
+ * Purpose: Send creator a warm welcome email with their links and MemoryPop details
  *
- * Request: { shareCode: string, email: string }
+ * Request: { shareCode: string, email: string, managementToken: string }
  * Response: { success: boolean, message?: string, error?: string }
  *
+ * Security Model:
+ * - Validates creator session (HTTP-only cookie)
+ * - Validates management token hashes to stored hash
+ * - Never persists raw management token
+ * - Never persists unverified email address
+ * - Rate limited (5 minutes per MemoryPop)
+ * - No logging of tokens or email addresses
+ *
  * TODO (Future Enhancement):
- * When Creator Email is enabled, verified creators should be able to request
- * a fresh authenticated session instead of relying on the permanent recovery link.
- * This would provide an additional security layer by making the management token
- * revocable and allowing email-based session restoration.
+ * When Creator Identity is enabled, this email may become part of a verification flow.
+ * For now: Email is send-only convenience, not authentication or identity.
+ * Private Creator Link remains the only security boundary.
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { Resend } from "resend";
-import CreationConfirmationEmail from "@/emails/CreationConfirmation";
-import { generateVerificationToken } from "@/lib/verification";
+import CreatorWelcomeEmail from "@/emails/CreatorWelcome";
+import { hashManagementToken } from "@/lib/verification";
 import { getCreatorSession } from "@/lib/creatorSession";
 
 /**
@@ -65,7 +72,7 @@ function buildMemoryPopUrl(path: string): string {
 
   try {
     new URL(baseUrl); // Validates URL format
-  } catch (error) {
+  } catch {
     throw new Error(`APP_BASE_URL is malformed: ${baseUrl}`);
   }
 
@@ -102,7 +109,7 @@ function isValidEmail(email: string): boolean {
 
 /**
  * POST /api/send-creator-email
- * Handle creator email capture and send confirmation email
+ * Send creator welcome email with Private Creator Link and contributor link
  */
 export async function POST(request: NextRequest) {
   try {
@@ -121,7 +128,7 @@ export async function POST(request: NextRequest) {
     // Validate environment configuration
     const configCheck = validateEmailConfig();
     if (!configCheck.valid) {
-      console.error('Email configuration errors:', configCheck.errors);
+      // DO NOT LOG errors (may contain config details)
       return NextResponse.json(
         {
           error: "Email configuration error",
@@ -133,12 +140,26 @@ export async function POST(request: NextRequest) {
 
     // Parse request body
     const body = await request.json();
-    const { shareCode, email } = body;
+    const { shareCode, email, managementToken } = body;
 
-    // Validate inputs
+    // Validate inputs (DO NOT LOG - contains email and token)
     if (!shareCode) {
       return NextResponse.json(
         { error: "shareCode is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!email || !isValidEmail(email)) {
+      return NextResponse.json(
+        { error: "Invalid email address" },
+        { status: 400 }
+      );
+    }
+
+    if (!managementToken) {
+      return NextResponse.json(
+        { error: "managementToken is required" },
         { status: 400 }
       );
     }
@@ -154,14 +175,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!email || !isValidEmail(email)) {
-      return NextResponse.json(
-        { error: "Invalid email address" },
-        { status: 400 }
-      );
-    }
-
     // Normalize email (lowercase, trim)
+    // DO NOT LOG normalized email
     const normalizedEmail = email.toLowerCase().trim();
 
     // Fetch MemoryPop from database with session validation
@@ -176,6 +191,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "MemoryPop not found or unauthorized" },
         { status: 404 }
+      );
+    }
+
+    // CRITICAL SECURITY: Verify management token hashes to stored hash
+    // This prevents unauthorized email distribution
+    const tokenHash = hashManagementToken(managementToken);
+
+    if (tokenHash !== memorypop.management_token_hash) {
+      // Invalid token - DO NOT LOG token or hash
+      return NextResponse.json(
+        { error: "Invalid management token" },
+        { status: 403 }
       );
     }
 
@@ -195,37 +222,28 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Generate secure verification token
-    const { token, tokenHash, expiresAt } = generateVerificationToken();
-
-    // Update database with PENDING email, token hash, and expiry
-    // SECURITY: Store token HASH only, never plaintext
-    // Email stored in pending_creator_email until verified
+    // Update database with rate limiting timestamp ONLY
+    // DO NOT persist email address or management token
     const { error: updateError } = await supabase
       .from("memorypops")
       .update({
-        pending_creator_email: normalizedEmail, // Store as PENDING (not verified yet)
         verification_sent_at: new Date().toISOString(), // For rate limiting
-        verification_token_hash: tokenHash,
-        verification_token_expires_at: expiresAt.toISOString(),
-        verification_attempts: 0, // Reset attempts on new token
       })
       .eq("share_code", shareCode);
 
     if (updateError) {
-      console.error("Database update error:", updateError);
+      // DO NOT LOG error (may contain sensitive data)
       return NextResponse.json(
         { error: "Failed to update database" },
         { status: 500 }
       );
     }
 
-    // Generate VERIFICATION link (not dashboard link)
-    // User must verify email ownership before accessing dashboard
-    const verificationLink = buildMemoryPopUrl(`/verify-email?token=${token}&code=${shareCode}`);
+    // Generate email links
+    const managementLink = buildMemoryPopUrl(`/manage/${managementToken}`);
     const contributorLink = buildMemoryPopUrl(`/m/${shareCode}/contribute`);
 
-    // Send email via Resend
+    // Send welcome email via Resend
     const resend = getResend();
     const fromEmail = process.env.EMAIL_FROM;
 
@@ -233,37 +251,69 @@ export async function POST(request: NextRequest) {
       throw new Error('EMAIL_FROM environment variable is not configured');
     }
 
+    // Calculate celebration timeline if date exists
+    const celebrationMessage = memorypop.celebration_date
+      ? formatCelebrationTimeline(memorypop.celebration_date)
+      : null;
+
     const { error: sendError } = await resend.emails.send({
       from: fromEmail,
       to: normalizedEmail,
-      subject: `Verify your email for ${memorypop.recipient_name}'s MemoryPop 🎉`,
-      react: CreationConfirmationEmail({
+      subject: `🎉 Your MemoryPop is ready!`,
+      react: CreatorWelcomeEmail({
         recipientName: memorypop.recipient_name,
         occasion: memorypop.occasion,
-        verificationLink,
+        celebrationDate: memorypop.celebration_date,
+        celebrationMessage,
+        createdAt: memorypop.created_at,
+        managementLink,
         contributorLink,
       }),
     });
 
     if (sendError) {
-      console.error("Email send error:", sendError);
+      // DO NOT LOG sendError (may contain email or token)
       return NextResponse.json(
-        { error: "Failed to send email", details: sendError.message },
+        { error: "Failed to send email", details: "Email delivery failed" },
         { status: 500 }
       );
     }
 
-    // Success response
+    // Success response (DO NOT include email or token in response)
     return NextResponse.json({
       success: true,
       message: "Email sent successfully",
     });
 
-  } catch (error) {
-    console.error("Unexpected error in send-creator-email:", error);
+  } catch {
+    // DO NOT LOG error (may contain email or token)
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
     );
+  }
+}
+
+/**
+ * Format celebration date timeline message
+ * @param dateString - ISO date string
+ * @returns Human-readable timeline message
+ */
+function formatCelebrationTimeline(dateString: string): string {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const celebration = new Date(dateString);
+  celebration.setHours(0, 0, 0, 0);
+
+  const diffTime = celebration.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays > 0) {
+    return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} until the celebration`;
+  } else if (diffDays === 0) {
+    return "Today is the celebration!";
+  } else {
+    return "Celebration complete";
   }
 }

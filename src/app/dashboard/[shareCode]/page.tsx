@@ -4,7 +4,7 @@ import { isCreatorAuthorized } from "@/lib/creatorSession";
 import { headers } from "next/headers";
 import { ShareButtons } from "@/components/ShareButtons";
 import { DashboardPlusFeatures } from "@/components/DashboardPlusFeatures";
-import { EmailCaptureReminder } from "@/components/EmailCaptureReminder";
+// import { EmailCaptureReminder } from "@/components/EmailCaptureReminder"; // Disabled: incompatible with new security model
 import DashboardClientSection from "@/components/DashboardClientSection";
 import { Suspense } from "react";
 import Link from "next/link";
@@ -205,15 +205,18 @@ export default async function DashboardPage({
           </div>
         )}
 
-        {/* Email Capture Reminder - Sprint 1 */}
-        {isEmailFeatureEnabled && (
+        {/* Email Capture Reminder - Disabled (incompatible with new security model)
+            TODO: Dashboard email capture requires management token which is not available here.
+            Email capture now only available on success page where token is accessible.
+        */}
+        {/* {isEmailFeatureEnabled && (
           <Suspense fallback={null}>
             <EmailCaptureReminder
               shareCode={shareCode}
               hasEmail={hasCreatorEmail}
             />
           </Suspense>
-        )}
+        )} */}
 
         {/* Plus Features (Welcome Message & Upgrade CTA) */}
         <Suspense fallback={null}>

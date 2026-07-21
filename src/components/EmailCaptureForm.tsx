@@ -1,10 +1,14 @@
 /**
  * Email Capture Form Component
- * Sprint 1: Creator Email Capture & Recovery
+ * Private Beta: Optional Creator Welcome Email
  *
- * Displays inline email capture form on success page
- * Handles submission to API, shows success/error states
- * Tracks analytics events throughout the flow
+ * Sends creator a warm welcome email with:
+ * - Private Creator Link (for dashboard access)
+ * - Contributor Link (for sharing)
+ * - MemoryPop summary and details
+ *
+ * Security: Management token validated server-side, never persisted.
+ * Email address not stored (send-only convenience feature).
  */
 
 "use client";
@@ -14,9 +18,11 @@ import { trackEvent } from "@/lib/analytics";
 
 interface EmailCaptureFormProps {
   shareCode: string;
+  managementToken: string;
+  baseUrl: string; // Passed from server but not used client-side
 }
 
-export function EmailCaptureForm({ shareCode }: EmailCaptureFormProps) {
+export function EmailCaptureForm({ shareCode, managementToken }: EmailCaptureFormProps) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -26,14 +32,18 @@ export function EmailCaptureForm({ shareCode }: EmailCaptureFormProps) {
     setStatus("loading");
     setErrorMessage("");
 
-    // Track submission attempt
-    trackEvent("email_capture_submitted", { shareCode });
+    // Track submission attempt (no email or token in event)
+    trackEvent("creator_welcome_email_requested", { shareCode });
 
     try {
       const response = await fetch("/api/send-creator-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ shareCode, email }),
+        body: JSON.stringify({
+          shareCode,
+          email,
+          managementToken, // Validated server-side, never persisted
+        }),
       });
 
       const data = await response.json();
@@ -42,33 +52,29 @@ export function EmailCaptureForm({ shareCode }: EmailCaptureFormProps) {
         throw new Error(data.error || "Failed to send email");
       }
 
-      // Success - track and update UI
+      // Success - track and update UI (no email or token in event)
       setStatus("success");
-      trackEvent("email_captured", { shareCode });
-      trackEvent("creation_email_sent", { shareCode });
+      trackEvent("creator_welcome_email_sent", { shareCode });
 
     } catch (error) {
-      // Error - track and show message
+      // Error - track and show message (no email or token in event)
       setStatus("error");
       setErrorMessage(error instanceof Error ? error.message : "Something went wrong");
-      trackEvent("email_capture_failed", { shareCode, error: String(error) });
+      trackEvent("creator_welcome_email_failed", { shareCode, error: String(error) });
     }
   };
 
   const handleSkip = () => {
-    trackEvent("email_capture_skipped", { shareCode });
+    trackEvent("creator_welcome_email_skipped", { shareCode });
   };
 
   // Success State
   if (status === "success") {
     return (
       <div className="text-center">
-        <div className="text-4xl mb-2">📧</div>
-        <p className="text-lg font-semibold text-[#3a241e] mb-2">
-          Check Your Inbox!
-        </p>
-        <p className="text-sm text-[#6B5B52]">
-          We sent both links to <strong>{email}</strong>
+        <div className="text-4xl mb-2">✓</div>
+        <p className="text-lg font-semibold text-[#3a241e]">
+          Your MemoryPop details are on their way.
         </p>
       </div>
     );
@@ -92,7 +98,7 @@ export function EmailCaptureForm({ shareCode }: EmailCaptureFormProps) {
           disabled={status === "loading"}
           className="rounded-full bg-[#ef6a57] px-7 py-3 font-semibold text-white transition-colors hover:bg-[#d95a47] active:ring-2 active:ring-[#FF6B57] active:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {status === "loading" ? "Sending..." : "Send Email"}
+          {status === "loading" ? "Sending..." : "Email me these details"}
         </button>
       </div>
 

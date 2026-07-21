@@ -115,19 +115,23 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
           </div>
         </div>
 
-        {/* Email Capture Section - Sprint 1 */}
-        {isEmailFeatureEnabled && (
+        {/* Email Capture Section - Optional Convenience */}
+        {isEmailFeatureEnabled && managementToken && (
           <>
             <div className="mt-10 w-full border-t border-[#ead8c9]"></div>
 
             <div className="mt-10 w-full rounded-3xl border border-[#ead8c9] bg-white p-6 shadow-sm">
-              <p className="mb-4 text-center text-sm font-semibold uppercase tracking-wide text-[#856b5f]">
-                💌 Save Your Links via Email
+              <p className="mb-4 text-center text-lg font-semibold text-[#856b5f]">
+                📧 Save your MemoryPop details
               </p>
               <p className="mb-4 text-center text-sm text-[#6B5B52]">
-                We&apos;ll email you both links so you never lose access to {recipient}&apos;s MemoryPop.
+                Enter your email and we&apos;ll send you your Private Creator Link, contributor link, MemoryPop summary, and celebration date.
               </p>
-              <EmailCaptureForm shareCode={shareCode} />
+              <EmailCaptureForm
+                shareCode={shareCode}
+                managementToken={managementToken}
+                baseUrl={baseUrl}
+              />
             </div>
           </>
         )}

@@ -2,15 +2,20 @@
  * Email Capture Reminder Component
  * Sprint 1: Creator Email Capture & Recovery
  *
- * Displays dismissible banner on dashboard for creators who skipped email
- * Session-based dismissal (not persistent across devices)
- * Includes inline email capture form
+ * STATUS: DISABLED - Incompatible with new security model
+ *
+ * The new email flow requires management token validation, which is not available
+ * on the dashboard (only token hash is stored). Email capture is now only supported
+ * on the success page where the raw token is available.
+ *
+ * TODO: Either remove this component or redesign to work without management token.
+ * Possible future approach: Email-based recovery link system.
  */
 
 "use client";
 
 import { useState, useEffect } from "react";
-import { EmailCaptureForm } from "./EmailCaptureForm";
+// import { EmailCaptureForm } from "./EmailCaptureForm"; // Disabled
 import { trackEvent } from "@/lib/analytics";
 
 interface EmailCaptureReminderProps {
@@ -80,8 +85,10 @@ export function EmailCaptureReminder({ shareCode, hasEmail }: EmailCaptureRemind
         </p>
       </div>
 
-      {/* Email Capture Form */}
-      <EmailCaptureForm shareCode={shareCode} />
+      {/* Email Capture Form - Disabled (requires management token) */}
+      <p className="text-sm text-[#856b5f]">
+        Email capture is only available during MemoryPop creation.
+      </p>
     </div>
   );
 }
