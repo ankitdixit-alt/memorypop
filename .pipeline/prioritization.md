@@ -1,517 +1,235 @@
-# Product Prioritization: Occasion Intelligence v1
+# Product Owner Decision: Success Page UX Redesign
 
-**Feature:** Occasion Intelligence v1
-**Type:** Copy Enhancement
-**Evaluated:** 2026-07-10
-**Evaluator:** Product Owner Agent
+## Decision
 
----
+**BUILD NOW**
 
-## Product Decision
+## Product Owner Score
 
-### ✅ BUILD NOW
-
-This feature should proceed to planning immediately.
-
----
-
-## Score Breakdown
-
-| Dimension | Score | Weight | Rationale |
-|-----------|-------|--------|-----------|
-| **Customer Value** | 5/5 | High | First impression, emotional resonance, completes broken promise |
-| **MVP Importance** | 4/5 | High | Completes existing feature, brand perception, first impression |
-| **Complexity** | 4/5 | Medium | Low complexity = high score (copy only, no redesign) |
-| **Learning Value** | 3/5 | Medium | Foundation for future, validates occasion diversity |
-| **Revenue Potential** | 3/5 | Medium | Indirect via perception, differentiation, future premium |
-| **TOTAL** | **19/25** | | |
-
-**Score Interpretation:** 19/25 = BUILD LATER (15-19 range)
-
-**But special considerations override score → BUILD NOW**
-
----
+**9/10** - High Value, High Alignment, Low Risk
 
 ## Rationale
 
-### Why BUILD NOW (despite 19/25 score)
+### Customer Value (Critical)
 
-#### 1. Completes Half-Finished Feature
-- Occasion selection exists but doesn't adapt anything
-- This is like having a "select language" dropdown that doesn't change the language
-- **Completing existing features > adding new features**
+The success page is the creator's first impression of the product experience after creation.
 
-#### 2. First Impression Impact
-- Copy is the first thing users see
-- Wrong occasion copy breaks immersion immediately
-- "Happy Birthday" on a retirement MemoryPop = broken experience
-- **Cost of getting it wrong > cost of building it right**
+Current problems:
 
-#### 3. Low Cost, High Perception Impact
-- $5-7 cost for significant perception improvement
-- Copy changes are cheap
-- Perception impact is high
-- **High ROI = build now**
+1. **Inverted hierarchy**: Security features dominate over the primary user goal (collecting memories)
+2. **Punitive UX**: Blocking dashboard access creates anxiety instead of celebration
+3. **Cognitive overload**: Three competing sections with unclear priority
+4. **Technical language**: "management token", "recovery", "authentication" breaks the celebration moment
+5. **Broken interaction**: "Skip for now" button performs no action
 
-#### 4. Product Principle Alignment
-From `memorypop-context.md`:
-- ✅ "Emotion before technology" - Personalized copy increases emotion
-- ✅ "Every detail matters" - Occasion-aware copy shows attention to detail
-- ✅ "Make it feel like a gift" - Right words make it feel more special
-- ✅ "Build moments, not pages" - The moment feels more special with right words
+Creator mental model at this moment:
+- ✅ "Great! Now I need everyone to contribute."
+- ✅ "I don't want to lose access later."
+- ❌ NOT thinking about authentication, tokens, verification
 
-**This feature is highly aligned with core principles.**
+This redesign aligns the page with the creator's natural workflow.
 
-#### 5. MVP Credibility
-- MemoryPop positions as "premium" and "thoughtful"
-- Generic copy undermines this positioning
-- "One beautiful home for every celebration" requires occasion awareness
-- **MVP credibility depends on this**
+### MVP Alignment (Strong)
 
----
+MemoryPop is a **celebration product**.
 
-## Alignment with Founder Principles
+The success page should:
+- Celebrate the creation
+- Make inviting contributors effortless
+- Reassure about access without being technical
+- Feel warm and friendly, not transactional
 
-### ✅ Strongly Aligned
+Current page feels like a password manager, not a celebration tool.
 
-**From `memorypop-context.md`:**
+This redesign is **core to the product promise**.
 
-1. **"Emotion before technology"**
-   - Occasion-specific copy increases emotional resonance
-   - "Congratulations on an Incredible Career" vs "Happy Birthday" completely changes emotional impact
+### Business Impact (High)
 
-2. **"Every detail matters"**
-   - Occasion-aware copy shows attention to detail
-   - Makes non-birthday users feel product was made for them
+**Primary metric:** Contributors per MemoryPop
 
-3. **"Make it feel like a gift"**
-   - Right words make the celebration feel more special
-   - Wrong words break the gift-like experience
+If creators don't invite contributors immediately, they may never return.
 
-4. **"Build moments, not pages"**
-   - The moment feels more special with appropriate occasion language
-   - Copy creates the emotional context for the celebration
+The success page is the **highest-leverage conversion point** for contributor invitations.
 
-5. **"Delight through small moments"**
-   - Occasion-appropriate copy is a delightful detail
-   - Shows thoughtfulness and care
+Current page buries the invitation CTA below security features.
 
-6. **"One beautiful home for every celebration"**
-   - Generic copy doesn't honor "every celebration"
-   - Occasion awareness required to deliver on this promise
+Fixing this will directly impact:
+- Contributors per MemoryPop
+- Memories per MemoryPop
+- MemoryPop completion rate
+- Creator satisfaction
 
-**Conclusion:** This feature is not just aligned - it's essential to deliver on core brand promises.
+### Technical Complexity (Low)
 
----
+This is a **UX reorganization**, not new functionality.
 
-## Trade-offs Considered
+All features already exist:
+- ✅ Share buttons (working)
+- ✅ Email capture (working)
+- ✅ Private Creator Link (working)
+- ✅ Dashboard access (working)
 
-### Option A: BUILD NOW
-**Pros:**
-- ✅ Complete existing feature
-- ✅ Strong first impression
-- ✅ All occasions feel intentional
-- ✅ Premium positioning credible
-- ✅ Foundation for future features
-- ✅ Low cost ($5-7)
+Changes required:
+- Reorder existing sections
+- Remove blocking behavior
+- Update copy and visual hierarchy
+- Remove "Skip for now" button
 
-**Cons:**
-- ⚠️ Takes 1-2 days to implement and test
-- ⚠️ Delays other features slightly
-- ⚠️ Requires testing all occasions (6 occasions × 6 pages)
+**No new API endpoints.**
+**No database changes.**
+**No security changes.**
 
-### Option B: BUILD LATER (after launch)
-**Pros:**
-- ✅ Ship other features faster
-- ✅ Can iterate based on usage data
-- ✅ Focus on core flows first
+Estimated effort: **1-2 days**
 
-**Cons:**
-- ❌ Half-finished feature remains broken
-- ❌ Non-birthday users feel product isn't for them
-- ❌ "Happy Birthday" on retirement MemoryPop = bad UX
-- ❌ Generic copy undermines premium positioning
-- ❌ First impressions can't be recovered
-- ❌ Technical debt (will need to update later anyway)
+### Risk Assessment (Low)
 
-### Option C: DON'T BUILD (remove occasion selection)
-**Pros:**
-- ✅ Simplifies product (one less field)
-- ✅ Reduces maintenance burden
+**Security risk:** None
+- All existing security remains unchanged
+- Management token validation unchanged
+- Session management unchanged
 
-**Cons:**
-- ❌ Removes differentiation from competitors
-- ❌ Forces birthday-only positioning
-- ❌ Limits market size significantly
-- ❌ Conflicts with "every celebration" mission
-- ❌ Database field already exists
+**Product risk:** Low
+- Removing blocking behavior is **safer** than blocking
+- Email section remains optional
+- Private Creator Link still prominently available
 
-**Recommendation: Option A (BUILD NOW) wins**
+**Technical risk:** Very Low
+- No infrastructure changes
+- No API changes
+- Simple component reorganization
 
-The cost of getting occasion copy wrong (broken immersion, undermined positioning) exceeds the cost of building it right ($5-7, 1-2 days).
+**Rollback:** Easy
+- Simple git revert if needed
 
----
+### Alternative Approaches Considered
+
+**Option A:** Keep blocking behavior, just reorder sections
+- ❌ Still punitive
+- ❌ Doesn't solve core problem
+
+**Option B:** Remove Private Creator Link entirely, email only
+- ❌ Too aggressive
+- ❌ Users who don't want to provide email have no alternative
+
+**Option C:** Recommended approach
+- ✅ Reorder: Celebrate → Invite → Save access
+- ✅ Remove blocking
+- ✅ Email recommended, link as alternative
+- ✅ Warm language throughout
+- ✅ Mobile-first design
 
 ## Smallest Useful Slice
 
-### Recommended: Ship Full Feature ($5-7, 1-2 days)
+**Phase 1:** Success Page UX Redesign (this request)
 
-**Why not phase?**
-- Partial implementation creates inconsistency
-- "Some pages have occasion copy, some don't" feels broken
-- Copy changes are already small scope
-- Better to ship complete experience
+### In Scope
 
-**Full scope:**
-- ✅ Support all 6 occasions (Birthday, Farewell, Wedding, Baby, Graduation, Retirement)
-- ✅ Update all 6 pages (Create, Success, View, Contribute, Dashboard, Reveal)
-- ✅ Create occasion mapping utility
-- ✅ Test all combinations (36 test cases)
+1. **Information hierarchy**
+   - Section 1: Celebrate success
+   - Section 2: Invite contributors (PRIMARY CTA)
+   - Section 3: Keep access safe (email recommended, link alternative)
 
-**If we must phase (not recommended):**
+2. **Behavior changes**
+   - Remove dashboard button blocking
+   - Remove "Skip for now" button
+   - Collapse email form after success
 
-**Phase 1: Core Occasions + Key Pages** ($3-4, 1 day)
-- Support 4 occasions: Birthday, Farewell, Wedding, Retirement
-- Update 2 pages: Reveal + Dashboard (highest impact)
+3. **Copy updates**
+   - Warm, celebration-focused language
+   - Remove technical terms (management token, verification, etc.)
+   - Use "Private Creator Link", "MemoryPop details"
 
-**Phase 2: Full Coverage** ($2-3, 0.5 days)
-- Add remaining occasions (Baby, Graduation)
-- Update remaining pages (Create, Success, Contribute, View)
+4. **Visual hierarchy**
+   - Make contributor invitation most prominent
+   - Reduce security warning visual weight
+   - Mobile-first responsive design
 
----
+5. **Analytics review**
+   - Verify events don't leak sensitive data
+   - Ensure events track redesigned flow
 
-## In Scope
+### Out of Scope
 
-### ✅ Included in Occasion Intelligence v1
+- Email template changes (already warm and friendly)
+- Dashboard page changes
+- New features or functionality
+- API or backend changes
+- Database schema changes
+- Security model changes
+- Email delivery mechanism changes
 
-1. **Copy changes across 6 pages:**
-   - Create flow (`/create`)
-   - Success page (`/success`)
-   - MemoryPop view page (`/m/[shareCode]`)
-   - Contribute page (`/m/[shareCode]/contribute`)
-   - Dashboard (`/dashboard/[shareCode]`)
-   - Reveal experience (`/m/[shareCode]/reveal`)
+### Success Outcome
 
-2. **Copy elements to adapt:**
-   - Page headings
-   - Subheadings
-   - Helper text
-   - Empty states
-   - Button labels
-   - Success messages
-   - Reveal messages
-   - Dashboard copy
-   - Call-to-action text
+**Primary metrics:**
+- Increase "contributor link copied" events by 30%+
+- Increase "WhatsApp share" actions by 30%+
+- Maintain or increase email capture rate
 
-3. **Supported occasions:**
-   - Birthday
-   - Farewell
-   - Wedding
-   - New Baby
-   - Graduation
-   - Retirement
+**Secondary metrics:**
+- Reduce time-to-first-contributor-invitation
+- Reduce dashboard button frustration (remove blocking)
+- Improve creator satisfaction (qualitative feedback)
 
-4. **Technical:**
-   - Create occasion mapping utility (`lib/occasion-copy.ts`)
-   - Use existing `occasion` field from `memorypops` table
-   - Follow existing design system
-   - Keep all layouts unchanged
-
-5. **Testing:**
-   - Test all 6 occasions × 6 pages (36 test cases)
-   - Regression testing (existing functionality)
-   - Mobile experience verification
-
----
-
-## Out of Scope
-
-### ❌ NOT included in v1
-
-1. **No new features:**
-   - Different user flows per occasion
-   - Occasion-specific features
-   - Occasion recommendations
-   - Occasion-specific analytics (can add later)
-
-2. **No visual changes:**
-   - Occasion-specific themes/colors
-   - Occasion-specific images/illustrations
-   - UI redesign
-   - Layout changes
-   - New design system components
-
-3. **No AI features:**
-   - AI-generated occasion content
-   - AI occasion detection
-   - AI message suggestions per occasion
-
-4. **No database changes:**
-   - No new fields (use existing `occasion`)
-   - No schema changes
-   - No migrations
-
-5. **No authentication changes:**
-   - Creator journey unchanged
-   - Contributor experience unchanged
-   - No new user flows
-
----
-
-## Success Outcome
-
-### Primary Success Criteria
-
-**User story:**
-A creator makes a MemoryPop for a retirement celebration:
-1. ✅ Final reveal says "Congratulations on an Incredible Career" not "Happy Birthday"
-2. ✅ Dashboard copy feels retirement-appropriate
-3. ✅ Contributors see retirement-appropriate messaging
-4. ✅ The entire experience feels intentionally designed for retirement
-
-**Qualitative:**
-- All 6 supported occasions feel intentional (manual audit)
-- No birthday-specific wording for other occasions (automated check)
-- Existing functionality continues working (regression tests pass)
-
-**Quantitative (optional, not MVP):**
-- Track occasion usage distribution (birthday vs non-birthday)
-- Monitor completion rates by occasion (no significant drop)
-
-### What Success Looks Like
-
-**Before (current state):**
-- User creates retirement MemoryPop
-- Reveal page says "Happy Birthday!" ❌
-- Dashboard says "birthday celebration" ❌
-- Contributors see "birthday message" ❌
-- Feels generic and thoughtless ❌
-
-**After (v1):**
-- User creates retirement MemoryPop
-- Reveal page says "Congratulations on an Incredible Career" ✅
-- Dashboard says "retirement celebration" ✅
-- Contributors see "retirement message" ✅
-- Feels intentionally designed for retirement ✅
-
-**Perception shift:**
-- From: "This is a birthday tool I'm using for something else"
-- To: "This was made for my retirement celebration"
-
----
+**User experience:**
+- Creator feels celebrated, not anxious
+- Inviting contributors feels effortless and primary
+- Access preservation feels reassuring, not technical
 
 ## Notes for Planner
 
-If this moves to planning stage:
+### Critical Requirements
 
-### 1. Start with Audit
-- Document all existing copy that needs occasion awareness
-- Identify copy patterns (headings, CTAs, empty states, etc.)
-- Map which pages have which copy elements
+1. **Security unchanged**
+   - All token validation remains
+   - No token logging
+   - No persistence changes
+   - Session management unchanged
 
-### 2. Design Occasion Mapping Utility
-- Create `lib/occasion-copy.ts` as single source of truth
-- Structure: `getOccasionCopy(occasion: string, element: string) => string`
-- Example elements: 'heading', 'subheading', 'cta', 'emptyState', 'successMessage'
-- Easy to add new occasions later
-- Easy to maintain and update
+2. **Mobile-first design**
+   - Reduce vertical height
+   - Improve spacing
+   - Primary CTA visible without scrolling
 
-### 3. Map Copy Elements by Occasion
-- Create comprehensive copy map for all occasions
-- Document copy variations for each element
-- Consider tone: Birthday (joyful), Farewell (warm), Wedding (celebratory), Retirement (respectful)
+3. **Copy tone**
+   - Warm, friendly, celebratory
+   - Plain language, no jargon
+   - Keep security warning: "Keep this link private. Anyone with it can manage your MemoryPop."
 
-### 4. Update Components Systematically
-- One page at a time
-- Replace hardcoded strings with utility calls
-- Preserve existing functionality
-- Test after each page
+4. **Email section**
+   - Optional and non-blocking
+   - Recommended over link alternative
+   - Collapse form after success
+   - Remove "Skip for now" button
 
-### 5. Testing Strategy
-- **Test matrix:** 6 occasions × 6 pages = 36 test cases minimum
-- Manual testing required (qualitative evaluation of copy tone)
-- Automated regression testing where possible
-- Mobile experience verification
+5. **Analytics**
+   - Review all events for sensitive data
+   - Track redesigned flow
+   - No tokens or emails in events
 
-### 6. Key Architectural Decisions
-- **Where does copy live?** Utility file (`lib/occasion-copy.ts`)
-- **How do components access it?** Import utility, pass occasion prop
-- **What about default/fallback?** Birthday as default (most common)
-- **How to handle new occasions?** Add to utility map, no code changes needed elsewhere
+### Files Likely Affected
 
-### 7. Example Implementation
+- `src/app/success/page.tsx` - Main page reorganization
+- `src/components/SuccessActions.tsx` - Remove blocking behavior
+- `src/components/EmailCaptureForm.tsx` - Remove "Skip" button
+- Possibly new component for reorganized sections
 
-```typescript
-// lib/occasion-copy.ts
-export function getOccasionCopy(occasion: string, element: 'heading' | 'subheading' | 'cta' | ...): string {
-  const copyMap = {
-    birthday: {
-      heading: 'Happy Birthday!',
-      subheading: 'Celebrate their special day',
-      // ...
-    },
-    retirement: {
-      heading: 'Congratulations on an Incredible Career',
-      subheading: 'Honor this milestone',
-      // ...
-    },
-    // ...
-  }
-  return copyMap[occasion]?.[element] || copyMap.birthday[element]
-}
-```
+### Testing Focus
 
-### 8. Preserve Existing Functionality
-- This is enhancement only, not refactor
-- No breaking changes
-- No new user flows
-- No layout changes
-- Follow existing patterns
+- Visual hierarchy on mobile
+- Non-blocking dashboard access
+- Email form collapse after success
+- Analytics events
+- Accessibility (color contrast, ARIA labels)
+- Security unchanged
 
----
+### Open Questions
 
-## Risk Assessment
+None - requirements are clear and comprehensive.
 
-### Technical Risk: ✅ LOW
-- **Why:** No database changes, no UI redesign, string substitution only
-- **Mitigation:** Easy to test and rollback
-- **Confidence:** High (straightforward implementation)
+## Product Owner Signature
 
-### Product Risk: ✅ LOW
-- **Why:** Enhances existing functionality, aligned with core principles
-- **Mitigation:** No new user flows, no new complexity for users
-- **Confidence:** High (user value is clear)
+Approved for Planning Phase
 
-### Budget Risk: ✅ LOW
-- **Cost:** $5-7
-- **Available:** $22.50+
-- **Buffer:** $15+ remaining after completion
-- **Confidence:** Very safe to proceed
-
-### Schedule Risk: ✅ LOW
-- **Duration:** 1-2 days
-- **Dependencies:** None (independent work)
-- **Parallelization:** Can be done alongside other work
-- **Confidence:** Won't block other features
-
-### Reputation Risk: ⚠️ MEDIUM-HIGH (if we DON'T build)
-- **Issue:** Leaving occasion field unused looks unfinished
-- **Impact:** Generic copy undermines premium positioning
-- **Consequence:** Wrong occasion copy creates bad first impression
-- **Mitigation:** BUILD NOW to avoid reputation damage
-
-**Overall Risk Assessment:**
-- Building this: ✅ LOW risk
-- NOT building this: ⚠️ MEDIUM-HIGH perception risk
-
-**Recommendation:** Risk profile favors building immediately.
-
----
-
-## Estimated Effort
-
-### Planning Phase
-**Duration:** 0.5 days
-**Cost:** ~$1.50
-**Activities:**
-- Audit existing copy across all pages
-- Design occasion mapping utility structure
-- Document copy elements per occasion
-- Create test matrix (6 occasions × 6 pages)
-
-### Implementation Phase
-**Duration:** 1.0 days
-**Cost:** ~$3.00-4.00
-**Activities:**
-- Create `lib/occasion-copy.ts` utility
-- Update 6 pages/components with occasion-aware copy
-- Manual testing during implementation
-- Fix any issues found
-
-### Testing Phase
-**Duration:** 0.5 days
-**Cost:** ~$0.50-1.50
-**Activities:**
-- Test all occasions (6)
-- Test all pages (6)
-- Test combinations (36 test cases)
-- Regression testing (existing functionality)
-- Mobile experience verification
-
-### Total Effort
-**Duration:** 2.0 days
-**Cost:** $5.00-7.00
-**Budget Available:** $22.50+ (78-80% of daily cap remaining)
-**Buffer After Completion:** $15.50-17.50
-
-**Budget Health:** ✅ EXCELLENT (safe to proceed)
-
----
-
-## Budget Context
-
-**Current State:**
-- Daily Cap: $30/user/day
-- Spent Today: $6.00-6.60 (Dashboard v2 Phase 1)
-- Remaining: $23.40-24.00 (78-80%)
-
-**This Feature:**
-- Estimated Cost: $5.00-7.00
-- Percentage of Daily Cap: 17-23%
-- Remaining After: $16.40-19.00 (55-63%)
-
-**Budget Compliance:** ✅ EXCELLENT
-- Well within daily cap
-- Large buffer remaining
-- Safe to proceed immediately
-
-**Checkpoint Strategy:**
-- Checkpoint 1: After planning ($1.50) → $21.90-22.50 remaining
-- Checkpoint 2: After implementation ($4.50-5.50) → $17.90-19.90 remaining
-- Checkpoint 3: After testing ($5.00-7.00) → $16.40-19.00 remaining
-
-**Risk:** ✅ LOW (very unlikely to hit budget limits)
-
----
-
-## Final Recommendation Summary
-
-### Decision: ✅ BUILD NOW
-
-**Why:**
-1. Completes half-finished feature (occasion field exists but unused)
-2. Low cost ($5-7), high perception impact
-3. Critical for first impressions and premium positioning
-4. Highly aligned with core product principles
-5. Foundation for future occasion features
-6. Well within budget ($22.50+ remaining)
-
-**What:**
-- Adapt copy across 6 pages based on selected occasion
-- Support 6 occasions (Birthday, Farewell, Wedding, Baby, Graduation, Retirement)
-- Create occasion mapping utility
-- Test all combinations (36 test cases)
-
-**When:**
-- Proceed to planning immediately
-- 2-day implementation cycle
-- Can be done alongside other work
-
-**Confidence:**
-- ✅ High customer value
-- ✅ Low technical risk
-- ✅ Strong principle alignment
-- ✅ Safe budget
-
----
-
-**Status:** Ready for Planning
-**Next Step:** Route to Planner Agent
-**Expected Timeline:** 2 days from planning start to completion
-
----
-
-**Evaluated by:** Product Owner Agent
-**Date:** 2026-07-10
-**Budget Status:** ✅ HEALTHY ($22.50+ remaining)
-**Recommendation:** ✅ BUILD NOW
+**Date:** 2026-07-21
+**Product Owner:** Claude Orchestrator
+**Next Stage:** Planning (awaiting Founder approval after specs)

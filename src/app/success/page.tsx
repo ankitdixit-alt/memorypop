@@ -2,8 +2,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { ShareButtons } from "@/components/ShareButtons";
-import { EmailCaptureForm } from "@/components/EmailCaptureForm";
-import { SuccessActions } from "@/components/SuccessActions";
+import { CreatorAccessSection } from "@/components/CreatorAccessSection";
 import { getCelebrationExperience } from "@/lib/celebrationExperience";
 import { isCreatorAuthorized } from "@/lib/creatorSession";
 import type { Metadata } from "next";
@@ -70,39 +69,27 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   return (
     <main className="min-h-screen bg-[#FFF8F2] px-6 py-12 text-[#2B1E18]">
       <div className="mx-auto flex min-h-[80vh] max-w-2xl flex-col items-center justify-center text-center">
+
+        {/* SECTION 1: CELEBRATION */}
         <p className="text-5xl">{celebrationExperience.emoji}</p>
 
         <h1 className="mt-6 text-4xl font-bold">
           {recipient}&apos;s MemoryPop is Ready!
         </h1>
 
-        <p className="mt-3 text-lg text-[#6B5B52]">
-          {celebrationExperience.celebrationMessage}
+        <p className="mt-4 max-w-xl text-lg leading-relaxed text-[#6B5B52]">
+          Now invite friends and family to add memories before the celebration.
         </p>
 
-        {celebrationExperience.subMessage && (
-          <p className="mt-2 text-lg text-[#6B5B52]">
-            {celebrationExperience.subMessage}
-          </p>
-        )}
+        <div className="mt-8 w-full border-t border-[#ead8c9]"></div>
 
-        <p className="mt-5 max-w-xl text-lg leading-8 text-[#6B5B52]">
-          {recipient}&apos;s celebration has been safely saved. Now invite friends and family
-          to add memories for {recipient}.
-        </p>
-
-        {/* Private Creator Link + Dashboard Access (with copy-to-continue gate) */}
-        <SuccessActions
-          shareCode={shareCode}
-          managementToken={managementToken || null}
-          baseUrl={baseUrl}
-        />
-
-        <div className="mt-10 w-full border-t border-[#ead8c9]"></div>
-
-        <div className="mt-10 w-full rounded-3xl border border-[#ead8c9] bg-white p-6 shadow-sm">
-          <p className="mb-6 text-center text-sm font-semibold uppercase tracking-wide text-[#856b5f]">
-            {celebrationExperience.sharePrompt}
+        {/* SECTION 2: INVITE CONTRIBUTORS (PRIMARY CTA) */}
+        <div className="mt-8 w-full rounded-2xl border-2 border-[#ef6a57] bg-white p-6 shadow-md">
+          <h2 className="text-2xl font-bold text-[#3a241e] mb-2">
+            Invite Friends & Family
+          </h2>
+          <p className="text-sm text-[#6B5B52] mb-6">
+            Share this link to collect memories for {recipient}.
           </p>
 
           <div className="flex justify-center">
@@ -115,30 +102,45 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
           </div>
         </div>
 
-        {/* Email Capture Section - Optional Convenience */}
-        {isEmailFeatureEnabled && managementToken && (
-          <>
-            <div className="mt-10 w-full border-t border-[#ead8c9]"></div>
+        <div className="mt-8 w-full border-t border-[#ead8c9]"></div>
 
-            <div className="mt-10 w-full rounded-3xl border border-[#ead8c9] bg-white p-6 shadow-sm">
-              <p className="mb-4 text-center text-lg font-semibold text-[#856b5f]">
-                📧 Save your MemoryPop details
-              </p>
-              <p className="mb-4 text-center text-sm text-[#6B5B52]">
-                Enter your email and we&apos;ll send you your Private Creator Link, contributor link, MemoryPop summary, and celebration date.
-              </p>
-              <EmailCaptureForm
-                shareCode={shareCode}
-                managementToken={managementToken}
-                baseUrl={baseUrl}
-              />
-            </div>
-          </>
+        {/* SECTION 3: KEEP ACCESS SAFE (Email Recommended, Link Alternative) */}
+        {isEmailFeatureEnabled && managementToken && (
+          <CreatorAccessSection
+            shareCode={shareCode}
+            managementToken={managementToken}
+            baseUrl={baseUrl}
+          />
         )}
 
-        <div className="mt-10 w-full border-t border-[#ead8c9]"></div>
+        {/* If email feature disabled, show link only */}
+        {(!isEmailFeatureEnabled || !managementToken) && managementToken && (
+          <div className="mt-8 w-full rounded-2xl border border-[#ead8c9] bg-white p-6 shadow-sm">
+            <div className="mb-6 text-center">
+              <h2 className="text-xl font-bold text-[#3a241e] mb-2">
+                Keep your creator access safe
+              </h2>
+            </div>
 
-        <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            <PrivateCreatorLinkFallback
+              shareCode={shareCode}
+              managementToken={managementToken}
+              baseUrl={baseUrl}
+            />
+          </div>
+        )}
+
+        <div className="mt-8 w-full border-t border-[#ead8c9]"></div>
+
+        {/* SECTION 4: DASHBOARD & NAVIGATION (Always Enabled) */}
+        <Link
+          href={`/dashboard/${shareCode}`}
+          className="mt-8 inline-block rounded-full border-2 border-[#ef6a57] bg-white px-7 py-4 font-semibold text-[#ef6a57] transition-colors hover:bg-[#fff8ef] active:ring-2 active:ring-[#FF6B57] active:ring-offset-2 transition-all"
+        >
+          View Creator Dashboard
+        </Link>
+
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <Link
             href="/create"
             className="rounded-full border border-[#ead8c9] bg-white px-7 py-4 font-semibold text-[#3a241e] transition-colors hover:bg-[#fff8ef] active:ring-2 active:ring-[#FF6B57] active:ring-offset-2 transition-all"
@@ -155,5 +157,46 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
         </div>
       </div>
     </main>
+  );
+}
+
+// Fallback Private Creator Link component (when email feature disabled)
+function PrivateCreatorLinkFallback({
+  shareCode,
+  managementToken,
+  baseUrl,
+}: {
+  shareCode: string;
+  managementToken: string;
+  baseUrl: string;
+}) {
+  const managementLink = `${baseUrl}/manage/${managementToken}`;
+
+  return (
+    <div>
+      <div className="mb-4">
+        <label className="block text-sm font-semibold text-[#856b5f] mb-2 text-center">
+          Your Private Creator Link:
+        </label>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <input
+            type="text"
+            value={managementLink}
+            readOnly
+            className="flex-1 rounded-lg border border-[#ead8c9] bg-white px-4 py-3 text-sm text-[#3a241e] font-mono focus:outline-none focus:ring-2 focus:ring-[#ef6a57]"
+            aria-label="Private Creator Link"
+          />
+        </div>
+      </div>
+
+      <div className="rounded-lg bg-[#fff8f2] border border-[#ead8c9] p-4 text-center">
+        <p className="text-sm font-semibold text-[#3a241e] mb-1">
+          ⚠️ Keep this link private
+        </p>
+        <p className="text-xs text-[#6B5B52] leading-relaxed">
+          Anyone with it can manage your MemoryPop.
+        </p>
+      </div>
+    </div>
   );
 }

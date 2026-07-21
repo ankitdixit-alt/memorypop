@@ -1,961 +1,1267 @@
-# Implementation Specification: Creator Dashboard v2 (Phase 1)
+# Implementation Specification: Success Page UX Redesign
 
-## Overview
-
-This specification details the Phase 1 enhancement of the Creator Dashboard at `/dashboard/[shareCode]`. The goal is to improve visual hierarchy, add progress visibility, and consolidate quick actions while staying within a tight budget of $4.75-5.25.
-
-**What Phase 1 delivers:**
-- Progress card showing memory collection status
-- Memory counter breakdown (messages, photos, contributors)
-- Consolidated quick actions section
-- Enhanced empty state
-- Better layout and visual hierarchy
-
-**What Phase 1 explicitly does NOT deliver:**
-- Recent activity feed (deferred to Phase 2)
-- Real-time updates (refresh-based is acceptable)
-- Activity timestamps or contributor attribution
-- New database queries or schema changes
+**Feature:** Post-Creation Success Page Redesign
+**Product Owner Decision:** BUILD NOW (Score 9/10)
+**Planning Date:** 2026-07-21
 
 ---
 
-## Files to Modify
+## 1. UX Diagnosis
 
-### Primary File
-**Path:** `/Users/adixit/Downloads/MemoryPop/memorypop/src/app/dashboard/[shareCode]/page.tsx`
+### Current Problems
 
-**Strategy:** Enhance existing dashboard by reorganizing layout and adding new card components inline. Do NOT rebuild from scratch.
+**Problem 1: Inverted Information Hierarchy**
 
-### Supporting Files (No Changes Required)
-- `/Users/adixit/Downloads/MemoryPop/memorypop/src/components/ShareButtons.tsx` - Reuse as-is
-- `/Users/adixit/Downloads/MemoryPop/memorypop/src/lib/supabase.ts` - No changes needed
+Current order:
+1. Success celebration
+2. Private Creator Link (large, prominent, with blocking behavior)
+3. Share with contributors
+4. Email capture
 
----
+Creator's natural workflow:
+1. ✅ "Great! Now invite everyone to contribute"
+2. ✅ "Save my access for later"
 
-## Phase 1 Scope (Build ONLY These Features)
-
-### 1. Progress Card
-
-**Purpose:** Show collection progress at the top of the dashboard to build anticipation and momentum.
-
-**Design:**
-```
-┌─────────────────────────────────────┐
-│  ❤️ 8 Memories Collected            │
-│                                     │
-│  Goal:                              │
-│  Collect memories before the        │
-│  celebration.                       │
-└─────────────────────────────────────┘
-```
-
-**Implementation Details:**
-- Position: Top of dashboard, below header
-- Background: White card with `rounded-2xl shadow-sm`
-- Text styling:
-  - "❤️ X Memories Collected" - Large, bold, primary color (`#3a241e`)
-  - "Goal:" - Small, uppercase, secondary color (`#856b5f`)
-  - Goal text - Regular, primary color
-- Data source: `memoryCount` (already calculated)
-- Singular/plural handling: "1 Memory Collected" vs "X Memories Collected"
-
-**Conditional Logic:**
-- Hide this card entirely when `memoryCount === 0`
-- Show empty state card instead (see section 5)
+**The primary user goal (inviting contributors) is buried below security features.**
 
 ---
 
-### 2. Memory Counter Breakdown
+**Problem 2: Punitive UX Pattern**
 
-**Purpose:** Display detailed metrics with clear visual separation.
+Current behavior:
+- Dashboard button disabled until creator copies Private Creator Link
+- Messaging: "⬆️ Please copy your Private Creator Link first"
 
-**Design:**
-```
-┌──────────────┬──────────────┬──────────────┐
-│   Messages   │    Photos    │ Contributors │
-│      15      │      12      │      8       │
-└──────────────┴──────────────┴──────────────┘
-```
+This creates:
+- ❌ Anxiety instead of celebration
+- ❌ Feeling of being blocked or restricted
+- ❌ Impression that the product doesn't trust the user
 
-**Implementation Details:**
-- Position: Below progress card
-- Layout: 3-column grid on desktop, single column on mobile
-- Each column: White card with `rounded-2xl shadow-sm`
-- Text styling:
-  - Number: Large, bold, primary color (`#3a241e`)
-  - Label: Small, secondary color (`#856b5f`)
-- Icons (optional): Consider adding small icons before labels
-
-**Data Calculations:**
-```typescript
-// Messages count
-const messagesCount = memories?.filter(m => m.message && m.message.trim() !== '').length || 0;
-
-// Photos count
-const photosCount = memories?.filter(m => m.photo_url).length || 0;
-
-// Contributors count (already calculated)
-const contributorCount = new Set(
-  memories?.map((m) => m.contributor_name) || []
-).size;
-```
-
-**Edge Cases:**
-- Zero values: Display "0" not "-" or empty
-- Singular labels: "1 Message", "1 Photo", "1 Contributor"
-- Plural labels: "X Messages", "X Photos", "X Contributors"
+**UX Improvement:** Removing blocking makes the experience feel reassuring instead of punitive. Creator can always access dashboard. If they haven't saved access, show gentle reminder (not blocker).
 
 ---
 
-### 3. Quick Actions Section
+**Problem 3: Broken Interaction**
 
-**Purpose:** Consolidate all dashboard actions in one organized section.
+"Skip for now" button:
+- Performs no meaningful action
+- Only tracks analytics event
+- Section is already optional (ignoring it = skipping)
+- Creates impression of broken UI
 
-**Current State:**
-- ShareButtons component with Copy Link + WhatsApp (lines 103-106)
-- Reveal Celebration button (lines 108-115)
-- Open MemoryPop link (lines 117-123)
-
-**Enhanced Design:**
-```
-┌─────────────────────────────────────┐
-│        Share or View                │
-│                                     │
-│  [Copy Link] [Share WhatsApp]       │
-│                                     │
-│  [Preview MemoryPop]                │
-│                                     │
-│  [Reveal Celebration]   (if memories)│
-└─────────────────────────────────────┘
-```
-
-**Implementation Details:**
-- Position: Below memory counter breakdown
-- Background: White card with `rounded-2xl shadow-sm`
-- Section title: "Quick Actions" or "Share or View" (uppercase, secondary color)
-- Button order:
-  1. ShareButtons component (Copy Link + WhatsApp)
-  2. Preview MemoryPop button (secondary style)
-  3. Reveal Celebration button (primary style, conditional)
-
-**Button Styles:**
-- **Primary action** (Reveal Celebration):
-  - Background: `#ef6a57` (coral)
-  - Text: White
-  - Full width on mobile
-  - Hover: `#e05a47`
-
-- **Secondary action** (Preview MemoryPop):
-  - Background: White
-  - Border: `1px solid #ead8c9`
-  - Text: `#3a241e`
-  - Full width on mobile
-  - Hover: `#fff8ef`
-
-**Conditional Logic:**
-- Reveal Celebration button: Only show when `memoryCount > 0`
-- All other actions: Always visible
+**Violates principle:** Every visible action must have meaningful outcome.
 
 ---
 
-### 4. Empty State
+**Problem 4: Technical Language**
 
-**Purpose:** Guide creators when no memories have been collected yet.
+Current terminology:
+- "Management token"
+- "Recovery"
+- "Private Creator Link" (acceptable)
+- Section feels like password manager, not celebration tool
 
-**Design:**
-```
-┌─────────────────────────────────────┐
-│                                     │
-│  No memories yet.                   │
-│                                     │
-│  Share your MemoryPop to start      │
-│  collecting beautiful memories ❤️   │
-│                                     │
-│  [Copy Link] [Share WhatsApp]       │
-│                                     │
-└─────────────────────────────────────┘
-```
-
-**Implementation Details:**
-- Position: Replaces progress card when `memoryCount === 0`
-- Background: White card with `rounded-2xl shadow-sm`
-- Text styling:
-  - "No memories yet." - Bold, larger, primary color
-  - Description - Regular, secondary color
-  - Heart emoji at end
-- Include ShareButtons component for immediate action
-- Center-aligned text
-
-**Conditional Logic:**
-```typescript
-if (memoryCount === 0) {
-  // Show empty state card (replaces progress card)
-  // Hide memory counter breakdown
-  // Show quick actions (but NOT Reveal Celebration)
-} else {
-  // Show progress card
-  // Show memory counter breakdown
-  // Show full quick actions including Reveal Celebration
-}
-```
+**Breaks the celebration moment** with authentication concepts.
 
 ---
 
-### 5. Enhanced Layout Structure
+**Problem 5: Competing Visual Weight**
 
-**New Dashboard Hierarchy:**
+All three sections have equal visual prominence:
+- Private Creator Link: Large card, red border, extensive warnings
+- Share with contributors: Standard white card
+- Email capture: Standard white card
 
-```
-Header (unchanged)
-├── Title: "{recipient}'s {occasion}"
-└── Label: "Dashboard"
-
-┌─ Section 1: Progress/Empty State
-│  ├── IF memories > 0: Progress Card
-│  └── IF memories === 0: Empty State Card
-
-┌─ Section 2: Metrics (only if memories > 0)
-│  └── Memory Counter Breakdown (3 columns)
-
-┌─ Section 3: Actions
-│  └── Quick Actions Card
-│     ├── ShareButtons
-│     ├── Preview MemoryPop
-│     └── Reveal Celebration (conditional)
-
-┌─ Section 4: Info Card (move below actions)
-│  └── Story + Status Badge (existing card)
-
-┌─ Section 5: Contributors List (unchanged)
-│  └── Recent Contributors (only if memories > 0)
-```
-
-**Layout Changes:**
-1. Move Info Card (Story + Status) below Quick Actions
-2. Add Progress Card at top
-3. Add Memory Counter Breakdown
-4. Consolidate actions into Quick Actions section
-5. Simplify empty state logic
+**Security warning dominates** when contributor invitation should be most prominent.
 
 ---
 
-## Design System Compliance
+### Root Cause Analysis
 
-### Colors (from memorypop-context.md)
-- Background: `#fff8ef` (cream)
-- Text primary: `#3a241e` (dark brown)
-- Text secondary: `#856b5f` (mid brown)
-- Primary action: `#ef6a57` (coral)
-- Primary hover: `#e05a47`
-- Card background: `#ffffff`
-- Card border: `#ead8c9`
-- Status badge background: `#fff1e6`
+The page was designed around **technical implementation details** (security, token management) rather than **creator workflow** (celebrate → invite → preserve access).
 
-### Typography
-- Section labels: `text-sm font-semibold uppercase tracking-wide`
-- Primary headings: `text-4xl font-bold`
-- Card titles: `text-sm font-semibold uppercase tracking-wide`
-- Body text: `leading-relaxed`
-- Metric numbers: `text-3xl font-bold`
-- Metric labels: `text-sm`
-
-### Spacing
-- Card padding: `p-6` or `p-8` (empty state)
-- Card margin: `mt-6`
-- Section gaps: `gap-4` (grid), `gap-3` (flex)
-- Border radius: `rounded-2xl`
-- Shadow: `shadow-sm`
-
-### Responsive Breakpoints
-- Mobile-first: Default is single column
-- Desktop: `sm:` prefix for larger screens
-- Grid: `grid-cols-2` on mobile, `grid-cols-3` on desktop for counters
+Security is critical but should feel reassuring, not technical or blocking.
 
 ---
 
-## Data Requirements
+## 2. Proposed User Flow
 
-### Available from Existing Queries
+### New Information Architecture
 
-**MemoryPop Data:**
-```typescript
-const { data: memorypop } = await supabase
-  .from("memorypops")
-  .select("*")
-  .eq("share_code", shareCode)
-  .single();
+```
+┌─────────────────────────────────────────┐
+│ SECTION 1: CELEBRATION                   │
+│                                          │
+│ 🎉 [Recipient]'s MemoryPop is ready!    │
+│                                          │
+│ Now invite friends and family to add     │
+│ memories before the celebration.         │
+└─────────────────────────────────────────┘
 
-// Contains: recipient_name, occasion, story, status, celebration_date
+┌─────────────────────────────────────────┐
+│ SECTION 2: INVITE CONTRIBUTORS           │
+│ (PRIMARY CTA - MOST PROMINENT)           │
+│                                          │
+│ Invite Friends & Family                  │
+│                                          │
+│ [Copy Link] [Share on WhatsApp]         │
+│                                          │
+│ Share this link to collect memories.    │
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│ SECTION 3: KEEP ACCESS SAFE             │
+│ (REASSURING, NOT BLOCKING)               │
+│                                          │
+│ Keep your creator access safe            │
+│                                          │
+│ RECOMMENDED:                             │
+│ Email me my MemoryPop details            │
+│                                          │
+│ [Email input] [Email me these details]  │
+│                                          │
+│ ─── OR ───                               │
+│                                          │
+│ Prefer not to use email?                │
+│                                          │
+│ Your Private Creator Link:               │
+│ [Link display] [Copy Link]              │
+│                                          │
+│ ⚠️ Keep this link private.              │
+│ Anyone with it can manage your           │
+│ MemoryPop.                               │
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│ SECTION 4: DASHBOARD ACCESS              │
+│ (ALWAYS ENABLED)                         │
+│                                          │
+│ [View Creator Dashboard]                 │
+│                                          │
+│ [Create Another] [Back Home]            │
+└─────────────────────────────────────────┘
 ```
 
-**Memories Data:**
-```typescript
-const { data: memories } = await supabase
-  .from("memories")
-  .select("*")
-  .eq("memorypop_id", memorypop.id)
-  .order("created_at", { ascending: false });
+### User Journey
 
-// Each memory contains: message, photo_url, contributor_name, created_at
-```
+**Step 1: Creator creates MemoryPop**
+- Form submitted
+- MemoryPop created in database
+- Creator session established
+- Redirected to success page with token in URL
 
-### Derived Calculations
+**Step 2: Celebration**
+- See success message
+- Feel accomplished
 
-```typescript
-// Total memories
-const memoryCount = memories?.length || 0;
+**Step 3: Primary action - Invite contributors**
+- Most prominent section
+- Copy link or share via WhatsApp
+- Analytics tracked
 
-// Contributors (already calculated)
-const contributorCount = new Set(
-  memories?.map((m) => m.contributor_name) || []
-).size;
+**Step 4: Optional - Preserve access (recommended: email)**
+- See two options: email (recommended) or copy link (alternative)
+- Choose preferred method
+- Email sent or link copied
+- Analytics tracked
 
-// Messages count (NEW)
-const messagesCount = memories?.filter(
-  m => m.message && m.message.trim() !== ''
-).length || 0;
-
-// Photos count (NEW)
-const photosCount = memories?.filter(
-  m => m.photo_url
-).length || 0;
-```
-
-**Important:** All data is already available. No new database queries required.
+**Step 5: Continue to dashboard**
+- Click "View Creator Dashboard" (always enabled)
+- If neither email nor copy performed: gentle reminder shown (non-blocking)
+- Access dashboard
 
 ---
 
-## Component Structure
+## 3. Wireframe (Text-Based)
 
-### Reusable Components
+### Mobile View (Priority)
 
-**ShareButtons Component** (existing, no changes)
-- Path: `/src/components/ShareButtons.tsx`
-- Props: `shareLink`, `recipient`
-- Renders: Copy Link button + WhatsApp share button
-- Already styled correctly
-
-### New Inline Components
-
-**Progress Card:**
-```tsx
-<div className="mt-6 rounded-2xl bg-white p-6 shadow-sm">
-  <p className="text-2xl font-bold text-[#3a241e]">
-    ❤️ {memoryCount} {memoryCount === 1 ? 'Memory' : 'Memories'} Collected
-  </p>
-  <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-[#856b5f]">
-    Goal:
-  </p>
-  <p className="mt-1 text-[#3a241e]">
-    Collect memories before the celebration.
-  </p>
-</div>
+```
+╔═══════════════════════════════════════════╗
+║                                           ║
+║              🎉                           ║
+║                                           ║
+║     Shagun's MemoryPop is ready!         ║
+║                                           ║
+║   Now invite friends and family to add    ║
+║   memories before the celebration.        ║
+║                                           ║
+╠═══════════════════════════════════════════╣
+║                                           ║
+║ ┌───────────────────────────────────────┐ ║
+║ │                                       │ ║
+║ │   Invite Friends & Family             │ ║
+║ │                                       │ ║
+║ │   Share this link to collect memories │ ║
+║ │                                       │ ║
+║ │   ┌─────────────────────────────┐    │ ║
+║ │   │     🔗 Copy Link            │    │ ║
+║ │   └─────────────────────────────┘    │ ║
+║ │                                       │ ║
+║ │   ┌─────────────────────────────┐    │ ║
+║ │   │  💬 Share on WhatsApp       │    │ ║
+║ │   └─────────────────────────────┘    │ ║
+║ │                                       │ ║
+║ └───────────────────────────────────────┘ ║
+║                                           ║
+║         ─────────────────────             ║
+║                                           ║
+║ ┌───────────────────────────────────────┐ ║
+║ │                                       │ ║
+║ │   Keep your creator access safe       │ ║
+║ │                                       │ ║
+║ │   Recommended:                        │ ║
+║ │                                       │ ║
+║ │   📧 Email me my MemoryPop details    │ ║
+║ │                                       │ ║
+║ │   The email contains:                 │ ║
+║ │   • Private Creator Link              │ ║
+║ │   • Contributor Link                  │ ║
+║ │   • MemoryPop summary                 │ ║
+║ │   • Celebration date                  │ ║
+║ │                                       │ ║
+║ │   ┌─────────────────────────────┐    │ ║
+║ │   │  your@email.com             │    │ ║
+║ │   └─────────────────────────────┘    │ ║
+║ │                                       │ ║
+║ │   ┌─────────────────────────────┐    │ ║
+║ │   │ Email me these details      │    │ ║
+║ │   └─────────────────────────────┘    │ ║
+║ │                                       │ ║
+║ │   ───────── OR ─────────              │ ║
+║ │                                       │ ║
+║ │   Prefer not to use email?            │ ║
+║ │                                       │ ║
+║ │   Your Private Creator Link:          │ ║
+║ │                                       │ ║
+║ │   ┌─────────────────────────────┐    │ ║
+║ │   │ memorypop.app/manage/xyz... │    │ ║
+║ │   └─────────────────────────────┘    │ ║
+║ │                                       │ ║
+║ │   ┌─────────────────────────────┐    │ ║
+║ │   │     Copy Link               │    │ ║
+║ │   └─────────────────────────────┘    │ ║
+║ │                                       │ ║
+║ │   ⚠️ Keep this link private.         │ ║
+║ │   Anyone with it can manage your      │ ║
+║ │   MemoryPop.                          │ ║
+║ │                                       │ ║
+║ └───────────────────────────────────────┘ ║
+║                                           ║
+║         ─────────────────────             ║
+║                                           ║
+║   ┌───────────────────────────────────┐  ║
+║   │  View Creator Dashboard           │  ║
+║   └───────────────────────────────────┘  ║
+║                                           ║
+║   ┌─────────────┐  ┌─────────────────┐  ║
+║   │ Create      │  │  Back Home      │  ║
+║   │ Another     │  │                 │  ║
+║   └─────────────┘  └─────────────────┘  ║
+║                                           ║
+╚═══════════════════════════════════════════╝
 ```
 
-**Memory Counter Breakdown:**
-```tsx
-<div className="mt-6 grid grid-cols-3 gap-4">
-  {/* Messages Card */}
-  <div className="rounded-2xl bg-white p-6 text-center shadow-sm">
-    <p className="text-3xl font-bold text-[#3a241e]">{messagesCount}</p>
-    <p className="mt-1 text-sm text-[#856b5f]">
-      {messagesCount === 1 ? 'Message' : 'Messages'}
-    </p>
-  </div>
+### Desktop View
 
-  {/* Photos Card */}
-  <div className="rounded-2xl bg-white p-6 text-center shadow-sm">
-    <p className="text-3xl font-bold text-[#3a241e]">{photosCount}</p>
-    <p className="mt-1 text-sm text-[#856b5f]">
-      {photosCount === 1 ? 'Photo' : 'Photos'}
-    </p>
-  </div>
+Same structure but horizontal layout for contributor buttons and bottom navigation.
 
-  {/* Contributors Card */}
-  <div className="rounded-2xl bg-white p-6 text-center shadow-sm">
-    <p className="text-3xl font-bold text-[#3a241e]">{contributorCount}</p>
-    <p className="mt-1 text-sm text-[#856b5f]">
-      {contributorCount === 1 ? 'Contributor' : 'Contributors'}
-    </p>
-  </div>
-</div>
+---
+
+## 4. Updated Copy
+
+### Section 1: Celebration
+
+**Heading:**
+```
+[emoji] [Recipient]'s MemoryPop is ready!
 ```
 
-**Empty State Card:**
-```tsx
-<div className="mt-6 rounded-2xl bg-white p-8 text-center shadow-sm">
-  <p className="text-xl font-bold text-[#3a241e]">
-    No memories yet.
-  </p>
-  <p className="mt-3 text-[#856b5f]">
-    Share your MemoryPop to start collecting beautiful memories ❤️
-  </p>
-  <div className="mt-6 flex justify-center">
-    <ShareButtons shareLink={shareLink} recipient={memorypop.recipient_name} />
-  </div>
-</div>
+**Subtext:**
+```
+Now invite friends and family to add memories before the celebration.
+```
+
+### Section 2: Invite Contributors (Primary CTA)
+
+**Heading:**
+```
+Invite Friends & Family
+```
+
+**Helper text:**
+```
+Share this link to collect memories for [Recipient].
+```
+
+**Buttons:**
+- `Copy Link` (changes to `Copied! ✓` after click)
+- `Share on WhatsApp`
+
+### Section 3: Keep Access Safe
+
+**Heading:**
+```
+Keep your creator access safe
+```
+
+**Email Option (Recommended):**
+
+Label:
+```
+Recommended:
+```
+
+Heading:
+```
+📧 Email me my MemoryPop details
+```
+
+Description:
+```
+The email contains:
+• Private Creator Link
+• Contributor Link
+• MemoryPop summary
+• Celebration date
+```
+
+Input placeholder:
+```
+your@email.com
+```
+
+Button:
+```
+Email me these details
+```
+
+Success state:
+```
+✅ Your MemoryPop details are on their way.
+```
+
+**Divider:**
+```
+───────── OR ─────────
+```
+
+**Link Alternative:**
+
+Label:
+```
+Prefer not to use email?
+```
+
+Heading:
+```
+Your Private Creator Link:
+```
+
+Link display:
+```
+[Full URL in monospace font]
+```
+
+Button:
+```
+Copy Link
+```
+
+Security warning:
+```
+⚠️ Keep this link private.
+Anyone with it can manage your MemoryPop.
+```
+
+### Section 4: Dashboard & Navigation
+
+**Dashboard button:**
+```
+View Creator Dashboard
+```
+
+**Secondary buttons:**
+```
+Create Another
+Back Home
 ```
 
 ---
 
-## Edge Cases
+## 5. Component Changes
 
-### Zero State Scenarios
+### 5.1 File Structure
 
-1. **Zero memories total:**
-   - Hide progress card
-   - Show empty state card
-   - Hide memory counter breakdown
-   - Show quick actions BUT hide Reveal Celebration
+**Modified files:**
+- `src/app/success/page.tsx` - Page reorganization
+- `src/components/SuccessActions.tsx` - Remove blocking, rename to CreatorAccessSection
+- `src/components/EmailCaptureForm.tsx` - Remove "Skip for now" button
 
-2. **Zero messages but has photos:**
-   - Show progress card with total count
-   - Memory counter shows: Messages: 0, Photos: X, Contributors: Y
+**No new files required** - all components already exist.
 
-3. **Zero photos but has messages:**
-   - Show progress card with total count
-   - Memory counter shows: Messages: X, Photos: 0, Contributors: Y
+### 5.2 Component Architecture
 
-4. **Zero contributors:**
-   - Should be impossible if memories exist (contributor_name required)
-   - Defensive coding: Show 0 if it happens
-
-### Singular vs Plural
-
-**Always handle singular forms:**
-- 1 Memory (not "1 Memories")
-- 1 Message (not "1 Messages")
-- 1 Photo (not "1 Photos")
-- 1 Contributor (not "1 Contributors")
-
-**Implementation pattern:**
-```typescript
-{count === 1 ? 'Memory' : 'Memories'}
+```
+SuccessPage
+├── Celebration Header (inline JSX)
+├── ContributorInviteSection (ShareButtons + wrapper)
+├── CreatorAccessSection (renamed from SuccessActions)
+│   ├── EmailCaptureForm (modified)
+│   └── PrivateCreatorLink (modified, shown as alternative)
+├── Dashboard Button (always enabled)
+└── Navigation Buttons (inline JSX)
 ```
 
-### Long Counts
+### 5.3 Detailed Component Changes
 
-**Unlikely but possible:**
-- 100+ memories: Counter should not break layout
-- Use `text-3xl` which scales appropriately
-- Trust the design system's responsive text sizing
+#### `src/app/success/page.tsx`
 
-### Missing Data
+**Changes:**
+1. Reorder sections:
+   - Celebration first
+   - Contributor invitation second (PRIMARY CTA)
+   - Creator access preservation third
+   - Dashboard/navigation fourth
 
-**Defensive checks:**
-```typescript
-const memories = data?.memories || [];
-const memoryCount = memories.length || 0;
-const messagesCount = memories.filter(m => m.message?.trim()).length || 0;
+2. Update visual hierarchy classes:
+   - Contributor section: Larger card, bolder heading, more prominent buttons
+   - Creator access section: Standard card, softer visual weight
+   - Remove excessive border-t dividers
+
+3. Remove `SuccessActions` component
+   - Replace with `CreatorAccessSection`
+
+4. Dashboard button always enabled
+   - No conditional rendering based on `hasCompletedCopy`
+   - Always render as enabled Link
+
+#### `src/components/SuccessActions.tsx` → `src/components/CreatorAccessSection.tsx`
+
+**Changes:**
+1. Rename file and component
+2. Remove blocking state (`hasCompletedCopy`)
+3. Remove `onCopyComplete` callback
+4. Reorganize internal structure:
+   - Email form first (recommended)
+   - OR divider
+   - Private Creator Link second (alternative)
+
+5. Update Private Creator Link styling:
+   - Remove red border (`border-2 border-[#ef6a57]`)
+   - Remove pink background (`bg-[#fff3f0]`)
+   - Use standard white card with subtle border
+   - Reduce visual prominence
+
+6. Remove "shown only once" messaging
+   - Keep security warning
+   - Remove anxiety-inducing copy
+
+7. Remove "Private Beta" context section
+   - Redundant with main security warning
+
+8. Remove token from URL (keep this existing behavior)
+
+#### `src/components/EmailCaptureForm.tsx`
+
+**Changes:**
+1. Remove `handleSkip` function (lines 67-69)
+2. Remove "Skip for now" button JSX (lines 112-121)
+3. Keep all other functionality unchanged:
+   - Form submission
+   - Success state with collapsed UI
+   - Error handling
+   - Analytics tracking
+
+**No other changes** - component already has good UX for success state.
+
+---
+
+## 6. Behaviour Changes
+
+### 6.1 Dashboard Button
+
+**Before:**
+- Disabled until creator copies Private Creator Link
+- Shows disabled state with gray styling
+- Shows messaging: "⬆️ Please copy your Private Creator Link first"
+
+**After:**
+- Always enabled
+- Always rendered as clickable Link
+- No blocking behavior
+- No conditional states
+
+**Rationale:** UX improvement - removing blocking makes experience feel reassuring instead of punitive. Creator can access dashboard anytime. Security unchanged (session still required).
+
+### 6.2 Private Creator Link
+
+**Before:**
+- Prominently displayed at top
+- Large red-bordered card
+- Extensive warnings
+- Blocking dashboard access until copied
+
+**After:**
+- Shown below email option
+- Labeled as "Prefer not to use email?" (alternative)
+- Standard white card styling
+- Security warning retained but not anxiety-inducing
+- No blocking behavior
+
+**Rationale:** UX improvement - keep link available but don't make it feel mandatory or technical.
+
+### 6.3 Email Capture
+
+**Before:**
+- "Skip for now" button tracks analytics but performs no action
+- Shown in separate section
+
+**After:**
+- No "Skip for now" button
+- Ignoring the section = skipping (already optional)
+- Shown as recommended option in "Keep access safe" section
+
+**Rationale:** Remove broken interaction. Every visible action must have meaningful outcome.
+
+### 6.4 Token URL Cleanup
+
+**No change** - keep existing behavior:
+- Token removed from URL on component mount
+- Token stays in React props
+- URL cleanup is safe
+
+### 6.5 Page Scroll Behavior
+
+**New behavior:**
+- Page should not require excessive scrolling on mobile
+- Primary CTA (contributor invitation) should be visible without scrolling
+- Reduce unnecessary vertical spacing
+
+---
+
+## 7. Analytics Impact
+
+### 7.1 Existing Events (Keep Unchanged)
+
+**ShareButtons component:**
+- `memorypop_shared` (share_method: 'copy_link')
+- `memorypop_shared` (share_method: 'whatsapp')
+
+**EmailCaptureForm component:**
+- `creator_welcome_email_requested`
+- `creator_welcome_email_sent`
+- `creator_welcome_email_failed`
+
+**SuccessActions/PrivateCreatorLink:**
+- `private_creator_link_copied`
+
+### 7.2 Events to Remove
+
+**EmailCaptureForm component:**
+- ❌ `creator_welcome_email_skipped` (button being removed)
+
+### 7.3 Event Verification
+
+**All events verified to NOT contain:**
+- ✅ No management tokens
+- ✅ No email addresses
+- ✅ Only shareCode and descriptive properties
+
+**No analytics changes required** beyond removing the "skipped" event.
+
+### 7.4 Measurement Targets (Hypotheses)
+
+**Hypothesis 1:** Making contributor invitation the primary CTA will increase share actions
+
+**Measurement target:**
+- `memorypop_shared` events increase by 30%+
+
+**Hypothesis 2:** Removing blocking behavior will improve creator experience without reducing access preservation
+
+**Measurement targets:**
+- `private_creator_link_copied` events: maintain current rate or increase
+- `creator_welcome_email_sent` events: maintain current rate or increase
+
+**Hypothesis 3:** Removing "Skip for now" button will not impact email capture rate
+
+**Measurement target:**
+- `creator_welcome_email_sent` rate unchanged (section already optional)
+
+---
+
+## 8. Accessibility Review
+
+### 8.1 Keyboard Navigation
+
+**Requirements:**
+- All interactive elements focusable via Tab
+- Logical tab order: celebration → invite → email/link → dashboard → navigation
+- No keyboard traps
+- Focus visible on all interactive elements
+
+**Implementation:**
+- Ensure proper semantic HTML (button, input, Link)
+- No custom tab index manipulation needed
+
+### 8.2 Screen Reader Support
+
+**Requirements:**
+- Heading hierarchy (h1 → h2 → h3)
+- ARIA labels where needed
+- Form labels properly associated
+- Button purposes clear
+
+**Current compliance:**
+- ShareButtons: ✅ Already has proper button labels
+- EmailCaptureForm: ✅ Input has placeholder and required attribute
+- PrivateCreatorLink: ✅ Has aria-label on input and button
+
+**Changes needed:**
+- Add semantic heading structure to new sections
+- Ensure "Recommended" and "OR" dividers have proper semantic meaning
+
+### 8.3 Color Contrast
+
+**Requirements:**
+- WCAG AA: 4.5:1 for normal text
+- WCAG AA: 3:1 for large text (18pt+)
+
+**Current colors:**
+- Primary text `#3a241e` on `#FFF8F2` - ✅ passes
+- Secondary text `#6B5B52` on `#FFF8F2` - ✅ passes
+- Button text white on `#ef6a57` - ✅ passes
+- Security warning text on pink background - ✅ passes
+
+**No contrast issues** - existing palette already accessible.
+
+### 8.4 Form Validation
+
+**Email input:**
+- Required attribute: ✅ Already present
+- Type="email": ✅ Already present
+- Error messages: ✅ Already clear and visible
+
+**No changes needed.**
+
+---
+
+## 9. Mobile Review
+
+### 9.1 Mobile-First Design Principles
+
+**Priority 1: Reduce vertical height**
+- Remove excessive spacing between sections
+- Reduce padding in cards
+- Consolidate related content
+
+**Priority 2: Primary CTA above the fold**
+- Contributor invitation section should be visible without scrolling
+- Large, tappable buttons (44x44px minimum)
+
+**Priority 3: Readable text**
+- Minimum 16px font size for body text
+- Proper line height (1.5-1.6)
+- Sufficient padding around interactive elements
+
+### 9.2 Touch Targets
+
+**Requirements:**
+- Minimum 44x44px for all interactive elements
+- Adequate spacing between buttons (12px minimum)
+
+**Current buttons:**
+- ShareButtons: ✅ `px-7 py-4` = adequate size
+- EmailCaptureForm button: ✅ `px-7 py-3` = adequate size
+- Private Creator Link copy button: ✅ `px-6 py-3` = adequate size
+
+**Verification needed:**
+- Ensure buttons maintain size on smallest viewports (320px width)
+
+### 9.3 Responsive Breakpoints
+
+**Current responsive patterns:**
+- `flex-col sm:flex-row` for button groups
+- Works well for mobile-first approach
+
+**Keep existing patterns** - already mobile-friendly.
+
+### 9.4 Viewport Sizing
+
+**Test on:**
+- 320px (iPhone SE)
+- 375px (iPhone 12/13 Mini)
+- 390px (iPhone 12/13/14 Pro)
+- 428px (iPhone 14 Pro Max)
+- Tablet sizes
+
+**Focus:**
+- No horizontal scroll
+- All content readable
+- Buttons tappable
+- Proper spacing
+
+---
+
+## 10. Security Review
+
+### 10.1 Security Model (Unchanged)
+
+**All existing security remains intact:**
+
+✅ **Management Token:**
+- SHA-256 hashed before storage
+- Never persisted in raw form
+- Validated server-side before email send
+- Removed from URL after page load
+
+✅ **Creator Session:**
+- HTTP-only signed cookie
+- HMAC-SHA256 signature
+- 7-day expiry
+- Bound to specific shareCode
+
+✅ **Email Endpoint:**
+- Creator session required
+- Management token hash validation
+- Rate limiting (5 minutes)
+- No token/email in logs
+- No token/email in analytics
+
+✅ **Private Creator Link:**
+- Shown once in URL
+- Available for copy anytime
+- Security warning displayed
+
+### 10.2 Changes That Do NOT Affect Security
+
+**Removing dashboard blocking:**
+- Security: Dashboard still requires valid creator session
+- UX improvement: Creator not forced to copy before accessing
+- Authorization unchanged: `isCreatorAuthorized(shareCode)` still enforced
+
+**Reordering sections:**
+- No security impact
+- Pure presentation change
+
+**Removing "Skip for now" button:**
+- No security impact
+- Button performed no security action
+
+**Making link "alternative" instead of "primary":**
+- No security impact
+- Link still available for copy
+- Security warning still present
+
+### 10.3 Threat Model Review
+
+**Threat 1: Token exposure via URL**
+- Mitigation: Token removed from URL on mount (existing)
+- Status: ✅ Unchanged
+
+**Threat 2: Token exposure via session storage**
+- Mitigation: Token only in React component props (existing)
+- Status: ✅ Unchanged
+
+**Threat 3: Unauthorized dashboard access**
+- Mitigation: Server-side session validation (existing)
+- Status: ✅ Unchanged
+
+**Threat 4: Token exposure via analytics**
+- Mitigation: No tokens in tracked events (existing, verified above)
+- Status: ✅ Unchanged
+
+**Threat 5: Unauthorized email sends**
+- Mitigation: Session + token hash validation (existing)
+- Status: ✅ Unchanged
+
+**No new threats introduced.**
+
+### 10.4 User Security Awareness
+
+**Before redesign:**
+- Large red-bordered warning card
+- Anxiety-inducing messaging ("shown only once")
+- Blocking behavior emphasizing criticality
+
+**After redesign:**
+- Security warning retained: "Keep this link private. Anyone with it can manage your MemoryPop."
+- Less anxiety-inducing presentation
+- Creator still informed of security implications
+
+**Assessment:** Security awareness maintained while reducing anxiety.
+
+---
+
+## 11. Acceptance Criteria
+
+### 11.1 Visual Hierarchy
+
+**AC-1:** Contributor invitation section is the most visually prominent section
+- ✅ Larger or equal card size to other sections
+- ✅ Primary action button styling
+- ✅ Positioned second (after celebration, before access preservation)
+
+**AC-2:** Security section feels reassuring, not blocking
+- ✅ Standard card styling (not red-bordered)
+- ✅ Security warning present but not anxiety-inducing
+- ✅ Shown as "alternative" after email option
+
+**AC-3:** Mobile-first responsive design
+- ✅ Primary CTA visible without scrolling on mobile
+- ✅ Reduced vertical spacing
+- ✅ All touch targets minimum 44x44px
+
+### 11.2 Behavior
+
+**AC-4:** Dashboard button always enabled
+- ✅ No disabled state
+- ✅ No blocking messaging
+- ✅ Rendered as Link with proper styling
+- ✅ Navigates to `/dashboard/[shareCode]`
+
+**AC-5:** Email form collapses after success
+- ✅ Success message: "✅ Your MemoryPop details are on their way."
+- ✅ Form input and button hidden after success
+- ✅ Success state persists (no reset)
+
+**AC-6:** No "Skip for now" button
+- ✅ Button removed from EmailCaptureForm
+- ✅ No broken interaction
+- ✅ Section remains optional (can be ignored)
+
+**AC-7:** Token removed from URL
+- ✅ Existing behavior maintained
+- ✅ Token in component props only
+- ✅ URL cleanup on mount
+
+### 11.3 Copy
+
+**AC-8:** Warm, celebration-focused language
+- ✅ No "management token", "verification", "authentication"
+- ✅ Use "Private Creator Link", "MemoryPop details"
+- ✅ Security warning: "Keep this link private. Anyone with it can manage your MemoryPop."
+
+**AC-9:** Clear section purposes
+- ✅ Celebration: Success acknowledgment
+- ✅ Invite: Primary CTA, clear call to action
+- ✅ Access: Reassuring, not technical
+
+### 11.4 Analytics
+
+**AC-10:** Existing events still tracked
+- ✅ `memorypop_shared` (copy_link, whatsapp)
+- ✅ `creator_welcome_email_requested`, `_sent`, `_failed`
+- ✅ `private_creator_link_copied`
+
+**AC-11:** Removed event no longer tracked
+- ✅ `creator_welcome_email_skipped` removed
+
+**AC-12:** No sensitive data in events
+- ✅ No management tokens
+- ✅ No email addresses
+- ✅ Only shareCode and descriptive properties
+
+### 11.5 Accessibility
+
+**AC-13:** Keyboard accessible
+- ✅ All interactive elements focusable
+- ✅ Logical tab order
+- ✅ No keyboard traps
+
+**AC-14:** Screen reader accessible
+- ✅ Proper heading hierarchy
+- ✅ ARIA labels where needed
+- ✅ Form labels associated
+
+**AC-15:** Color contrast compliant
+- ✅ WCAG AA 4.5:1 for normal text
+- ✅ WCAG AA 3:1 for large text
+
+### 11.6 Security
+
+**AC-16:** Security model unchanged
+- ✅ Token hashing unchanged
+- ✅ Session validation unchanged
+- ✅ Email endpoint security unchanged
+- ✅ No new token exposure vectors
+
+**AC-17:** Dashboard authorization unchanged
+- ✅ Server-side `isCreatorAuthorized(shareCode)` still enforced
+- ✅ Session cookie still required
+- ✅ Unauthorized access still blocked
+
+### 11.7 Mobile
+
+**AC-18:** Mobile-responsive
+- ✅ No horizontal scroll on 320px viewport
+- ✅ All text readable (minimum 16px)
+- ✅ Buttons tappable (44x44px)
+- ✅ Proper spacing between interactive elements
+
+**AC-19:** Primary CTA above fold
+- ✅ Contributor invitation visible without scrolling on mobile
+
+---
+
+## 12. Risks and Mitigations
+
+### Risk 1: Creators don't preserve access
+
+**Risk level:** Medium
+
+**Description:** 
+Without blocking behavior, some creators may navigate to dashboard without copying link or providing email.
+
+**Current mitigation:**
+- Blocking forces copy before dashboard access
+- Private Beta context explains recovery difficulty
+
+**New mitigation:**
+- Email option recommended (easier than copying)
+- Link still available as alternative
+- Security warning still present
+- Creator can return to success page via browser back button if needed
+
+**Impact assessment:**
+- Hypothesis: Removing blocking improves UX without reducing preservation actions
+- Measurement: Track `private_creator_link_copied` and `creator_welcome_email_sent` rates
+- Rollback: Easy git revert if rates drop significantly
+
+**Decision:** Accept risk - UX improvement outweighs potential reduction in preservation rate.
+
+---
+
+### Risk 2: Contributor invitation rate doesn't improve
+
+**Risk level:** Low
+
+**Description:**
+Making contributor invitation primary CTA may not increase share actions as hypothesized.
+
+**Mitigation:**
+- This is pure upside risk (rate unlikely to decrease)
+- Measurement target: +30% increase in `memorypop_shared` events
+- Even if target not met, reordering aligns with user workflow
+
+**Impact assessment:**
+- Worst case: No change in share rate
+- Best case: Significant increase in contributors per MemoryPop
+- No downside risk
+
+**Decision:** Accept risk - hypothesis-driven improvement with measurement plan.
+
+---
+
+### Risk 3: Email capture rate decreases
+
+**Risk level:** Low
+
+**Description:**
+Repositioning email section and removing "Skip" button may affect capture rate.
+
+**Mitigation:**
+- Email section still prominent
+- Now labeled as "Recommended"
+- "Skip" button performed no action (removal is UX improvement)
+
+**Measurement:**
+- Track `creator_welcome_email_sent` rate
+- Compare pre/post redesign
+
+**Impact assessment:**
+- Low likelihood of decrease (section remains prominent)
+- Email option more clearly positioned as recommended approach
+
+**Decision:** Accept risk - removal of broken interaction outweighs potential rate decrease.
+
+---
+
+### Risk 4: Security awareness reduced
+
+**Risk level:** Low
+
+**Description:**
+Reducing visual prominence of security warnings may reduce creator awareness.
+
+**Mitigation:**
+- Security warning text retained: "Keep this link private. Anyone with it can manage your MemoryPop."
+- Email option includes reminder about Private Creator Link
+- Dashboard still session-protected
+
+**Impact assessment:**
+- Security functionality unchanged
+- Warning still visible
+- Less anxiety-inducing presentation is UX improvement
+
+**Decision:** Accept risk - security warning retained, just less anxiety-inducing.
+
+---
+
+### Risk 5: Mobile viewport issues
+
+**Risk level:** Low
+
+**Description:**
+Reordering sections may cause layout issues on small viewports.
+
+**Mitigation:**
+- Mobile-first design approach
+- Use existing responsive patterns (`flex-col sm:flex-row`)
+- Test on multiple viewport sizes during implementation
+
+**Testing focus:**
+- 320px (smallest common viewport)
+- 375px, 390px, 428px (common phone sizes)
+- Tablet sizes
+
+**Decision:** Accept risk - standard responsive patterns already proven in codebase.
+
+---
+
+### Risk 6: Component refactor introduces bugs
+
+**Risk level:** Low
+
+**Description:**
+Renaming SuccessActions to CreatorAccessSection and reorganizing may introduce bugs.
+
+**Mitigation:**
+- Thorough testing phase before merge
+- Judge stage for user experience validation
+- Reviewer stage for code quality
+
+**Rollback plan:**
+- Simple git revert
+- No database changes to rollback
+- No API changes to rollback
+
+**Decision:** Accept risk - standard refactor with multi-stage validation.
+
+---
+
+## 13. Implementation Notes
+
+### 13.1 Development Approach
+
+**Phase 1: Component reorganization**
+1. Rename SuccessActions → CreatorAccessSection
+2. Remove blocking behavior from dashboard button
+3. Reorganize internal structure (email first, link alternative)
+
+**Phase 2: Visual hierarchy**
+1. Update section styling (card sizes, borders, spacing)
+2. Mobile-first responsive design
+3. Reduce vertical spacing
+
+**Phase 3: Copy updates**
+1. Update all section headings and labels
+2. Remove technical terminology
+3. Add "Recommended" and "OR" labels
+
+**Phase 4: Cleanup**
+1. Remove "Skip for now" button from EmailCaptureForm
+2. Remove blocking messaging
+3. Remove excessive dividers
+
+### 13.2 Testing Checklist
+
+**Functional testing:**
+- [ ] Contributor link copy works
+- [ ] WhatsApp share works
+- [ ] Email form submission works
+- [ ] Email success state collapses form
+- [ ] Private Creator Link copy works
+- [ ] Dashboard button navigates correctly
+- [ ] Token removed from URL
+- [ ] All analytics events fire correctly
+- [ ] No `email_skipped` event
+
+**Visual testing:**
+- [ ] Mobile (320px, 375px, 390px, 428px)
+- [ ] Tablet
+- [ ] Desktop
+- [ ] Primary CTA visible without scrolling (mobile)
+- [ ] Proper spacing and sizing
+
+**Accessibility testing:**
+- [ ] Keyboard navigation works
+- [ ] Tab order logical
+- [ ] Screen reader compatibility
+- [ ] Color contrast passes
+- [ ] Form validation clear
+
+**Security testing:**
+- [ ] Dashboard requires session
+- [ ] Token not in URL after mount
+- [ ] Token not in localStorage/sessionStorage
+- [ ] No token in analytics
+- [ ] Email endpoint still validates properly
+
+### 13.3 Files to Modify
+
+1. **`src/app/success/page.tsx`**
+   - Reorder sections
+   - Update visual hierarchy
+   - Replace SuccessActions with CreatorAccessSection
+   - Remove conditional dashboard button
+   - Update copy
+
+2. **`src/components/SuccessActions.tsx` → `src/components/CreatorAccessSection.tsx`**
+   - Rename file
+   - Remove blocking state
+   - Reorganize: email first, link alternative
+   - Update Private Creator Link styling
+   - Update copy
+
+3. **`src/components/EmailCaptureForm.tsx`**
+   - Remove `handleSkip` function
+   - Remove "Skip for now" button JSX
+   - No other changes
+
+### 13.4 Files NOT Modified
+
+- `src/app/api/send-creator-email/route.ts` (security unchanged)
+- `src/lib/creatorSession.ts` (session unchanged)
+- `src/lib/verification.ts` (token hashing unchanged)
+- `src/components/ShareButtons.tsx` (already good)
+- Email templates (already warm and friendly)
+
+---
+
+## 14. Success Metrics
+
+### Primary Hypothesis
+
+**H1:** Making contributor invitation the primary CTA will increase share actions
+
+**Measurement target:**
+- Increase `memorypop_shared` events by 30%+
+
+**Measurement period:**
+- 2 weeks post-launch
+- Minimum 100 MemoryPops created (statistical significance)
+
+---
+
+### Secondary Hypotheses
+
+**H2:** Removing blocking behavior will not reduce access preservation actions
+
+**Measurement targets:**
+- `private_creator_link_copied` rate: maintain or increase
+- `creator_welcome_email_sent` rate: maintain or increase
+
+**H3:** Removing "Skip for now" button will not impact email capture rate
+
+**Measurement target:**
+- `creator_welcome_email_sent` rate unchanged
+
+---
+
+### Qualitative Metrics
+
+**Creator satisfaction:**
+- Post-creation experience feels celebratory (not technical)
+- Inviting contributors feels effortless
+- Access preservation feels reassuring (not anxiety-inducing)
+
+**Measurement:**
+- User interviews (if available)
+- Support ticket sentiment
+- Informal founder feedback
+
+---
+
+## 15. Rollback Plan
+
+### Rollback Trigger Conditions
+
+Rollback if any of these occur:
+
+1. **`memorypop_shared` rate decreases by 20%+**
+   - Primary CTA change had negative impact
+
+2. **`private_creator_link_copied` OR `creator_welcome_email_sent` rate decreases by 30%+**
+   - Removing blocking reduced access preservation significantly
+
+3. **Critical bugs** that block core functionality
+
+4. **Founder decision** based on qualitative feedback
+
+### Rollback Process
+
+**Step 1:** Revert commit
+```bash
+git revert [commit-hash]
 ```
 
-**Null/undefined handling:**
-- Use optional chaining: `m.message?.trim()`
-- Use nullish coalescing: `memories?.length || 0`
+**Step 2:** Deploy revert
+- Push to main
+- Vercel auto-deploys
+- Original page restored in ~2 minutes
 
-### Mobile Responsiveness
+**Step 3:** Monitor metrics
+- Verify old behavior restored
+- Confirm metrics return to baseline
 
-**Grid breakpoints:**
-- Memory counter: `grid-cols-3` on mobile (acceptable, cards are small)
-- Quick actions: `flex-col` on mobile, `gap-3`
-- ShareButtons: Already handles mobile with `flex-col sm:flex-row`
-
-**Text sizing:**
-- Use relative units (`text-xl`, `text-3xl`) not fixed pixels
-- Trust Tailwind's responsive defaults
+**No database rollback needed** (no schema changes)
+**No API rollback needed** (no endpoint changes)
 
 ---
 
-## Acceptance Criteria
+## 16. Next Steps
 
-The implementation is complete when ALL of these criteria are met:
+### Immediate Actions
 
-1. **Progress card displays correctly when memories > 0**
-   - Shows "❤️ X Memories Collected"
-   - Shows goal message
-   - Uses correct singular/plural grammar
+1. **Founder approval required**
+   - Review this specification
+   - Approve or request changes
+   - Do not proceed to implementation without approval
 
-2. **Empty state displays correctly when memories === 0**
-   - Shows "No memories yet" message
-   - Includes ShareButtons for immediate action
-   - Replaces progress card (not shown alongside)
+2. **After approval:**
+   - Coder implements specification
+   - Tester validates functionality
+   - Judge evaluates user experience
+   - Reviewer assesses code quality
+   - Founder validates in production
 
-3. **Memory counter breakdown displays accurate counts**
-   - Messages count matches memories with non-empty message field
-   - Photos count matches memories with photo_url
-   - Contributors count shows unique contributor names
-   - All three metrics display simultaneously
+### Post-Launch
 
-4. **Quick actions section consolidates all actions**
-   - ShareButtons (Copy Link + WhatsApp) render correctly
-   - Preview MemoryPop button navigates to `/m/[shareCode]`
-   - Reveal Celebration button only shows when memoryCount > 0
-   - Reveal Celebration navigates to `/m/[shareCode]/reveal`
+1. **Monitor metrics** (2 weeks)
+   - Track hypothesis measurement targets
+   - Compare pre/post redesign rates
+   - Assess qualitative feedback
 
-5. **Layout hierarchy is correct**
-   - Progress/Empty State at top
-   - Memory counter below progress
-   - Quick actions below counter
-   - Story card below actions
-   - Contributors list at bottom (existing)
-
-6. **Mobile responsive on small screens**
-   - Cards stack vertically on mobile
-   - Text remains readable
-   - Buttons are full-width on mobile
-   - No horizontal scrolling
-
-7. **Design system compliance**
-   - Colors match existing palette
-   - Typography matches existing scale
-   - Spacing is consistent
-   - Cards use `rounded-2xl shadow-sm`
-
-8. **Edge cases handled gracefully**
-   - Zero state works correctly
-   - Singular/plural grammar is correct
-   - Missing data doesn't break layout
-   - Defensive coding for null/undefined
-
-9. **Existing functionality preserved**
-   - Copy Link works (existing ShareButtons)
-   - WhatsApp share works (existing ShareButtons)
-   - Preview link works (existing Link)
-   - Reveal button works (existing Link)
-   - Contributors list works (existing section)
-
-10. **Performance acceptable**
-    - Page loads in < 2 seconds
-    - No unnecessary re-renders
-    - Server-side rendering works correctly
+2. **Iterate if needed**
+   - If targets not met, analyze and adjust
+   - If targets exceeded, document learnings
 
 ---
 
-## Testing Approach
+## Planning Signature
 
-### Manual Testing Scenarios
+**Specification Status:** Complete and ready for Founder approval
 
-**Test Case 1: Fresh MemoryPop (Zero Memories)**
-1. Navigate to dashboard with shareCode that has 0 memories
-2. Verify empty state card displays
-3. Verify progress card does NOT display
-4. Verify memory counter does NOT display
-5. Verify Reveal Celebration button does NOT display
-6. Verify Copy Link and WhatsApp buttons work
+**Date:** 2026-07-21
 
-**Test Case 2: One Memory**
-1. Add one memory with message only
-2. Navigate to dashboard
-3. Verify progress card shows "1 Memory Collected" (singular)
-4. Verify memory counter shows: 1 Message, 0 Photos, 1 Contributor
-5. Verify Reveal Celebration button DOES display
+**Planner:** Claude Orchestrator
 
-**Test Case 3: Multiple Memories Mixed Content**
-1. Add memories with different combinations (message only, photo only, both)
-2. Navigate to dashboard
-3. Verify progress card shows correct total
-4. Verify messages count = memories with non-empty message
-5. Verify photos count = memories with photo_url
-6. Verify contributors count = unique contributor names
+**Next Stage:** Awaiting Founder Approval
 
-**Test Case 4: Mobile Responsive**
-1. Open dashboard on mobile device or small viewport
-2. Verify cards stack vertically
-3. Verify memory counter remains readable (3 columns acceptable)
-4. Verify buttons are full-width
-5. Verify no horizontal overflow
-
-**Test Case 5: Quick Actions**
-1. Click Copy Link → verify copied feedback
-2. Click WhatsApp → verify opens WhatsApp with correct message
-3. Click Preview MemoryPop → verify navigates to `/m/[shareCode]`
-4. Click Reveal Celebration → verify navigates to `/m/[shareCode]/reveal`
-
-### Automated Testing (Optional)
-
-If time allows, add unit tests for data calculations:
-
-```typescript
-describe('Dashboard calculations', () => {
-  it('calculates messages count correctly', () => {
-    const memories = [
-      { message: 'Hello', photo_url: null },
-      { message: '', photo_url: 'photo.jpg' },
-      { message: 'World', photo_url: 'photo2.jpg' }
-    ];
-    expect(messagesCount).toBe(2); // Only non-empty messages
-  });
-
-  it('calculates photos count correctly', () => {
-    // Similar test
-  });
-
-  it('handles singular vs plural correctly', () => {
-    expect(formatMemoryCount(1)).toBe('1 Memory Collected');
-    expect(formatMemoryCount(5)).toBe('5 Memories Collected');
-  });
-});
-```
-
-**Note:** Automated tests are nice-to-have, not required for Phase 1.
+**Implementation starts after approval only.**
 
 ---
 
-## Risk Assessment
+## Founder Approval Section
 
-### Technical Risks
+**Approval Status:** [ ] Pending
 
-**Risk 1: Budget Overrun**
-- **Severity:** HIGH
-- **Likelihood:** MODERATE
-- **Impact:** Cannot complete implementation
-- **Mitigation:**
-  - Keep implementation simple
-  - Reuse existing components
-  - No new queries or schema changes
-  - Pause gracefully if time runs out
+**Approved by:** _________________
 
-**Risk 2: Scope Creep**
-- **Severity:** MODERATE
-- **Likelihood:** MODERATE
-- **Impact:** Recent activity feed gets added, blows budget
-- **Mitigation:**
-  - Strict adherence to Phase 1 scope
-  - Explicit "do not implement" list in spec
-  - Coder agent must follow spec exactly
+**Date:** _________________
 
-**Risk 3: Mobile Layout Issues**
-- **Severity:** LOW
-- **Likelihood:** LOW
-- **Impact:** Poor mobile experience
-- **Mitigation:**
-  - Follow existing mobile patterns
-  - Use proven responsive utilities
-  - Test on small viewport early
+**Notes/Changes Requested:**
 
-**Risk 4: Data Calculation Errors**
-- **Severity:** MODERATE
-- **Likelihood:** LOW
-- **Impact:** Incorrect counts shown to users
-- **Mitigation:**
-  - Defensive coding with nullish coalescing
-  - Test with various memory combinations
-  - Validate calculations match existing metrics
+_________________
 
-### Product Risks
-
-**Risk 1: Empty State Not Compelling**
-- **Severity:** LOW
-- **Likelihood:** MODERATE
-- **Impact:** Creators don't share when dashboard is empty
-- **Mitigation:**
-  - Include ShareButtons directly in empty state
-  - Use warm, encouraging language
-  - Heart emoji for emotional connection
-
-**Risk 2: Progress Visibility Doesn't Drive Behavior**
-- **Severity:** LOW
-- **Likelihood:** MODERATE
-- **Impact:** Dashboard enhancement doesn't increase sharing
-- **Mitigation:**
-  - This is a learning experiment
-  - Phase 1 validates hypothesis
-  - Low cost to iterate or remove
-
-**Risk 3: Too Much Information Overwhelms**
-- **Severity:** LOW
-- **Likelihood:** LOW
-- **Impact:** Dashboard feels cluttered
-- **Mitigation:**
-  - Clean card-based design
-  - Clear visual hierarchy
-  - Consistent with existing patterns
-
----
-
-## Implementation Order
-
-Follow this sequence to minimize risk and maintain safe checkpoints:
-
-### Step 1: Data Calculations (15 min)
-- Add `messagesCount` calculation
-- Add `photosCount` calculation
-- Verify calculations work with existing `memories` array
-- Test with console.log or debugger
-- **Checkpoint:** Data calculations work correctly
-
-### Step 2: Progress Card (20 min)
-- Add progress card component inline
-- Position at top of layout
-- Apply styling (white card, rounded, shadow)
-- Handle singular/plural grammar
-- Add conditional rendering: only when `memoryCount > 0`
-- **Checkpoint:** Progress card displays correctly
-
-### Step 3: Empty State Card (15 min)
-- Add empty state card component inline
-- Position where progress card would be
-- Include ShareButtons component
-- Add conditional rendering: only when `memoryCount === 0`
-- **Checkpoint:** Empty state displays correctly
-
-### Step 4: Memory Counter Breakdown (25 min)
-- Add 3-column grid layout
-- Create Messages card
-- Create Photos card
-- Update Contributors card (move from existing)
-- Apply styling consistently
-- Handle singular/plural for all labels
-- Add conditional rendering: only when `memoryCount > 0`
-- **Checkpoint:** Memory counter displays correctly
-
-### Step 5: Quick Actions Section (20 min)
-- Create Quick Actions card wrapper
-- Move ShareButtons inside
-- Add Preview MemoryPop button (reuse existing Link)
-- Move Reveal Celebration button inside
-- Keep Reveal conditional on `memoryCount > 0`
-- Apply consistent styling
-- **Checkpoint:** All actions work correctly
-
-### Step 6: Layout Reorganization (15 min)
-- Move Info Card (Story + Status) below Quick Actions
-- Verify Contributors list remains at bottom
-- Check spacing between all sections
-- Ensure `mt-6` consistency
-- **Checkpoint:** Layout hierarchy is correct
-
-### Step 7: Mobile Testing (15 min)
-- Test on small viewport (< 640px)
-- Verify cards stack correctly
-- Check memory counter on mobile (3 cols acceptable)
-- Test ShareButtons mobile layout
-- Fix any overflow issues
-- **Checkpoint:** Mobile responsive works
-
-### Step 8: Edge Case Testing (15 min)
-- Test with 0 memories
-- Test with 1 memory
-- Test with messages only
-- Test with photos only
-- Test with mixed content
-- Verify singular/plural throughout
-- **Checkpoint:** All edge cases handled
-
-### Step 9: Final Polish (10 min)
-- Review all text content
-- Check all colors against design system
-- Verify spacing consistency
-- Remove any console.logs
-- Format code consistently
-- **Checkpoint:** Implementation complete
-
-**Total Estimated Time:** 2.5-3 hours
-
----
-
-## Estimated Effort
-
-### Planning Stage (Current)
-- **Time:** 30-40 minutes
-- **Cost:** $0.50-0.65
-- **Model:** Claude Opus 4.8 (high quality planning)
-
-### Implementation Stage
-- **Time:** 2.5-3 hours
-- **Cost:** $3.50-4.00
-- **Model:** Claude Sonnet 4.6 (efficient execution)
-- **Complexity:** Medium
-- **Approach:** Enhance existing page, reuse components
-
-### Testing Stage
-- **Time:** 30 minutes
-- **Cost:** $0.50
-- **Tasks:**
-  - Manual testing of all scenarios
-  - Mobile responsive testing
-  - Edge case validation
-
-### Judge Stage
-- **Time:** 15 minutes
-- **Cost:** $0.25
-- **Tasks:**
-  - User-side evaluation
-  - Experience validation
-  - Verdict (approve/revise/block)
-
-### Review Stage
-- **Time:** 15 minutes
-- **Cost:** $0.25
-- **Tasks:**
-  - Code quality review
-  - Design system compliance
-  - Verdict (approve/revise/block)
-
-### Total Estimated Cost
-- **Planning:** $0.50-0.65
-- **Implementation:** $3.50-4.00
-- **Testing:** $0.50
-- **Judge:** $0.25
-- **Review:** $0.25
-- **Total:** $5.00-5.65
-
-### Budget Status
-- **Available:** $7.00
-- **Estimated:** $5.00-5.65
-- **Buffer:** $1.35-2.00
-- **Risk Level:** LOW (adequate buffer)
-
-**Note:** If implementation starts taking longer than estimated, pause gracefully after next safe checkpoint and document progress in `.pipeline/status.md`.
-
----
-
-## Success Metrics (Post-Launch)
-
-While not part of implementation, these metrics validate the enhancement:
-
-1. **Dashboard engagement:**
-   - Dashboard page views increase by 20%+
-   - Time on dashboard page increases
-
-2. **Sharing behavior:**
-   - Share actions from dashboard increase by 15%+
-   - Time to first share decreases
-
-3. **Creator satisfaction:**
-   - Qualitative feedback: "I love seeing the progress"
-   - Reduced confusion about dashboard purpose
-
-4. **Return visits:**
-   - Creators check dashboard multiple times
-   - Measured by repeat visits to `/dashboard/[shareCode]`
-
----
-
-## Phase 2 Deferred Features
-
-These features are explicitly OUT OF SCOPE for Phase 1:
-
-### Recent Activity Feed
-- Show last 5 contributor actions
-- Display "Mum added a memory" with relative timestamps
-- Requires new activity tracking or created_at queries
-- Estimated additional effort: 2-3 hours
-
-### Real-Time Updates
-- Live updates when new memories added
-- WebSocket or polling implementation
-- Requires infrastructure work
-- Estimated additional effort: 3-4 hours
-
-### Activity Timestamps
-- Relative time display ("5 minutes ago")
-- Requires date formatting library or utility
-- Requires timestamp tracking
-- Estimated additional effort: 1 hour
-
-### Contributor Attribution
-- Show who added what (privacy considerations)
-- Might require permissions or reveal logic
-- UX design needed
-- Estimated additional effort: 2-3 hours
-
-**Total Phase 2 Effort:** 8-11 hours ($8-12 cost)
-
-**Decision:** Phase 2 features should be planned in next budget cycle when there's adequate time and budget.
-
----
-
-## Dependencies
-
-### Required (Already Available)
-- ✅ Next.js (installed)
-- ✅ Tailwind CSS (configured)
-- ✅ Supabase client (configured)
-- ✅ ShareButtons component (exists)
-- ✅ Dashboard page (exists)
-- ✅ Database schema (no changes needed)
-
-### Not Required
-- ❌ No new npm packages
-- ❌ No database migrations
-- ❌ No API route changes
-- ❌ No new components (inline only)
-- ❌ No environment variables
-
----
-
-## Rollback Plan
-
-If implementation fails or causes issues:
-
-### Easy Rollback
-Because we're enhancing an existing page without schema changes:
-
-1. **Git revert** to previous commit
-2. No data migration needed
-3. No configuration changes needed
-4. Dashboard v1 still functional
-
-### Partial Rollback
-If only specific features cause issues:
-
-1. Remove problematic card/section
-2. Keep working enhancements
-3. Dashboard remains functional
-
-### Zero Risk to Core Functionality
-- Memories continue working
-- Contributors can still add content
-- Reveal mode unaffected
-- Share functionality preserved
-
----
-
-## Final Notes for Coder Agent
-
-### Do's
-✅ Follow this spec exactly
-✅ Reuse existing components and patterns
-✅ Use defensive coding (null checks)
-✅ Handle singular/plural everywhere
-✅ Test mobile responsive early
-✅ Keep code changes minimal
-✅ Maintain existing functionality
-✅ Use consistent spacing (`mt-6`)
-✅ Follow design system colors and typography
-
-### Don'ts
-❌ Do NOT implement recent activity feed
-❌ Do NOT add real-time updates
-❌ Do NOT create new database queries
-❌ Do NOT install new dependencies
-❌ Do NOT rebuild the page from scratch
-❌ Do NOT change existing components (ShareButtons)
-❌ Do NOT add features not in Phase 1 scope
-❌ Do NOT optimize prematurely
-❌ Do NOT over-engineer
-
-### If You Get Stuck
-1. Pause and document what's blocking
-2. Update `.pipeline/status.md` with current state
-3. Mark safe checkpoint in progress
-4. Do NOT continue if approach seems wrong
-5. Ask for clarification rather than guessing
-
----
-
-## Specification Status
-
-**Status:** COMPLETE ✅
-
-**Date:** 2026-07-10
-**Prepared by:** Planner Agent (Claude Opus 4.8)
-**Approved for Implementation:** Yes
-**Budget Status:** Within limits ($5.00-5.65 of $7.00 available)
-
-**Next Step:** Hand off to Coder Agent for implementation using Claude Sonnet 4.6.
-
----
-
-**End of Specification**

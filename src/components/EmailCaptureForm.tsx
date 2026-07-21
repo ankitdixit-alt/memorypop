@@ -64,10 +64,6 @@ export function EmailCaptureForm({ shareCode, managementToken }: EmailCaptureFor
     }
   };
 
-  const handleSkip = () => {
-    trackEvent("creator_welcome_email_skipped", { shareCode });
-  };
-
   // Success State
   if (status === "success") {
     return (
@@ -108,17 +104,6 @@ export function EmailCaptureForm({ shareCode, managementToken }: EmailCaptureFor
           <p className="text-sm text-red-700">{errorMessage}</p>
         </div>
       )}
-
-      {/* Skip Option */}
-      <div className="text-center">
-        <button
-          type="button"
-          onClick={handleSkip}
-          className="text-sm text-[#856b5f] underline hover:text-[#3a241e] transition-colors"
-        >
-          Skip for now
-        </button>
-      </div>
     </form>
   );
 }
