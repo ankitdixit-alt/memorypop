@@ -8,7 +8,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { trackEvent } from "@/lib/analytics";
 
@@ -104,6 +104,25 @@ function PrivateCreatorLinkInternal({
   const [hasCopied, setHasCopied] = useState(false);
 
   const managementLink = `${baseUrl}/manage/${managementToken}`;
+
+  // Remove token from URL after component mounts
+  // Token is already in React props, so URL cleanup is safe
+  useEffect(() => {
+    // Only run in browser
+    if (typeof window === 'undefined') return;
+
+    // Check if token is in URL
+    const url = new URL(window.location.href);
+    const hasTokenParam = url.searchParams.has('token');
+
+    if (hasTokenParam) {
+      // Remove token param while preserving all other params
+      url.searchParams.delete('token');
+
+      // Update URL without page reload
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, []); // Run once on mount
 
   const handleCopy = async () => {
     try {

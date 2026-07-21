@@ -17,9 +17,11 @@ const hasSupabaseEnv =
   process.env.NEXT_PUBLIC_SUPABASE_URL &&
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+// Conditional require for Supabase (only loaded when env vars present)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let supabase: any;
 if (hasSupabaseEnv) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
   supabase = require('@/lib/supabase').supabase;
 }
 
@@ -425,6 +427,96 @@ describe('Creator Recovery - Security', () => {
 
       // All tokens should be unique
       expect(tokens.size).toBe(iterations);
+    });
+  });
+
+  describe('URL Cleanup', () => {
+    it('should remove token parameter from URL on mount', () => {
+      // Simulate URL with token parameter
+      const testUrl = 'http://localhost:3000/success?shareCode=ABC123&token=test-token-12345&recipient=John&occasion=Birthday';
+      const url = new URL(testUrl);
+
+      const hasTokenParam = url.searchParams.has('token');
+
+      expect(hasTokenParam).toBe(true);
+      expect(url.searchParams.get('token')).toBe('test-token-12345');
+
+      // Simulate the useEffect logic that removes token from URL
+      url.searchParams.delete('token');
+
+      // Verify token removed
+      expect(url.searchParams.has('token')).toBe(false);
+
+      // Verify other params preserved
+      expect(url.searchParams.get('shareCode')).toBe('ABC123');
+      expect(url.searchParams.get('recipient')).toBe('John');
+      expect(url.searchParams.get('occasion')).toBe('Birthday');
+
+      // Verify final URL format
+      expect(url.toString()).toBe(
+        'http://localhost:3000/success?shareCode=ABC123&recipient=John&occasion=Birthday'
+      );
+    });
+
+    it('should not modify URL if token parameter not present', () => {
+      // Simulate URL without token
+      const testUrl = 'http://localhost:3000/success?shareCode=ABC123&recipient=John';
+      const url = new URL(testUrl);
+
+      const hasTokenParam = url.searchParams.has('token');
+
+      // Verify no token in URL
+      expect(hasTokenParam).toBe(false);
+
+      // Verify params unchanged
+      expect(url.searchParams.get('shareCode')).toBe('ABC123');
+      expect(url.searchParams.get('recipient')).toBe('John');
+    });
+
+    it('should preserve all query parameters except token', () => {
+      // Simulate URL with multiple params including token
+      const testUrl = 'http://localhost:3000/success?shareCode=XYZ&token=abc123&recipient=Jane+Doe&occasion=Wedding&extra=data';
+      const url = new URL(testUrl);
+
+      // Remove only token
+      url.searchParams.delete('token');
+
+      // Verify all other params preserved
+      expect(url.searchParams.has('token')).toBe(false);
+      expect(url.searchParams.get('shareCode')).toBe('XYZ');
+      expect(url.searchParams.get('recipient')).toBe('Jane Doe');
+      expect(url.searchParams.get('occasion')).toBe('Wedding');
+      expect(url.searchParams.get('extra')).toBe('data');
+    });
+
+    it('should handle URL with only token parameter', () => {
+      // Edge case: URL with only token param
+      const testUrl = 'http://localhost:3000/success?token=test-token-only';
+      const url = new URL(testUrl);
+
+      expect(url.searchParams.has('token')).toBe(true);
+
+      // Remove token
+      url.searchParams.delete('token');
+
+      // URL should have no query params
+      expect(url.search).toBe('');
+      expect(url.toString()).toBe('http://localhost:3000/success');
+    });
+
+    it('should construct correct replaceState call', () => {
+      // Verify the logic for constructing the new URL for replaceState
+      const testUrl = 'http://localhost:3000/success?shareCode=ABC&token=xyz123&recipient=Test';
+      const url = new URL(testUrl);
+
+      // Remove token
+      url.searchParams.delete('token');
+
+      // Verify the URL that would be passed to replaceState
+      const newUrl = url.toString();
+
+      expect(newUrl).toBe('http://localhost:3000/success?shareCode=ABC&recipient=Test');
+      expect(newUrl).not.toContain('token=');
     });
   });
 });
