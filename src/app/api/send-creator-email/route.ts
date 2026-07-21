@@ -7,6 +7,12 @@
  *
  * Request: { shareCode: string, email: string }
  * Response: { success: boolean, message?: string, error?: string }
+ *
+ * TODO (Future Enhancement):
+ * When Creator Email is enabled, verified creators should be able to request
+ * a fresh authenticated session instead of relying on the permanent recovery link.
+ * This would provide an additional security layer by making the management token
+ * revocable and allowing email-based session restoration.
  */
 
 import { NextRequest, NextResponse } from "next/server";

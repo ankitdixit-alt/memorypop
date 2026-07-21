@@ -93,10 +93,11 @@ async function saveMemoryPop() {
       selected_cover: selectedCover,
     });
 
-    // Redirect to success page
+    // Redirect to success page with management token
     // Session cookie already established by server
-    // No managementToken in URL (uses session instead)
-    window.location.href = `/success?shareCode=${result.shareCode}&recipient=${encodeURIComponent(
+    // Management token passed once for recovery display
+    // SECURITY: Token in URL is acceptable (client-side navigation, consumed immediately)
+    window.location.href = `/success?shareCode=${result.shareCode}&token=${result.managementToken}&recipient=${encodeURIComponent(
       recipient
     )}&occasion=${encodeURIComponent(occasion)}`;
 

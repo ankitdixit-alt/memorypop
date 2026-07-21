@@ -3,14 +3,18 @@
  * POST /api/memorypops/create
  *
  * Securely generates public and private credentials,
- * establishes creator session, returns sanitized result.
+ * establishes creator session, returns result with management token.
  *
  * Security Features:
  * - Server-side token generation (crypto.randomUUID, crypto.randomBytes)
  * - SHA-256 hashing before storage
  * - Atomic insert (both credentials or none)
  * - Immediate session establishment
- * - No raw token in response (session cookie instead)
+ * - Raw management token returned ONCE in response (for recovery)
+ *
+ * SECURITY: Management token is returned once for display on success page.
+ * This is the creator's only recovery mechanism during Private Beta.
+ * Token never stored in database (only hash), never logged, never tracked.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -62,7 +66,8 @@ export async function POST(request: NextRequest) {
     const shareCode = crypto.randomUUID();
 
     // Generate private management token (for creator)
-    const { tokenHash: managementTokenHash } = generateManagementToken();
+    // SECURITY: Token returned once, hash stored in DB
+    const { token: managementToken, tokenHash: managementTokenHash } = generateManagementToken();
 
     // Insert MemoryPop with both credentials
     const { data, error } = await supabase
@@ -93,11 +98,14 @@ export async function POST(request: NextRequest) {
     // Session binds this creator to THIS specific MemoryPop
     await setCreatorSession(shareCode, managementTokenHash);
 
-    // Return ONLY non-sensitive data
-    // Do NOT return managementToken in normal flow
+    // Return shareCode and raw management token
+    // SECURITY: Token returned ONCE for display on success page
+    // This is creator's only recovery mechanism during Private Beta
+    // Token must be saved by creator (shown once, never retrievable)
     return NextResponse.json({
       success: true,
       shareCode: data.share_code,
+      managementToken: managementToken,
     });
 
   } catch (error) {

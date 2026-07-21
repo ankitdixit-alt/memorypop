@@ -3,9 +3,9 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { ShareButtons } from "@/components/ShareButtons";
 import { EmailCaptureForm } from "@/components/EmailCaptureForm";
+import { SuccessActions } from "@/components/SuccessActions";
 import { getCelebrationExperience } from "@/lib/celebrationExperience";
 import { isCreatorAuthorized } from "@/lib/creatorSession";
-import { trackEvent } from "@/lib/analytics";
 import type { Metadata } from "next";
 
 /**
@@ -29,6 +29,7 @@ type SuccessPageProps = {
     recipient?: string;
     occasion?: string;
     shareCode?: string;
+    token?: string; // Management token (shown once for recovery)
   }>;
 };
 
@@ -38,6 +39,7 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   const recipient = params.recipient || "your loved one";
   const occasion = params.occasion || "Celebration";
   const shareCode = params.shareCode || "";
+  const managementToken = params.token || ""; // Management token from creation (shown once)
 
   // Verify creator session exists
   // If no session, creator somehow bypassed creation flow
@@ -53,7 +55,8 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   const headersList = await headers();
   const host = headersList.get("host") || "localhost:3000";
   const protocol = host.includes("localhost") ? "http" : "https";
-  const shareLink = `${protocol}://${host}/m/${shareCode}/contribute`;
+  const baseUrl = `${protocol}://${host}`;
+  const shareLink = `${baseUrl}/m/${shareCode}/contribute`;
 
   // Get celebration experience (occasion + default mood composition)
   const celebrationExperience = getCelebrationExperience({
@@ -88,6 +91,15 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
           to add memories for {recipient}.
         </p>
 
+        {/* Private Creator Link + Dashboard Access (with copy-to-continue gate) */}
+        <SuccessActions
+          shareCode={shareCode}
+          managementToken={managementToken || null}
+          baseUrl={baseUrl}
+        />
+
+        <div className="mt-10 w-full border-t border-[#ead8c9]"></div>
+
         <div className="mt-10 w-full rounded-3xl border border-[#ead8c9] bg-white p-6 shadow-sm">
           <p className="mb-6 text-center text-sm font-semibold uppercase tracking-wide text-[#856b5f]">
             {celebrationExperience.sharePrompt}
@@ -119,15 +131,6 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
             </div>
           </>
         )}
-
-        <div className="mt-10 w-full border-t border-[#ead8c9]"></div>
-
-        <Link
-          href={`/dashboard/${shareCode}`}
-          className="mt-10 rounded-full border-2 border-[#ef6a57] bg-white px-7 py-4 font-semibold text-[#ef6a57] transition-colors hover:bg-[#fff8ef] active:ring-2 active:ring-[#FF6B57] active:ring-offset-2 transition-all"
-        >
-          View Creator Dashboard
-        </Link>
 
         <div className="mt-10 w-full border-t border-[#ead8c9]"></div>
 
