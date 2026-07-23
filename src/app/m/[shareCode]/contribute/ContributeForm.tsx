@@ -2,7 +2,6 @@
 
 import { ChangeEvent, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 import { getCelebrationExperience, type CelebrationExperience } from "@/lib/celebrationExperience";
 import { ShareButtons } from "@/components/ShareButtons";
 import { trackEvent } from "@/lib/analytics";
@@ -63,27 +62,24 @@ export default function ContributeForm({
 
   async function uploadPhotoToSupabase(file: File): Promise<string | null> {
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `${shareCode}/${fileName}`;
+      // Upload via API route (server-side)
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('shareCode', shareCode);
 
-      const { data, error } = await supabase.storage
-        .from('memory-photos')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false
-        });
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
 
-      if (error) {
-        console.error('Upload error:', error);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Upload failed' }));
+        console.error('Upload error:', errorData.error);
         return null;
       }
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('memory-photos')
-        .getPublicUrl(filePath);
-
-      return publicUrl;
+      const data = await response.json();
+      return data.publicUrl;
     } catch (error) {
       console.error('Upload failed:', error);
       return null;
