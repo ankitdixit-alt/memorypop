@@ -15,7 +15,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseServer } from "@/lib/supabaseServer";
 import { hashToken, isTokenExpired, isVerificationLocked } from "@/lib/verification";
 
 export async function GET(request: NextRequest) {
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
   const tokenHash = hashToken(token);
 
   // Fetch MemoryPop with verification data
-  const { data: memorypop, error: fetchError } = await supabase
+  const { data: memorypop, error: fetchError } = await supabaseServer
     .from("memorypops")
     .select("*")
     .eq("share_code", shareCode)
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
   // Constant-time comparison would be ideal but string comparison is acceptable here
   if (memorypop.verification_token_hash !== tokenHash) {
     // Increment failed attempts
-    await supabase
+    await supabaseServer
       .from("memorypops")
       .update({
         verification_attempts: (memorypop.verification_attempts || 0) + 1,
@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
   // SUCCESS - Promote pending email to verified email
   // Move pending_creator_email → creator_email (verified)
   // SECURITY: Invalidate token after single use
-  const { error: updateError } = await supabase
+  const { error: updateError } = await supabaseServer
     .from("memorypops")
     .update({
       creator_email: memorypop.pending_creator_email, // Promote pending to verified

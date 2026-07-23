@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { supabaseServer } from "@/lib/supabaseServer";
 import RevealExperience from "./RevealExperience";
 import type { Metadata } from "next";
 
@@ -16,7 +16,7 @@ export async function generateMetadata({
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.app';
 
   // Fetch MemoryPop for personalized title
-  const { data: memorypop } = await supabase
+  const { data: memorypop } = await supabaseServer
     .from("memorypops")
     .select("recipient_name, occasion")
     .eq("share_code", shareCode)
@@ -57,7 +57,7 @@ export default async function RevealPage({
   const { shareCode } = await params;
 
   // Fetch MemoryPop
-  const { data: memoryPop, error: memoryPopError } = await supabase
+  const { data: memoryPop, error: memoryPopError } = await supabaseServer
     .from("memorypops")
     .select("*")
     .eq("share_code", shareCode)
@@ -75,7 +75,7 @@ export default async function RevealPage({
   }
 
   // Fetch memories with photos
-  const { data: memories, error: memoriesError } = await supabase
+  const { data: memories, error: memoriesError } = await supabaseServer
     .from("memories")
     .select("*")
     .eq("memorypop_id", memoryPop.id)

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { supabase } from "@/lib/supabase";
+import { supabaseServer } from "@/lib/supabaseServer";
 
 // Initialize Stripe with secret key (server-side only)
 function getStripe() {
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Fetch MemoryPop from database
-    const { data: memorypop, error: fetchError } = await supabase
+    const { data: memorypop, error: fetchError } = await supabaseServer
       .from("memorypops")
       .select("*")
       .eq("share_code", shareCode)

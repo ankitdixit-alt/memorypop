@@ -23,7 +23,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseServer } from "@/lib/supabaseServer";
 import { Resend } from "resend";
 import CreatorWelcomeEmail from "@/emails/CreatorWelcome";
 import { hashManagementToken } from "@/lib/verification";
@@ -180,7 +180,7 @@ export async function POST(request: NextRequest) {
     const normalizedEmail = email.toLowerCase().trim();
 
     // Fetch MemoryPop from database with session validation
-    const { data: memorypop, error: fetchError } = await supabase
+    const { data: memorypop, error: fetchError } = await supabaseServer
       .from("memorypops")
       .select("*")
       .eq("share_code", shareCode)
@@ -224,7 +224,7 @@ export async function POST(request: NextRequest) {
 
     // Update database with rate limiting timestamp ONLY
     // DO NOT persist email address or management token
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseServer
       .from("memorypops")
       .update({
         verification_sent_at: new Date().toISOString(), // For rate limiting

@@ -18,7 +18,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabaseServer';
 import { generateManagementToken } from '@/lib/verification';
 import { setCreatorSession } from '@/lib/creatorSession';
 import crypto from 'crypto';
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
     const { token: managementToken, tokenHash: managementTokenHash } = generateManagementToken();
 
     // Insert MemoryPop with both credentials
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
       .from('memorypops')
       .insert({
         recipient_name: body.recipient_name,

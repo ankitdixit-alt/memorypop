@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { supabaseServer } from "@/lib/supabaseServer";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { ShareButtons } from "@/components/ShareButtons";
@@ -86,7 +86,7 @@ export async function generateMetadata({
 
   try {
     // Fetch with timeout
-    const fetchPromise = supabase
+    const fetchPromise = supabaseServer
       .from("memorypops")
       .select("recipient_name, occasion")
       .eq("share_code", shareCode)
@@ -157,7 +157,7 @@ export default async function MemoryPopPage({
 }) {
   const { shareCode } = await params;
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseServer
     .from("memorypops")
     .select("*")
     .eq("share_code", shareCode)
@@ -176,7 +176,7 @@ export default async function MemoryPopPage({
   }
 
   // Fetch memories for this memorypop
-  const { data: memories } = await supabase
+  const { data: memories } = await supabaseServer
     .from("memories")
     .select("*")
     .eq("memorypop_id", data.id)

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { supabase } from "@/lib/supabase";
+import { supabaseServer } from "@/lib/supabaseServer";
 
 /**
  * SEO Foundation Phase 1 - Task 3 & 4
@@ -15,7 +15,7 @@ export async function generateMetadata({
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.app';
 
   // Fetch MemoryPop for personalized title
-  const { data: memorypop } = await supabase
+  const { data: memorypop } = await supabaseServer
     .from("memorypops")
     .select("recipient_name, occasion")
     .eq("share_code", shareCode)

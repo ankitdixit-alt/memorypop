@@ -19,7 +19,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabaseServer';
 import { hashManagementToken } from '@/lib/verification';
 import { setCreatorSession } from '@/lib/creatorSession';
 
@@ -37,7 +37,7 @@ export async function GET(
   const tokenHash = hashManagementToken(token);
 
   // Find MemoryPop by management token hash
-  const { data: memorypop, error } = await supabase
+  const { data: memorypop, error } = await supabaseServer
     .from('memorypops')
     .select('share_code, management_token_hash')
     .eq('management_token_hash', tokenHash)

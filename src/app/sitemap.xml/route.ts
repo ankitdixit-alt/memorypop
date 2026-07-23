@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { supabaseServer } from "@/lib/supabaseServer";
 import { NextResponse } from "next/server";
 
 /**
@@ -13,7 +13,7 @@ export async function GET() {
 
   try {
     // Query public MemoryPops from database
-    const { data: memorypops, error } = await supabase
+    const { data: memorypops, error } = await supabaseServer
       .from('memorypops')
       .select('share_code, created_at')
       .order('created_at', { ascending: false });

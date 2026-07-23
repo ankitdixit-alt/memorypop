@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { supabaseServer } from "@/lib/supabaseServer";
 import { notFound, redirect } from "next/navigation";
 import { isCreatorAuthorized } from "@/lib/creatorSession";
 import { headers } from "next/headers";
@@ -51,7 +51,7 @@ export async function generateMetadata({
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.app';
 
   // Fetch MemoryPop to get recipient name
-  const { data: memorypop } = await supabase
+  const { data: memorypop } = await supabaseServer
     .from("memorypops")
     .select("recipient_name, occasion")
     .eq("share_code", shareCode)
@@ -101,7 +101,7 @@ export default async function DashboardPage({
   }
 
   // Fetch MemoryPop
-  const { data: memorypop, error } = await supabase
+  const { data: memorypop, error } = await supabaseServer
     .from("memorypops")
     .select("*")
     .eq("share_code", shareCode)
@@ -124,7 +124,7 @@ export default async function DashboardPage({
   }
 
   // Fetch memories
-  const { data: memories } = await supabase
+  const { data: memories } = await supabaseServer
     .from("memories")
     .select("*")
     .eq("memorypop_id", memorypop.id)
