@@ -146,13 +146,13 @@ function shouldApplySafetyOverrides(
   occasion: string,
   mood: CelebrationMood
 ): boolean {
-  // Only Sympathy with Funny/Emotional needs softening
-  if (occasion === 'sympathy' && (mood === 'funny' || mood === 'emotional')) {
+  // Only Sympathy with Playful/Nostalgic needs softening
+  if (occasion === 'sympathy' && (mood === 'playful_fun' || mood === 'nostalgic_reflective')) {
     return true;
   }
 
-  // Get Well Soon can be funny (appropriate for close relationships)
-  // Do NOT override Get Well Soon + Funny
+  // Get Well Soon can be playful (appropriate for close relationships)
+  // Do NOT override Get Well Soon + Playful
 
   return false;
 }

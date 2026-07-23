@@ -1,1267 +1,727 @@
-# Implementation Specification: Success Page UX Redesign
+# Implementation Specification: Celebration Mood Step
 
-**Feature:** Post-Creation Success Page Redesign
-**Product Owner Decision:** BUILD NOW (Score 9/10)
-**Planning Date:** 2026-07-21
-
----
-
-## 1. UX Diagnosis
-
-### Current Problems
-
-**Problem 1: Inverted Information Hierarchy**
-
-Current order:
-1. Success celebration
-2. Private Creator Link (large, prominent, with blocking behavior)
-3. Share with contributors
-4. Email capture
-
-Creator's natural workflow:
-1. ✅ "Great! Now invite everyone to contribute"
-2. ✅ "Save my access for later"
-
-**The primary user goal (inviting contributors) is buried below security features.**
+**Date:** 2026-07-23
+**Status:** ✅ Founder Approved with Refinements
+**Estimated Effort:** 1-2 days
 
 ---
 
-**Problem 2: Punitive UX Pattern**
+## Executive Summary
 
-Current behavior:
-- Dashboard button disabled until creator copies Private Creator Link
-- Messaging: "⬆️ Please copy your Private Creator Link first"
+Add a dedicated mood selection step (Step 1.5) to the MemoryPop creation flow, positioned between occasion selection and message writing. Mood influences both the creator experience (message-writing) and contributor experience throughout the celebration journey.
 
-This creates:
-- ❌ Anxiety instead of celebration
-- ❌ Feeling of being blocked or restricted
-- ❌ Impression that the product doesn't trust the user
+**Core Change:** Split Step 2 into "Choose Mood" (new Step 1.5) + "Write Message" (Step 2), moving mood selection earlier and establishing it as a first-class experience layer.
 
-**UX Improvement:** Removing blocking makes the experience feel reassuring instead of punitive. Creator can always access dashboard. If they haven't saved access, show gentle reminder (not blocker).
+**Architecture Principle:** Mood is a long-term experience layer that influences copy now, and will later influence visual styling, animations, reveal experience, celebration effects, and AI prompting.
 
 ---
 
-**Problem 3: Broken Interaction**
+## Architecture Principles
 
-"Skip for now" button:
-- Performs no meaningful action
-- Only tracks analytics event
-- Section is already optional (ignoring it = skipping)
-- Creates impression of broken UI
+### Mood as Long-Term Experience Layer
 
-**Violates principle:** Every visible action must have meaningful outcome.
+Mood is architected as a **first-class dimension** that will grow beyond copy to influence the entire celebration experience.
 
----
+**This Release (Copy Layer):**
+- ✅ Mood selection UI (Step 1.5)
+- ✅ Creator message-writing influenced by mood
+- ✅ Contributor contribute page influenced by mood
+- ✅ Reveal introduction influenced by mood
 
-**Problem 4: Technical Language**
+**Future Capabilities (Extensibility Built In):**
+- 🎨 **Visual Layer:** Mood-specific color palettes, gradients, cover styles
+- ✨ **Animation Layer:** Mood-appropriate transitions, celebration effects, confetti styles
+- 🎭 **Reveal Experience:** Mood-driven pacing, transitions, sound effects
+- 🤖 **AI Prompting:** Mood context for future AI-generated content
+- 📊 **Analytics:** Mood-based insights and personalization
 
-Current terminology:
-- "Management token"
-- "Recovery"
-- "Private Creator Link" (acceptable)
-- Section feels like password manager, not celebration tool
+**Design Decision:** The `MoodConfig` interface includes extensibility comments to guide future features. Fields can be added without breaking changes.
 
-**Breaks the celebration moment** with authentication concepts.
-
----
-
-**Problem 5: Competing Visual Weight**
-
-All three sections have equal visual prominence:
-- Private Creator Link: Large card, red border, extensive warnings
-- Share with contributors: Standard white card
-- Email capture: Standard white card
-
-**Security warning dominates** when contributor invitation should be most prominent.
+**Key Principle:** Mood should feel like a natural, intuitive choice that creators understand immediately. Five options provide meaningful variety without overwhelming.
 
 ---
 
-### Root Cause Analysis
+## Exact User Flow
 
-The page was designed around **technical implementation details** (security, token management) rather than **creator workflow** (celebrate → invite → preserve access).
+### Current Flow (3 steps)
+```
+Step 1: Choose occasion + Enter recipient name
+  ↓
+Step 2: Write message + Choose tone + Choose cover + Add date + Add photos
+  ↓
+Step 3: Preview + Create
+```
 
-Security is critical but should feel reassuring, not technical or blocking.
+###Proposed Flow (4 steps - reusing step numbering)
 
----
+```
+Step 1: Choose occasion + Enter recipient name
+  ↓ (Click "Make it personal →")
+  
+Step 1.5 NEW: Choose celebration mood
+  - Display: "How should this celebration feel?"
+  - Supporting: "Choose the atmosphere you'd like everyone to help create."
+  - Show 5 mood cards (2-column mobile, 3-column desktop)
+  - Each card: emoji + label + 1-sentence description
+  - Click to select, button to continue
+  - REQUIRED: Continue button disabled until mood selected
+  ↓ (Click "Write your message →")
+  
+Step 2: Write personal message (ENHANCED with mood)
+  - Header influenced by selected mood
+  - Helper text influenced by selected mood
+  - Message starters influenced by selected mood
+  - Textarea placeholder influenced by selected mood
+  - Celebration date (optional)
+  - Emoji selector (RENAMED: "Choose a celebration icon")
+  - Cover style selector (unchanged)
+  - Photo upload (unchanged)
+  ↓ (Click "See your MemoryPop →")
+  
+Step 3: Preview + Create (unchanged)
+```
 
-## 2. Proposed User Flow
+### Step-by-Step Interaction
 
-### New Information Architecture
+**Step 1 → 1.5 transition:**
+- User clicks "Make it personal →" after entering recipient name
+- Progress bar updates: 25% → 37.5%
+- Progress label changes: "🌱 Starting the celebration" → "💛 Choosing the mood"
+- Step counter: "Step 1 of 3" → "Step 1.5 of 3" (or relabel to "Step 2 of 4")
 
+**Step 1.5 (NEW):**
 ```
 ┌─────────────────────────────────────────┐
-│ SECTION 1: CELEBRATION                   │
-│                                          │
-│ 🎉 [Recipient]'s MemoryPop is ready!    │
-│                                          │
-│ Now invite friends and family to add     │
-│ memories before the celebration.         │
+│ 💛 Choosing the mood                    │
+│ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ │ 37.5%
+│ Step 2 of 4                             │
 └─────────────────────────────────────────┘
 
-┌─────────────────────────────────────────┐
-│ SECTION 2: INVITE CONTRIBUTORS           │
-│ (PRIMARY CTA - MOST PROMINENT)           │
-│                                          │
-│ Invite Friends & Family                  │
-│                                          │
-│ [Copy Link] [Share on WhatsApp]         │
-│                                          │
-│ Share this link to collect memories.    │
-└─────────────────────────────────────────┘
+[← Back]
 
-┌─────────────────────────────────────────┐
-│ SECTION 3: KEEP ACCESS SAFE             │
-│ (REASSURING, NOT BLOCKING)               │
-│                                          │
-│ Keep your creator access safe            │
-│                                          │
-│ RECOMMENDED:                             │
-│ Email me my MemoryPop details            │
-│                                          │
-│ [Email input] [Email me these details]  │
-│                                          │
-│ ─── OR ───                               │
-│                                          │
-│ Prefer not to use email?                │
-│                                          │
-│ Your Private Creator Link:               │
-│ [Link display] [Copy Link]              │
-│                                          │
-│ ⚠️ Keep this link private.              │
-│ Anyone with it can manage your           │
-│ MemoryPop.                               │
-└─────────────────────────────────────────┘
+How should this celebration feel?
+Choose the atmosphere you'd like everyone to help create.
 
-┌─────────────────────────────────────────┐
-│ SECTION 4: DASHBOARD ACCESS              │
-│ (ALWAYS ENABLED)                         │
-│                                          │
-│ [View Creator Dashboard]                 │
-│                                          │
-│ [Create Another] [Back Home]            │
-└─────────────────────────────────────────┘
+┌─────────────────┬─────────────────┐
+│ 💕 Warm &       │ 🎉 Playful &    │
+│    heartfelt    │    fun          │
+│                 │                 │
+│ Genuine love    │ Lighthearted    │
+│ and warmth      │ and joyful      │
+└─────────────────┴─────────────────┘
+
+┌─────────────────┬─────────────────┐
+│ ✨ Thoughtful & │ 🎊 Joyful &     │
+│    meaningful   │    celebratory  │
+│                 │                 │
+│ Sincere and     │ Uplifting and   │
+│ intentional     │ full of energy  │
+└─────────────────┴─────────────────┘
+
+┌─────────────────────────────────────┐
+│ 🌸 Nostalgic & reflective           │
+│                                     │
+│ Looking back with fondness          │
+└─────────────────────────────────────┘
+
+[Write your message →]  (disabled until selection)
 ```
 
-### User Journey
+**Step 1.5 → 2 transition:**
+- User selects mood (card highlights)
+- User clicks "Write your message →"
+- Progress bar: 37.5% → 62.5%
+- Progress label: "💛 Choosing the mood" → "💛 Making it personal"
+- Step counter: "Step 2 of 4" → "Step 3 of 4"
 
-**Step 1: Creator creates MemoryPop**
-- Form submitted
-- MemoryPop created in database
-- Creator session established
-- Redirected to success page with token in URL
-
-**Step 2: Celebration**
-- See success message
-- Feel accomplished
-
-**Step 3: Primary action - Invite contributors**
-- Most prominent section
-- Copy link or share via WhatsApp
-- Analytics tracked
-
-**Step 4: Optional - Preserve access (recommended: email)**
-- See two options: email (recommended) or copy link (alternative)
-- Choose preferred method
-- Email sent or link copied
-- Analytics tracked
-
-**Step 5: Continue to dashboard**
-- Click "View Creator Dashboard" (always enabled)
-- If neither email nor copy performed: gentle reminder shown (non-blocking)
-- Access dashboard
+**Step 2 (ENHANCED):**
+- Header text changes based on selected mood (see Mood Configuration below)
+- Helper text changes based on mood
+- Message starters change based on mood (if available)
+- Textarea prompt changes based on mood
+- Placeholder changes based on mood
+- Emoji selector label: "Add some emotion" → "Choose a celebration icon"
 
 ---
 
-## 3. Wireframe (Text-Based)
+## Data Model
 
-### Mobile View (Priority)
+### Database
 
-```
-╔═══════════════════════════════════════════╗
-║                                           ║
-║              🎉                           ║
-║                                           ║
-║     Shagun's MemoryPop is ready!         ║
-║                                           ║
-║   Now invite friends and family to add    ║
-║   memories before the celebration.        ║
-║                                           ║
-╠═══════════════════════════════════════════╣
-║                                           ║
-║ ┌───────────────────────────────────────┐ ║
-║ │                                       │ ║
-║ │   Invite Friends & Family             │ ║
-║ │                                       │ ║
-║ │   Share this link to collect memories │ ║
-║ │                                       │ ║
-║ │   ┌─────────────────────────────┐    │ ║
-║ │   │     🔗 Copy Link            │    │ ║
-║ │   └─────────────────────────────┘    │ ║
-║ │                                       │ ║
-║ │   ┌─────────────────────────────┐    │ ║
-║ │   │  💬 Share on WhatsApp       │    │ ║
-║ │   └─────────────────────────────┘    │ ║
-║ │                                       │ ║
-║ └───────────────────────────────────────┘ ║
-║                                           ║
-║         ─────────────────────             ║
-║                                           ║
-║ ┌───────────────────────────────────────┐ ║
-║ │                                       │ ║
-║ │   Keep your creator access safe       │ ║
-║ │                                       │ ║
-║ │   Recommended:                        │ ║
-║ │                                       │ ║
-║ │   📧 Email me my MemoryPop details    │ ║
-║ │                                       │ ║
-║ │   The email contains:                 │ ║
-║ │   • Private Creator Link              │ ║
-║ │   • Contributor Link                  │ ║
-║ │   • MemoryPop summary                 │ ║
-║ │   • Celebration date                  │ ║
-║ │                                       │ ║
-║ │   ┌─────────────────────────────┐    │ ║
-║ │   │  your@email.com             │    │ ║
-║ │   └─────────────────────────────┘    │ ║
-║ │                                       │ ║
-║ │   ┌─────────────────────────────┐    │ ║
-║ │   │ Email me these details      │    │ ║
-║ │   └─────────────────────────────┘    │ ║
-║ │                                       │ ║
-║ │   ───────── OR ─────────              │ ║
-║ │                                       │ ║
-║ │   Prefer not to use email?            │ ║
-║ │                                       │ ║
-║ │   Your Private Creator Link:          │ ║
-║ │                                       │ ║
-║ │   ┌─────────────────────────────┐    │ ║
-║ │   │ memorypop.app/manage/xyz... │    │ ║
-║ │   └─────────────────────────────┘    │ ║
-║ │                                       │ ║
-║ │   ┌─────────────────────────────┐    │ ║
-║ │   │     Copy Link               │    │ ║
-║ │   └─────────────────────────────┘    │ ║
-║ │                                       │ ║
-║ │   ⚠️ Keep this link private.         │ ║
-║ │   Anyone with it can manage your      │ ║
-║ │   MemoryPop.                          │ ║
-║ │                                       │ ║
-║ └───────────────────────────────────────┘ ║
-║                                           ║
-║         ─────────────────────             ║
-║                                           ║
-║   ┌───────────────────────────────────┐  ║
-║   │  View Creator Dashboard           │  ║
-║   └───────────────────────────────────┘  ║
-║                                           ║
-║   ┌─────────────┐  ┌─────────────────┐  ║
-║   │ Create      │  │  Back Home      │  ║
-║   │ Another     │  │                 │  ║
-║   └─────────────┘  └─────────────────┘  ║
-║                                           ║
-╚═══════════════════════════════════════════╝
+**NO SCHEMA CHANGES NEEDED**
+
+Reuse existing `tone` field in `memorypops` table:
+```sql
+-- Existing schema (no changes)
+CREATE TABLE memorypops (
+  ...
+  tone TEXT NOT NULL,  -- Legacy: "Heartfelt", "Funny", "Emotional", "Simple"
+                       -- New values: "warm_heartfelt", "playful_fun", "thoughtful_meaningful",
+                       --             "joyful_celebratory", "nostalgic_reflective"
+                       -- REQUIRED: Creator must select mood (no default)
+  ...
+);
 ```
 
-### Desktop View
+**Migration Strategy:**
+- No SQL migration needed (field already exists)
+- Normalize legacy values in application code
+- New MemoryPops use snake_case mood IDs
 
-Same structure but horizontal layout for contributor buttons and bottom navigation.
+### Type Definition
+
+**Update `src/lib/celebrationMood.ts`:**
+
+```typescript
+export type CelebrationMood =
+  | "warm_heartfelt"
+  | "playful_fun"
+  | "thoughtful_meaningful"
+  | "joyful_celebratory"
+  | "nostalgic_reflective";
+
+// Legacy compatibility
+type LegacyMood = "heartfelt" | "funny" | "emotional" | "simple";
+
+export interface MoodConfig {
+  // UI labels
+  id: CelebrationMood;
+  label: string;              // e.g., "Warm & heartfelt"
+  emoji: string;              // e.g., "💕"
+  description: string;        // e.g., "Genuine love and warmth"
+
+  // Creator experience (message writing step)
+  creatorHeadline: string;         // Header for creator's message step
+  creatorSupportingText: string;   // Helper text for creator
+  creatorPrompt: string;           // Label for creator's textarea
+  creatorPlaceholder: string;      // Placeholder for creator's textarea
+
+  // Contributor experience (contribute page)
+  contributorHeadline: string;     // Header for contributor form
+  contributorSupportingText: string; // Helper text for contributors
+  contributorPrompt: string;        // Label for contributor's textarea
+  contributorPlaceholder: string;   // Placeholder for contributor's textarea
+
+  // Reveal experience
+  revealIntroduction: string;      // Intro text on reveal page
+
+  // Optional: message starters (can differ for creator vs contributor)
+  messageStarters?: string[];
+
+  // Future extensibility
+  // Visual: colors, gradients, cover styles
+  // Animation: transition effects, celebration effects
+  // AI: prompt engineering hints
+}
+```
+
+### State Management
+
+**Update `src/app/create/page.tsx`:**
+
+```typescript
+const [step, setStep] = useState(1);       // Change to support 1.5
+const [mood, setMood] = useState<CelebrationMood | null>(null); // Rename from tone, required selection
+```
+
+**IMPORTANT:** Mood is required. Do not provide a default value. The creator must make an intentional choice before proceeding to the message-writing step.
+
+**Step numbering strategy:**
+- Option A: Use fractional steps (1, 1.5, 2, 3) - simpler code
+- Option B: Renumber to (1, 2, 3, 4) - clearer UI
+- **Recommendation:** Option B (renumber to 4 steps)
 
 ---
 
-## 4. Updated Copy
+## Mood Configuration
 
-### Section 1: Celebration
+### Complete Mood Definitions
 
-**Heading:**
-```
-[emoji] [Recipient]'s MemoryPop is ready!
+```typescript
+export const CELEBRATION_MOODS: Record<CelebrationMood, MoodConfig> = {
+  warm_heartfelt: {
+    id: "warm_heartfelt",
+    label: "Warm & heartfelt",
+    emoji: "💕",
+    description: "Genuine love and warmth",
+
+    // Creator experience
+    creatorHeadline: "Make it personal",
+    creatorSupportingText: "If someone asked why [Recipient] is special, what would you say?",
+    creatorPrompt: "Your message",
+    creatorPlaceholder: "Share your message...",
+
+    // Contributor experience
+    contributorHeadline: "Share something from the heart",
+    contributorSupportingText: "This celebration is about genuine connection and love. Share a meaningful memory or heartfelt message.",
+    contributorPrompt: "What is one memory that shows how much they mean to you?",
+    contributorPlaceholder: "I'll always remember the time we...",
+
+    // Reveal experience
+    revealIntroduction: "Every memory here was shared with love.",
+
+    messageStarters: [
+      "One of my favorite memories with you is...",
+      "You mean so much to me because...",
+      "I'll never forget the day when...",
+      "What I admire most about you is..."
+    ]
+  },
+  
+  playful_fun: {
+    id: "playful_fun",
+    label: "Playful & fun",
+    emoji: "🎉",
+    description: "Lighthearted and joyful",
+
+    // Creator experience
+    creatorHeadline: "Make it personal",
+    creatorSupportingText: "If someone asked why [Recipient] is special, what would you say?",
+    creatorPrompt: "Your message",
+    creatorPlaceholder: "Share your message...",
+
+    // Contributor experience
+    contributorHeadline: "Share something that will make them smile",
+    contributorSupportingText: "This celebration is about laughter and joy. Share a funny memory, inside joke, or lighthearted story.",
+    contributorPrompt: "What's the funniest moment you've shared together?",
+    contributorPlaceholder: "Remember when we...",
+
+    // Reveal experience
+    revealIntroduction: "Get ready for some memories that might make you laugh.",
+
+    messageStarters: [
+      "I still laugh when I think about the time...",
+      "Remember when we thought it was a good idea to...",
+      "One thing that always makes me smile is...",
+      "I'll never let you forget the day you..."
+    ]
+  },
+  
+  thoughtful_meaningful: {
+    id: "thoughtful_meaningful",
+    label: "Thoughtful & meaningful",
+    emoji: "✨",
+    description: "Sincere and intentional",
+
+    // Creator experience
+    creatorHeadline: "Make it personal",
+    creatorSupportingText: "If someone asked why [Recipient] is special, what would you say?",
+    creatorPrompt: "Your message",
+    creatorPlaceholder: "Share your message...",
+
+    // Contributor experience
+    contributorHeadline: "Share something meaningful",
+    contributorSupportingText: "This celebration is about thoughtful reflection and genuine appreciation. Share something meaningful and sincere.",
+    contributorPrompt: "What would you like them to always remember?",
+    contributorPlaceholder: "What I've always appreciated about you is...",
+
+    // Reveal experience
+    revealIntroduction: "Every word here was chosen with care.",
+
+    messageStarters: [
+      "I've always admired the way you...",
+      "One thing I hope you never forget is...",
+      "What makes you special is...",
+      "I'm grateful for the times we..."
+    ]
+  },
+
+  joyful_celebratory: {
+    id: "joyful_celebratory",
+    label: "Joyful & celebratory",
+    emoji: "🎊",
+    description: "Uplifting and full of energy",
+
+    // Creator experience
+    creatorHeadline: "Make it personal",
+    creatorSupportingText: "If someone asked why [Recipient] is special, what would you say?",
+    creatorPrompt: "Your message",
+    creatorPlaceholder: "Share your message...",
+
+    // Contributor experience
+    contributorHeadline: "Share the joy!",
+    contributorSupportingText: "This celebration is about excitement and positive energy. Share an achievement, happy moment, or reason to celebrate.",
+    contributorPrompt: "What makes this moment worth celebrating?",
+    contributorPlaceholder: "I'm celebrating you because...",
+
+    // Reveal experience
+    revealIntroduction: "This is a moment to celebrate together!",
+
+    messageStarters: [
+      "I'm so proud of you for...",
+      "This is such an exciting moment because...",
+      "Watching you achieve this has been...",
+      "You deserve to celebrate because..."
+    ]
+  },
+  
+  nostalgic_reflective: {
+    id: "nostalgic_reflective",
+    label: "Nostalgic & reflective",
+    emoji: "🌸",
+    description: "Looking back with fondness",
+
+    // Creator experience
+    creatorHeadline: "Make it personal",
+    creatorSupportingText: "If someone asked why [Recipient] is special, what would you say?",
+    creatorPrompt: "Your message",
+    creatorPlaceholder: "Share your message...",
+
+    // Contributor experience
+    contributorHeadline: "Share a memory they'll treasure",
+    contributorSupportingText: "This celebration is about cherished memories and meaningful moments. Share a favorite memory from the past.",
+    contributorPrompt: "What memory do you treasure most?",
+    contributorPlaceholder: "Looking back, I'll always remember...",
+
+    // Reveal experience
+    revealIntroduction: "Sometimes the best moments are the ones we carry with us.",
+
+    messageStarters: [
+      "Looking back, one moment that stands out is...",
+      "I'll always treasure the memory of...",
+      "Do you remember when we used to...",
+      "Time has passed, but I still think about..."
+    ]
+  }
+};
 ```
 
-**Subtext:**
-```
-Now invite friends and family to add memories before the celebration.
-```
+### Legacy Value Normalization
 
-### Section 2: Invite Contributors (Primary CTA)
+```typescript
+export function normalizeMood(mood: string | null | undefined): CelebrationMood {
+  if (!mood) {
+    return "warm_heartfelt"; // Safe default
+  }
+  
+  const lowercase = mood.toLowerCase().trim();
+  
+  // Handle new values (snake_case)
+  if (lowercase in CELEBRATION_MOODS) {
+    return lowercase as CelebrationMood;
+  }
+  
+  // Handle legacy values (capitalized)
+  const legacyMap: Record<string, CelebrationMood> = {
+    "heartfelt": "warm_heartfelt",
+    "funny": "playful_fun",
+    "emotional": "nostalgic_reflective",
+    "simple": "warm_heartfelt",
+    // Handle old elegant/bold names during transition
+    "elegant_meaningful": "thoughtful_meaningful",
+    "bold_celebratory": "joyful_celebratory",
+  };
 
-**Heading:**
-```
-Invite Friends & Family
-```
+  return legacyMap[lowercase] || "warm_heartfelt";
+}
 
-**Helper text:**
-```
-Share this link to collect memories for [Recipient].
-```
-
-**Buttons:**
-- `Copy Link` (changes to `Copied! ✓` after click)
-- `Share on WhatsApp`
-
-### Section 3: Keep Access Safe
-
-**Heading:**
-```
-Keep your creator access safe
-```
-
-**Email Option (Recommended):**
-
-Label:
-```
-Recommended:
-```
-
-Heading:
-```
-📧 Email me my MemoryPop details
-```
-
-Description:
-```
-The email contains:
-• Private Creator Link
-• Contributor Link
-• MemoryPop summary
-• Celebration date
-```
-
-Input placeholder:
-```
-your@email.com
-```
-
-Button:
-```
-Email me these details
-```
-
-Success state:
-```
-✅ Your MemoryPop details are on their way.
-```
-
-**Divider:**
-```
-───────── OR ─────────
-```
-
-**Link Alternative:**
-
-Label:
-```
-Prefer not to use email?
-```
-
-Heading:
-```
-Your Private Creator Link:
-```
-
-Link display:
-```
-[Full URL in monospace font]
-```
-
-Button:
-```
-Copy Link
-```
-
-Security warning:
-```
-⚠️ Keep this link private.
-Anyone with it can manage your MemoryPop.
-```
-
-### Section 4: Dashboard & Navigation
-
-**Dashboard button:**
-```
-View Creator Dashboard
-```
-
-**Secondary buttons:**
-```
-Create Another
-Back Home
+**Note:** For existing MemoryPops only, `normalizeMood()` provides a safe fallback. For new MemoryPops, mood is required and must be explicitly selected by the creator.
 ```
 
 ---
 
-## 5. Component Changes
+## Files to Change
 
-### 5.1 File Structure
+### Core Implementation (5 files)
 
-**Modified files:**
-- `src/app/success/page.tsx` - Page reorganization
-- `src/components/SuccessActions.tsx` - Remove blocking, rename to CreatorAccessSection
-- `src/components/EmailCaptureForm.tsx` - Remove "Skip for now" button
+1. **`src/lib/celebrationMood.ts`** (MODIFIED)
+   - Update `CelebrationMood` type with 5 new values
+   - Update `MoodConfig` interface to add UI fields (label, emoji, description)
+   - Replace `CELEBRATION_MOODS` object with 5 new mood configurations
+   - Update `normalizeMood()` to handle legacy values
+   - Add mood-specific `messageStarters` (optional per mood)
 
-**No new files required** - all components already exist.
+2. **`src/app/create/page.tsx`** (MODIFIED)
+   - Insert new Step 1.5 (mood selection) between current Step 1 and Step 2
+   - Rename `tone` state to `mood`
+   - Update step numbering (1, 2, 3, 4) and progress calculation
+   - Move mood selection out of Step 2
+   - Update Step 2 to use mood-influenced copy from `celebrationExperience`
+   - Change "Add some emotion" label to "Choose a celebration icon"
 
-### 5.2 Component Architecture
+3. **`src/components/MoodSelector.tsx`** (NEW)
+   - Reusable mood selection component
+   - Display 5 mood cards in responsive grid
+   - Handle selection state
+   - Similar pattern to OccasionSelector
 
-```
-SuccessPage
-├── Celebration Header (inline JSX)
-├── ContributorInviteSection (ShareButtons + wrapper)
-├── CreatorAccessSection (renamed from SuccessActions)
-│   ├── EmailCaptureForm (modified)
-│   └── PrivateCreatorLink (modified, shown as alternative)
-├── Dashboard Button (always enabled)
-└── Navigation Buttons (inline JSX)
-```
+4. **`src/app/api/memorypops/create/route.ts`** (MINOR UPDATE)
+   - Validate `mood` field in payload (should be one of 5 valid values)
+   - Save as `tone` in database (field name unchanged)
+   - Optional: log analytics event with mood selection
 
-### 5.3 Detailed Component Changes
+5. **`src/lib/celebrationExperience.ts`** (NO CHANGES)
+   - Composition layer already supports mood
+   - No modifications needed (already correctly structured)
 
-#### `src/app/success/page.tsx`
+### Optional Enhancements (2 files)
 
-**Changes:**
-1. Reorder sections:
-   - Celebration first
-   - Contributor invitation second (PRIMARY CTA)
-   - Creator access preservation third
-   - Dashboard/navigation fourth
+6. **`src/lib/occasions.ts`** (OPTIONAL CLEANUP)
+   - Remove any mood-related overrides if present
+   - Keep occasion configuration pure (no mood logic)
 
-2. Update visual hierarchy classes:
-   - Contributor section: Larger card, bolder heading, more prominent buttons
-   - Creator access section: Standard card, softer visual weight
-   - Remove excessive border-t dividers
-
-3. Remove `SuccessActions` component
-   - Replace with `CreatorAccessSection`
-
-4. Dashboard button always enabled
-   - No conditional rendering based on `hasCompletedCopy`
-   - Always render as enabled Link
-
-#### `src/components/SuccessActions.tsx` → `src/components/CreatorAccessSection.tsx`
-
-**Changes:**
-1. Rename file and component
-2. Remove blocking state (`hasCompletedCopy`)
-3. Remove `onCopyComplete` callback
-4. Reorganize internal structure:
-   - Email form first (recommended)
-   - OR divider
-   - Private Creator Link second (alternative)
-
-5. Update Private Creator Link styling:
-   - Remove red border (`border-2 border-[#ef6a57]`)
-   - Remove pink background (`bg-[#fff3f0]`)
-   - Use standard white card with subtle border
-   - Reduce visual prominence
-
-6. Remove "shown only once" messaging
-   - Keep security warning
-   - Remove anxiety-inducing copy
-
-7. Remove "Private Beta" context section
-   - Redundant with main security warning
-
-8. Remove token from URL (keep this existing behavior)
-
-#### `src/components/EmailCaptureForm.tsx`
-
-**Changes:**
-1. Remove `handleSkip` function (lines 67-69)
-2. Remove "Skip for now" button JSX (lines 112-121)
-3. Keep all other functionality unchanged:
-   - Form submission
-   - Success state with collapsed UI
-   - Error handling
-   - Analytics tracking
-
-**No other changes** - component already has good UX for success state.
+7. **`tests/mood-selection.test.tsx`** (NEW - if testing enabled)
+   - Test mood normalization function
+   - Test mood selector component
+   - Test legacy value handling
 
 ---
 
-## 6. Behaviour Changes
+## Acceptance Criteria
 
-### 6.1 Dashboard Button
+### Must Have (Required for Ship)
 
-**Before:**
-- Disabled until creator copies Private Creator Link
-- Shows disabled state with gray styling
-- Shows messaging: "⬆️ Please copy your Private Creator Link first"
+1. ✅ **Mood selection step exists and is required**
+   - Appears after occasion selection, before message writing
+   - Shows 5 mood options: Warm & heartfelt, Playful & fun, Thoughtful & meaningful, Joyful & celebratory, Nostalgic & reflective
+   - Each shows emoji, label, and description
+   - Allows single selection (radio-like behavior)
+   - Continue button disabled until selection made
+   - **No default mood** - creator must make intentional choice
 
-**After:**
-- Always enabled
-- Always rendered as clickable Link
-- No blocking behavior
-- No conditional states
+2. ✅ **Creator message writing step influenced by mood**
+   - Header text changes based on selected mood
+   - Helper text changes based on mood
+   - Textarea prompt changes based on mood
+   - Placeholder text changes based on mood
+   - Message starters (if present) change based on mood
 
-**Rationale:** UX improvement - removing blocking makes experience feel reassuring instead of punitive. Creator can access dashboard anytime. Security unchanged (session still required).
+3. ✅ **Contributor experience influenced by mood**
+   - Contribute page headline changes based on mood
+   - Supporting text changes based on mood
+   - Textarea prompt changes based on mood
+   - Placeholder text changes based on mood
+   - Examples: Warm → "Share something from the heart", Playful → "Share something that will make them smile", Nostalgic → "Share a memory they'll treasure"
 
-### 6.2 Private Creator Link
+4. ✅ **Data correctly saved**
+   - Selected mood saved to database `tone` field
+   - API validates mood value against allowed list (5 valid values)
+   - API rejects creation if mood is missing or invalid
+   - Existing MemoryPops continue to work (legacy values normalized)
 
-**Before:**
-- Prominently displayed at top
-- Large red-bordered card
-- Extensive warnings
-- Blocking dashboard access until copied
+5. ✅ **UI polish**
+   - Mood step visually consistent with existing design
+   - Heading: "How should this celebration feel?"
+   - Supporting text: "Choose the atmosphere you'd like everyone to help create."
+   - Mobile-first responsive layout (2 columns mobile, 3 desktop)
+   - Selected mood visually distinct (border + background color)
+   - Smooth transitions between steps
+   - Back button returns to mood selection with previous selection preserved
 
-**After:**
-- Shown below email option
-- Labeled as "Prefer not to use email?" (alternative)
-- Standard white card styling
-- Security warning retained but not anxiety-inducing
-- No blocking behavior
+6. ✅ **Emoji selector renamed**
+   - Label changes from "Add some emotion" to "Choose a celebration icon"
+   - Functionality unchanged
 
-**Rationale:** UX improvement - keep link available but don't make it feel mandatory or technical.
+7. ✅ **Legacy compatibility**
+   - Existing MemoryPops with old tone values ("Heartfelt", "Funny", etc.) still render correctly
+   - `normalizeMood()` function handles legacy values (including "elegant_meaningful" → "thoughtful_meaningful", "bold_celebratory" → "joyful_celebratory")
+   - No errors when viewing old MemoryPops
 
-### 6.3 Email Capture
+### Nice to Have (Optional)
 
-**Before:**
-- "Skip for now" button tracks analytics but performs no action
-- Shown in separate section
-
-**After:**
-- No "Skip for now" button
-- Ignoring the section = skipping (already optional)
-- Shown as recommended option in "Keep access safe" section
-
-**Rationale:** Remove broken interaction. Every visible action must have meaningful outcome.
-
-### 6.4 Token URL Cleanup
-
-**No change** - keep existing behavior:
-- Token removed from URL on component mount
-- Token stays in React props
-- URL cleanup is safe
-
-### 6.5 Page Scroll Behavior
-
-**New behavior:**
-- Page should not require excessive scrolling on mobile
-- Primary CTA (contributor invitation) should be visible without scrolling
-- Reduce unnecessary vertical spacing
+- ⭐ Mood-specific message starters (enhances UX but not required)
+- ⭐ Analytics event tracking mood selection
+- ⭐ Mood preview (show sample headline before selection)
 
 ---
 
-## 7. Analytics Impact
+## Risks & Edge Cases
 
-### 7.1 Existing Events (Keep Unchanged)
+### Technical Risks: VERY LOW
 
-**ShareButtons component:**
-- `memorypop_shared` (share_method: 'copy_link')
-- `memorypop_shared` (share_method: 'whatsapp')
+**Risk 1: Existing MemoryPops with legacy tone values**
+- **Impact:** Low - only affects display, not data integrity
+- **Mitigation:** `normalizeMood()` function maps legacy → new
+- **Fallback:** Default to "warm_heartfelt" if unmapped
 
-**EmailCaptureForm component:**
-- `creator_welcome_email_requested`
-- `creator_welcome_email_sent`
-- `creator_welcome_email_failed`
+**Risk 2: Step numbering changes**
+- **Impact:** Low - visual only, doesn't affect logic
+- **Mitigation:** Test step transitions thoroughly
+- **Fallback:** Keep fractional steps (1, 1.5, 2, 3) if renumbering complex
 
-**SuccessActions/PrivateCreatorLink:**
-- `private_creator_link_copied`
+**Risk 3: Database field name mismatch**
+- **Impact:** None - field is `tone` in DB, `mood` in UI
+- **Mitigation:** Map at API boundary (payload: mood → DB: tone)
+- **Fallback:** Already implemented correctly
 
-### 7.2 Events to Remove
+### Product Risks: LOW
 
-**EmailCaptureForm component:**
-- ❌ `creator_welcome_email_skipped` (button being removed)
+**Risk 1: Mood step adds time to creation flow**
+- **Impact:** Medium - might increase abandonment
+- **Mitigation:** Keep step simple, fast, obvious value
+- **Measurement:** Track time-on-step and abandonment rate
 
-### 7.3 Event Verification
+**Risk 2: Five options might overwhelm creators**
+- **Impact:** Low - 5 is reasonable for important decision
+- **Mitigation:** Clear descriptions, sensible default
+- **Fallback:** Reduce to 3-4 moods in future if data shows confusion
 
-**All events verified to NOT contain:**
-- ✅ No management tokens
-- ✅ No email addresses
-- ✅ Only shareCode and descriptive properties
+**Risk 3: Mood selection doesn't feel valuable**
+- **Impact:** Medium - creators might skip/ignore
+- **Mitigation:** Strong influence on message step (obvious value)
+- **Measurement:** Track mood selection rate (target >95%)
 
-**No analytics changes required** beyond removing the "skipped" event.
+### UX Risks: VERY LOW
 
-### 7.4 Measurement Targets (Hypotheses)
+**Risk 1: Mood cards not visually distinct**
+- **Impact:** Low - might be hard to see selection
+- **Mitigation:** Strong selected state (border + background)
+- **Fallback:** Add checkmark icon to selected card
 
-**Hypothesis 1:** Making contributor invitation the primary CTA will increase share actions
+**Risk 2: Descriptions too long on mobile**
+- **Impact:** Low - text wrapping might look bad
+- **Mitigation:** Keep descriptions to 1 short sentence (4-6 words)
+- **Fallback:** Hide descriptions on mobile (show only label)
 
-**Measurement target:**
-- `memorypop_shared` events increase by 30%+
+### Edge Cases
 
-**Hypothesis 2:** Removing blocking behavior will improve creator experience without reducing access preservation
+**Edge 1: User hits back from Step 2 to mood selection**
+- **Behavior:** Return to mood selection with previous mood still selected
+- **Implementation:** Preserve `mood` state, don't reset to default
 
-**Measurement targets:**
-- `private_creator_link_copied` events: maintain current rate or increase
-- `creator_welcome_email_sent` events: maintain current rate or increase
+**Edge 2: User hits back from mood selection to Step 1**
+- **Behavior:** Return to occasion/recipient step, previous values preserved
+- **Implementation:** Standard back navigation, no special handling
 
-**Hypothesis 3:** Removing "Skip for now" button will not impact email capture rate
+**Edge 3: User refreshes page during creation**
+- **Behavior:** State is lost (all create flows lose state on refresh)
+- **Implementation:** No special handling (consistent with existing behavior)
 
-**Measurement target:**
-- `creator_welcome_email_sent` rate unchanged (section already optional)
+**Edge 4: Null/undefined mood in database**
+- **Behavior:** Default to "warm_heartfelt"
+- **Implementation:** `normalizeMood()` handles this
 
----
-
-## 8. Accessibility Review
-
-### 8.1 Keyboard Navigation
-
-**Requirements:**
-- All interactive elements focusable via Tab
-- Logical tab order: celebration → invite → email/link → dashboard → navigation
-- No keyboard traps
-- Focus visible on all interactive elements
-
-**Implementation:**
-- Ensure proper semantic HTML (button, input, Link)
-- No custom tab index manipulation needed
-
-### 8.2 Screen Reader Support
-
-**Requirements:**
-- Heading hierarchy (h1 → h2 → h3)
-- ARIA labels where needed
-- Form labels properly associated
-- Button purposes clear
-
-**Current compliance:**
-- ShareButtons: ✅ Already has proper button labels
-- EmailCaptureForm: ✅ Input has placeholder and required attribute
-- PrivateCreatorLink: ✅ Has aria-label on input and button
-
-**Changes needed:**
-- Add semantic heading structure to new sections
-- Ensure "Recommended" and "OR" dividers have proper semantic meaning
-
-### 8.3 Color Contrast
-
-**Requirements:**
-- WCAG AA: 4.5:1 for normal text
-- WCAG AA: 3:1 for large text (18pt+)
-
-**Current colors:**
-- Primary text `#3a241e` on `#FFF8F2` - ✅ passes
-- Secondary text `#6B5B52` on `#FFF8F2` - ✅ passes
-- Button text white on `#ef6a57` - ✅ passes
-- Security warning text on pink background - ✅ passes
-
-**No contrast issues** - existing palette already accessible.
-
-### 8.4 Form Validation
-
-**Email input:**
-- Required attribute: ✅ Already present
-- Type="email": ✅ Already present
-- Error messages: ✅ Already clear and visible
-
-**No changes needed.**
+**Edge 5: Invalid mood value in database (e.g., "test123")**
+- **Behavior:** Default to "warm_heartfelt"
+- **Implementation:** `normalizeMood()` handles this
 
 ---
 
-## 9. Mobile Review
+## Non-Goals (Explicitly Out of Scope)
 
-### 9.1 Mobile-First Design Principles
-
-**Priority 1: Reduce vertical height**
-- Remove excessive spacing between sections
-- Reduce padding in cards
-- Consolidate related content
-
-**Priority 2: Primary CTA above the fold**
-- Contributor invitation section should be visible without scrolling
-- Large, tappable buttons (44x44px minimum)
-
-**Priority 3: Readable text**
-- Minimum 16px font size for body text
-- Proper line height (1.5-1.6)
-- Sufficient padding around interactive elements
-
-### 9.2 Touch Targets
-
-**Requirements:**
-- Minimum 44x44px for all interactive elements
-- Adequate spacing between buttons (12px minimum)
-
-**Current buttons:**
-- ShareButtons: ✅ `px-7 py-4` = adequate size
-- EmailCaptureForm button: ✅ `px-7 py-3` = adequate size
-- Private Creator Link copy button: ✅ `px-6 py-3` = adequate size
-
-**Verification needed:**
-- Ensure buttons maintain size on smallest viewports (320px width)
-
-### 9.3 Responsive Breakpoints
-
-**Current responsive patterns:**
-- `flex-col sm:flex-row` for button groups
-- Works well for mobile-first approach
-
-**Keep existing patterns** - already mobile-friendly.
-
-### 9.4 Viewport Sizing
-
-**Test on:**
-- 320px (iPhone SE)
-- 375px (iPhone 12/13 Mini)
-- 390px (iPhone 12/13/14 Pro)
-- 428px (iPhone 14 Pro Max)
-- Tablet sizes
-
-**Focus:**
-- No horizontal scroll
-- All content readable
-- Buttons tappable
-- Proper spacing
+❌ Mood-based cover style recommendations
+❌ Mood-based color theming
+❌ Mood-based animations or transitions
+❌ Custom mood creation (user-defined moods)
+❌ Mood editing after MemoryPop creation
+❌ Mood filtering on dashboard/browse
+❌ Mood analytics dashboard
+❌ A/B testing different mood sets
+❌ Mood-based email copy
+❌ Mood-based WhatsApp share messages
 
 ---
 
-## 10. Security Review
+## Testing Checklist
 
-### 10.1 Security Model (Unchanged)
+### Functional Tests
 
-**All existing security remains intact:**
+- [ ] Mood selection step appears after Step 1
+- [ ] All 5 moods display correctly (emoji + label + description)
+- [ ] Selecting a mood highlights the card
+- [ ] Continue button disabled until selection made
+- [ ] Continue button navigates to Step 2 when mood selected
+- [ ] Step 2 shows mood-influenced copy (headline, prompt, placeholder)
+- [ ] Emoji selector labeled "Choose a celebration icon"
+- [ ] Back button returns to mood selection with previous selection
+- [ ] Creating MemoryPop saves mood to database
+- [ ] API validates mood value (rejects invalid moods)
 
-✅ **Management Token:**
-- SHA-256 hashed before storage
-- Never persisted in raw form
-- Validated server-side before email send
-- Removed from URL after page load
+### Legacy Compatibility Tests
 
-✅ **Creator Session:**
-- HTTP-only signed cookie
-- HMAC-SHA256 signature
-- 7-day expiry
-- Bound to specific shareCode
+- [ ] Viewing MemoryPop with tone="Heartfelt" works (maps to warm_heartfelt)
+- [ ] Viewing MemoryPop with tone="Funny" works (maps to playful_fun)
+- [ ] Viewing MemoryPop with tone="Emotional" works (maps to nostalgic_reflective)
+- [ ] Viewing MemoryPop with tone="Simple" works (maps to warm_heartfelt)
+- [ ] Viewing MemoryPop with tone=null works (defaults to warm_heartfelt)
+- [ ] Viewing MemoryPop with invalid tone works (defaults to warm_heartfelt)
 
-✅ **Email Endpoint:**
-- Creator session required
-- Management token hash validation
-- Rate limiting (5 minutes)
-- No token/email in logs
-- No token/email in analytics
+### Responsive Tests
 
-✅ **Private Creator Link:**
-- Shown once in URL
-- Available for copy anytime
-- Security warning displayed
+- [ ] Mood cards display 2 columns on mobile (< 640px)
+- [ ] Mood cards display 3 columns on desktop (≥ 640px)
+- [ ] Text wraps gracefully on small screens
+- [ ] Touch targets are large enough (44px minimum)
 
-### 10.2 Changes That Do NOT Affect Security
+### Visual Polish Tests
 
-**Removing dashboard blocking:**
-- Security: Dashboard still requires valid creator session
-- UX improvement: Creator not forced to copy before accessing
-- Authorization unchanged: `isCreatorAuthorized(shareCode)` still enforced
-
-**Reordering sections:**
-- No security impact
-- Pure presentation change
-
-**Removing "Skip for now" button:**
-- No security impact
-- Button performed no security action
-
-**Making link "alternative" instead of "primary":**
-- No security impact
-- Link still available for copy
-- Security warning still present
-
-### 10.3 Threat Model Review
-
-**Threat 1: Token exposure via URL**
-- Mitigation: Token removed from URL on mount (existing)
-- Status: ✅ Unchanged
-
-**Threat 2: Token exposure via session storage**
-- Mitigation: Token only in React component props (existing)
-- Status: ✅ Unchanged
-
-**Threat 3: Unauthorized dashboard access**
-- Mitigation: Server-side session validation (existing)
-- Status: ✅ Unchanged
-
-**Threat 4: Token exposure via analytics**
-- Mitigation: No tokens in tracked events (existing, verified above)
-- Status: ✅ Unchanged
-
-**Threat 5: Unauthorized email sends**
-- Mitigation: Session + token hash validation (existing)
-- Status: ✅ Unchanged
-
-**No new threats introduced.**
-
-### 10.4 User Security Awareness
-
-**Before redesign:**
-- Large red-bordered warning card
-- Anxiety-inducing messaging ("shown only once")
-- Blocking behavior emphasizing criticality
-
-**After redesign:**
-- Security warning retained: "Keep this link private. Anyone with it can manage your MemoryPop."
-- Less anxiety-inducing presentation
-- Creator still informed of security implications
-
-**Assessment:** Security awareness maintained while reducing anxiety.
+- [ ] Progress bar updates correctly (25% → 37.5% → 62.5% → 100%)
+- [ ] Step counter updates correctly
+- [ ] Selected mood has visible border and background
+- [ ] Smooth transitions between steps
+- [ ] Consistent color scheme and typography
 
 ---
 
-## 11. Acceptance Criteria
+## Rollout Plan
 
-### 11.1 Visual Hierarchy
+### Phase 1: Implementation (Day 1)
+- Update `celebrationMood.ts` with 5 new moods
+- Create `MoodSelector` component
+- Update create page to insert Step 1.5
+- Update Step 2 to use mood-influenced copy
+- Rename emoji selector label
 
-**AC-1:** Contributor invitation section is the most visually prominent section
-- ✅ Larger or equal card size to other sections
-- ✅ Primary action button styling
-- ✅ Positioned second (after celebration, before access preservation)
+### Phase 2: Testing (Day 1-2)
+- Manual testing of full creation flow
+- Legacy value compatibility testing
+- Responsive testing (mobile/desktop)
+- API payload validation testing
 
-**AC-2:** Security section feels reassuring, not blocking
-- ✅ Standard card styling (not red-bordered)
-- ✅ Security warning present but not anxiety-inducing
-- ✅ Shown as "alternative" after email option
+### Phase 3: Deploy & Monitor (Day 2)
+- Deploy to production
+- Monitor key metrics:
+  - Mood selection rate (target >95%)
+  - Mood distribution
+  - Time on mood step (target 5-10s)
+  - Message step completion rate
+  - Create abandonment rate
 
-**AC-3:** Mobile-first responsive design
-- ✅ Primary CTA visible without scrolling on mobile
-- ✅ Reduced vertical spacing
-- ✅ All touch targets minimum 44x44px
-
-### 11.2 Behavior
-
-**AC-4:** Dashboard button always enabled
-- ✅ No disabled state
-- ✅ No blocking messaging
-- ✅ Rendered as Link with proper styling
-- ✅ Navigates to `/dashboard/[shareCode]`
-
-**AC-5:** Email form collapses after success
-- ✅ Success message: "✅ Your MemoryPop details are on their way."
-- ✅ Form input and button hidden after success
-- ✅ Success state persists (no reset)
-
-**AC-6:** No "Skip for now" button
-- ✅ Button removed from EmailCaptureForm
-- ✅ No broken interaction
-- ✅ Section remains optional (can be ignored)
-
-**AC-7:** Token removed from URL
-- ✅ Existing behavior maintained
-- ✅ Token in component props only
-- ✅ URL cleanup on mount
-
-### 11.3 Copy
-
-**AC-8:** Warm, celebration-focused language
-- ✅ No "management token", "verification", "authentication"
-- ✅ Use "Private Creator Link", "MemoryPop details"
-- ✅ Security warning: "Keep this link private. Anyone with it can manage your MemoryPop."
-
-**AC-9:** Clear section purposes
-- ✅ Celebration: Success acknowledgment
-- ✅ Invite: Primary CTA, clear call to action
-- ✅ Access: Reassuring, not technical
-
-### 11.4 Analytics
-
-**AC-10:** Existing events still tracked
-- ✅ `memorypop_shared` (copy_link, whatsapp)
-- ✅ `creator_welcome_email_requested`, `_sent`, `_failed`
-- ✅ `private_creator_link_copied`
-
-**AC-11:** Removed event no longer tracked
-- ✅ `creator_welcome_email_skipped` removed
-
-**AC-12:** No sensitive data in events
-- ✅ No management tokens
-- ✅ No email addresses
-- ✅ Only shareCode and descriptive properties
-
-### 11.5 Accessibility
-
-**AC-13:** Keyboard accessible
-- ✅ All interactive elements focusable
-- ✅ Logical tab order
-- ✅ No keyboard traps
-
-**AC-14:** Screen reader accessible
-- ✅ Proper heading hierarchy
-- ✅ ARIA labels where needed
-- ✅ Form labels associated
-
-**AC-15:** Color contrast compliant
-- ✅ WCAG AA 4.5:1 for normal text
-- ✅ WCAG AA 3:1 for large text
-
-### 11.6 Security
-
-**AC-16:** Security model unchanged
-- ✅ Token hashing unchanged
-- ✅ Session validation unchanged
-- ✅ Email endpoint security unchanged
-- ✅ No new token exposure vectors
-
-**AC-17:** Dashboard authorization unchanged
-- ✅ Server-side `isCreatorAuthorized(shareCode)` still enforced
-- ✅ Session cookie still required
-- ✅ Unauthorized access still blocked
-
-### 11.7 Mobile
-
-**AC-18:** Mobile-responsive
-- ✅ No horizontal scroll on 320px viewport
-- ✅ All text readable (minimum 16px)
-- ✅ Buttons tappable (44x44px)
-- ✅ Proper spacing between interactive elements
-
-**AC-19:** Primary CTA above fold
-- ✅ Contributor invitation visible without scrolling on mobile
+### Phase 4: Iterate (Week 1-2)
+- Analyze mood selection patterns
+- Gather creator feedback
+- Adjust mood descriptions if confusion detected
+- Consider A/B test of mood order or descriptions
 
 ---
 
-## 12. Risks and Mitigations
+## Success Metrics
 
-### Risk 1: Creators don't preserve access
+**Leading Indicators (Day 1-7):**
+- Mood selection rate: >95% of creators select a mood
+- Time on mood step: 5-10 seconds (not blocking)
+- No increase in create abandonment
+- Message step completion rate maintained or improved
 
-**Risk level:** Medium
+**Lagging Indicators (Week 2-4):**
+- Mood distribution roughly: 40% Warm, 20% each others
+- No increase in creator support questions about moods
+- Contributor experience NPS maintained or improved
+- Qualitative feedback mentions mood as helpful
 
-**Description:** 
-Without blocking behavior, some creators may navigate to dashboard without copying link or providing email.
-
-**Current mitigation:**
-- Blocking forces copy before dashboard access
-- Private Beta context explains recovery difficulty
-
-**New mitigation:**
-- Email option recommended (easier than copying)
-- Link still available as alternative
-- Security warning still present
-- Creator can return to success page via browser back button if needed
-
-**Impact assessment:**
-- Hypothesis: Removing blocking improves UX without reducing preservation actions
-- Measurement: Track `private_creator_link_copied` and `creator_welcome_email_sent` rates
-- Rollback: Easy git revert if rates drop significantly
-
-**Decision:** Accept risk - UX improvement outweighs potential reduction in preservation rate.
+**Failure Signals:**
+- Mood selection rate <80% (creators skipping or confused)
+- Time on mood step >20s (decision paralysis)
+- Create abandonment increases >10%
+- Negative feedback about added complexity
 
 ---
 
-### Risk 2: Contributor invitation rate doesn't improve
-
-**Risk level:** Low
-
-**Description:**
-Making contributor invitation primary CTA may not increase share actions as hypothesized.
-
-**Mitigation:**
-- This is pure upside risk (rate unlikely to decrease)
-- Measurement target: +30% increase in `memorypop_shared` events
-- Even if target not met, reordering aligns with user workflow
-
-**Impact assessment:**
-- Worst case: No change in share rate
-- Best case: Significant increase in contributors per MemoryPop
-- No downside risk
-
-**Decision:** Accept risk - hypothesis-driven improvement with measurement plan.
-
----
-
-### Risk 3: Email capture rate decreases
-
-**Risk level:** Low
-
-**Description:**
-Repositioning email section and removing "Skip" button may affect capture rate.
-
-**Mitigation:**
-- Email section still prominent
-- Now labeled as "Recommended"
-- "Skip" button performed no action (removal is UX improvement)
-
-**Measurement:**
-- Track `creator_welcome_email_sent` rate
-- Compare pre/post redesign
-
-**Impact assessment:**
-- Low likelihood of decrease (section remains prominent)
-- Email option more clearly positioned as recommended approach
-
-**Decision:** Accept risk - removal of broken interaction outweighs potential rate decrease.
-
----
-
-### Risk 4: Security awareness reduced
-
-**Risk level:** Low
-
-**Description:**
-Reducing visual prominence of security warnings may reduce creator awareness.
-
-**Mitigation:**
-- Security warning text retained: "Keep this link private. Anyone with it can manage your MemoryPop."
-- Email option includes reminder about Private Creator Link
-- Dashboard still session-protected
-
-**Impact assessment:**
-- Security functionality unchanged
-- Warning still visible
-- Less anxiety-inducing presentation is UX improvement
-
-**Decision:** Accept risk - security warning retained, just less anxiety-inducing.
-
----
-
-### Risk 5: Mobile viewport issues
-
-**Risk level:** Low
-
-**Description:**
-Reordering sections may cause layout issues on small viewports.
-
-**Mitigation:**
-- Mobile-first design approach
-- Use existing responsive patterns (`flex-col sm:flex-row`)
-- Test on multiple viewport sizes during implementation
-
-**Testing focus:**
-- 320px (smallest common viewport)
-- 375px, 390px, 428px (common phone sizes)
-- Tablet sizes
-
-**Decision:** Accept risk - standard responsive patterns already proven in codebase.
-
----
-
-### Risk 6: Component refactor introduces bugs
-
-**Risk level:** Low
-
-**Description:**
-Renaming SuccessActions to CreatorAccessSection and reorganizing may introduce bugs.
-
-**Mitigation:**
-- Thorough testing phase before merge
-- Judge stage for user experience validation
-- Reviewer stage for code quality
-
-**Rollback plan:**
-- Simple git revert
-- No database changes to rollback
-- No API changes to rollback
-
-**Decision:** Accept risk - standard refactor with multi-stage validation.
-
----
-
-## 13. Implementation Notes
-
-### 13.1 Development Approach
-
-**Phase 1: Component reorganization**
-1. Rename SuccessActions → CreatorAccessSection
-2. Remove blocking behavior from dashboard button
-3. Reorganize internal structure (email first, link alternative)
-
-**Phase 2: Visual hierarchy**
-1. Update section styling (card sizes, borders, spacing)
-2. Mobile-first responsive design
-3. Reduce vertical spacing
-
-**Phase 3: Copy updates**
-1. Update all section headings and labels
-2. Remove technical terminology
-3. Add "Recommended" and "OR" labels
-
-**Phase 4: Cleanup**
-1. Remove "Skip for now" button from EmailCaptureForm
-2. Remove blocking messaging
-3. Remove excessive dividers
-
-### 13.2 Testing Checklist
-
-**Functional testing:**
-- [ ] Contributor link copy works
-- [ ] WhatsApp share works
-- [ ] Email form submission works
-- [ ] Email success state collapses form
-- [ ] Private Creator Link copy works
-- [ ] Dashboard button navigates correctly
-- [ ] Token removed from URL
-- [ ] All analytics events fire correctly
-- [ ] No `email_skipped` event
-
-**Visual testing:**
-- [ ] Mobile (320px, 375px, 390px, 428px)
-- [ ] Tablet
-- [ ] Desktop
-- [ ] Primary CTA visible without scrolling (mobile)
-- [ ] Proper spacing and sizing
-
-**Accessibility testing:**
-- [ ] Keyboard navigation works
-- [ ] Tab order logical
-- [ ] Screen reader compatibility
-- [ ] Color contrast passes
-- [ ] Form validation clear
-
-**Security testing:**
-- [ ] Dashboard requires session
-- [ ] Token not in URL after mount
-- [ ] Token not in localStorage/sessionStorage
-- [ ] No token in analytics
-- [ ] Email endpoint still validates properly
-
-### 13.3 Files to Modify
-
-1. **`src/app/success/page.tsx`**
-   - Reorder sections
-   - Update visual hierarchy
-   - Replace SuccessActions with CreatorAccessSection
-   - Remove conditional dashboard button
-   - Update copy
-
-2. **`src/components/SuccessActions.tsx` → `src/components/CreatorAccessSection.tsx`**
-   - Rename file
-   - Remove blocking state
-   - Reorganize: email first, link alternative
-   - Update Private Creator Link styling
-   - Update copy
-
-3. **`src/components/EmailCaptureForm.tsx`**
-   - Remove `handleSkip` function
-   - Remove "Skip for now" button JSX
-   - No other changes
-
-### 13.4 Files NOT Modified
-
-- `src/app/api/send-creator-email/route.ts` (security unchanged)
-- `src/lib/creatorSession.ts` (session unchanged)
-- `src/lib/verification.ts` (token hashing unchanged)
-- `src/components/ShareButtons.tsx` (already good)
-- Email templates (already warm and friendly)
-
----
-
-## 14. Success Metrics
-
-### Primary Hypothesis
-
-**H1:** Making contributor invitation the primary CTA will increase share actions
-
-**Measurement target:**
-- Increase `memorypop_shared` events by 30%+
-
-**Measurement period:**
-- 2 weeks post-launch
-- Minimum 100 MemoryPops created (statistical significance)
-
----
-
-### Secondary Hypotheses
-
-**H2:** Removing blocking behavior will not reduce access preservation actions
-
-**Measurement targets:**
-- `private_creator_link_copied` rate: maintain or increase
-- `creator_welcome_email_sent` rate: maintain or increase
-
-**H3:** Removing "Skip for now" button will not impact email capture rate
-
-**Measurement target:**
-- `creator_welcome_email_sent` rate unchanged
-
----
-
-### Qualitative Metrics
-
-**Creator satisfaction:**
-- Post-creation experience feels celebratory (not technical)
-- Inviting contributors feels effortless
-- Access preservation feels reassuring (not anxiety-inducing)
-
-**Measurement:**
-- User interviews (if available)
-- Support ticket sentiment
-- Informal founder feedback
-
----
-
-## 15. Rollback Plan
-
-### Rollback Trigger Conditions
-
-Rollback if any of these occur:
-
-1. **`memorypop_shared` rate decreases by 20%+**
-   - Primary CTA change had negative impact
-
-2. **`private_creator_link_copied` OR `creator_welcome_email_sent` rate decreases by 30%+**
-   - Removing blocking reduced access preservation significantly
-
-3. **Critical bugs** that block core functionality
-
-4. **Founder decision** based on qualitative feedback
-
-### Rollback Process
-
-**Step 1:** Revert commit
-```bash
-git revert [commit-hash]
-```
-
-**Step 2:** Deploy revert
-- Push to main
-- Vercel auto-deploys
-- Original page restored in ~2 minutes
-
-**Step 3:** Monitor metrics
-- Verify old behavior restored
-- Confirm metrics return to baseline
-
-**No database rollback needed** (no schema changes)
-**No API rollback needed** (no endpoint changes)
-
----
-
-## 16. Next Steps
-
-### Immediate Actions
-
-1. **Founder approval required**
-   - Review this specification
-   - Approve or request changes
-   - Do not proceed to implementation without approval
-
-2. **After approval:**
-   - Coder implements specification
-   - Tester validates functionality
-   - Judge evaluates user experience
-   - Reviewer assesses code quality
-   - Founder validates in production
-
-### Post-Launch
-
-1. **Monitor metrics** (2 weeks)
-   - Track hypothesis measurement targets
-   - Compare pre/post redesign rates
-   - Assess qualitative feedback
-
-2. **Iterate if needed**
-   - If targets not met, analyze and adjust
-   - If targets exceeded, document learnings
-
----
-
-## Planning Signature
-
-**Specification Status:** Complete and ready for Founder approval
-
-**Date:** 2026-07-21
-
-**Planner:** Claude Orchestrator
-
-**Next Stage:** Awaiting Founder Approval
-
-**Implementation starts after approval only.**
-
----
-
-## Founder Approval Section
-
-**Approval Status:** [ ] Pending
-
-**Approved by:** _________________
-
-**Date:** _________________
-
-**Notes/Changes Requested:**
-
-_________________
-
+## Ready for Founder Approval
+
+This specification provides:
+- ✅ Complete user flow
+- ✅ Data model (reuses existing `tone` field)
+- ✅ All 5 mood configurations with full copy
+- ✅ Files to change (5 core + 2 optional)
+- ✅ Acceptance criteria (must-have + nice-to-have)
+- ✅ Risks and edge cases (all low/very low)
+- ✅ Testing checklist
+- ✅ Rollout plan
+- ✅ Success metrics
+
+**Estimated effort:** 1-2 days
+**Risk level:** Very Low
+**Product value:** High
+
+**Awaiting Founder approval to proceed to implementation.**

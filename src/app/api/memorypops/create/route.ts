@@ -33,6 +33,18 @@ interface CreateMemoryPopRequest {
 }
 
 /**
+ * Valid mood values (maps to database tone field)
+ */
+const VALID_MOODS = [
+  'warm_heartfelt',
+  'playful_fun',
+  'thoughtful_meaningful',
+  'joyful_celebratory',
+  'nostalgic_reflective',
+  'simple_classic'
+];
+
+/**
  * Validate creation payload
  */
 function validatePayload(body: unknown): body is CreateMemoryPopRequest {
@@ -45,6 +57,7 @@ function validatePayload(body: unknown): body is CreateMemoryPopRequest {
     typeof payload.occasion === 'string' &&
     typeof payload.story === 'string' &&
     typeof payload.tone === 'string' &&
+    VALID_MOODS.includes(payload.tone) && // Validate mood is one of the 5 valid values
     typeof payload.cover_style === 'string' &&
     payload.recipient_name.trim().length > 0
   );

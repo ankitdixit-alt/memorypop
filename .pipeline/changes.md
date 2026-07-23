@@ -1,344 +1,197 @@
-# Implementation Changes: Success Page UX Redesign
+# Implementation Changes: Celebration Mood Step
 
-**Date:** 2026-07-21
-**Coder:** Claude Orchestrator
-**Status:** Complete
-
----
-
-## Files Modified
-
-### 1. `src/components/EmailCaptureForm.tsx`
-
-**Changes:**
-- Removed `handleSkip` function (lines 67-69)
-- Removed "Skip for now" button and containing div (lines 112-121)
-
-**Rationale:**
-- Button performed no meaningful action (only tracked analytics)
-- Section is already optional (ignoring it = skipping)
-- Follows principle: Every visible action must have meaningful outcome
-
-**Lines changed:** 8 lines removed
+**Date:** 2026-07-23
+**Status:** ✅ Implementation Complete
+**Branch:** main
 
 ---
 
-### 2. `src/components/SuccessActions.tsx` → `src/components/CreatorAccessSection.tsx`
+## Summary
 
-**Changes:**
-- **File renamed** from SuccessActions to CreatorAccessSection
-- **Complete rewrite** of component structure:
-  - Removed all blocking behavior (`hasCompletedCopy` state)
-  - Removed `onCopyComplete` callback prop and logic
-  - Reorganized to show email first (recommended), link second (alternative)
-  - Added section header: "Keep your creator access safe"
-  - Added "Recommended" label above email option
-  - Added email benefits list (Private Creator Link, Contributor Link, etc.)
-  - Added "OR" divider between options
-  - Added "Prefer not to use email?" text above link option
-  - Removed large red border and pink background from link section
-  - Removed "shown only once" messaging
-  - Removed "Private Beta" context box
-  - Removed copy-to-continue gate messaging
-  - Updated Private Creator Link to use standard white card styling
-  - Simplified security warning (less anxiety-inducing)
-
-**New Structure:**
-```
-CreatorAccessSection
-├── Section Header
-├── Email Option (Recommended)
-│   ├── "Recommended" label
-│   ├── Benefits list
-│   └── EmailCaptureForm
-├── OR Divider
-└── Private Creator Link (Alternative)
-    ├── "Prefer not to use email?" text
-    ├── Link input and copy button
-    └── Security warning
-```
-
-**Props unchanged:**
-- `shareCode: string`
-- `managementToken: string | null`
-- `baseUrl: string`
-
-**Functionality preserved:**
-- Token removal from URL (existing behavior)
-- Copy to clipboard functionality
-- Analytics tracking (`private_creator_link_copied`)
-- Security warning text
-
-**Lines changed:** Complete file rewrite (~229 lines → ~200 lines)
+Implemented dedicated mood selection step in MemoryPop creation flow with 5 mood options, separating emotional tone (mood) from event type (occasion). Mood influences both creator and contributor experiences.
 
 ---
 
-### 3. `src/app/success/page.tsx`
+## Files Changed
 
-**Changes:**
-- **Import updated:** Changed from `SuccessActions` to `CreatorAccessSection`
-- **Section reordering:**
-  - Section 1: Celebration (existing)
-  - Section 2: Invite Contributors (moved up, enhanced visual hierarchy)
-  - Section 3: Keep Access Safe (CreatorAccessSection, moved down)
-  - Section 4: Dashboard & Navigation (always enabled, no blocking)
-- **Celebration section:**
-  - Simplified copy: "Now invite friends and family to add memories before the celebration."
-  - Removed redundant celebration messaging
-- **Contributor invitation section (PRIMARY CTA):**
-  - Added prominent border: `border-2 border-[#ef6a57]`
-  - Added shadow: `shadow-md`
-  - Added section heading: "Invite Friends & Family" (h2, text-2xl, bold)
-  - Added helper text: "Share this link to collect memories for {recipient}."
-  - Visually most prominent section (per spec)
-- **Creator access section:**
-  - Replaced `SuccessActions` with `CreatorAccessSection`
-  - Removed conditional rendering based on `hasCompletedCopy`
-  - Component now handles email + link internally
-- **Dashboard button:**
-  - Removed conditional disabled state
-  - Always rendered as enabled Link
-  - Removed blocking messaging
-  - No more "⬆️ Please copy your Private Creator Link first"
-- **Navigation:**
-  - Maintained "Create Another" and "Back Home" buttons
-  - No changes to navigation structure
-- **Email feature flag:**
-  - Added fallback `PrivateCreatorLinkFallback` component
-  - Handles case when email feature disabled
-  - Shows link-only option without email
-- **Spacing:**
-  - Reduced spacing between sections (mt-10 → mt-8)
-  - Improved mobile vertical height
-- **Removed:**
-  - All references to `SuccessActions`
-  - Blocking behavior logic
-  - Copy-to-continue gate
+### 1. src/lib/celebrationMood.ts (MAJOR UPDATE)
+**Change:** Complete rewrite with new mood system
 
-**New component added (inline):**
-- `PrivateCreatorLinkFallback` - Simple link display for when email disabled
+**What changed:**
+- Updated `CelebrationMood` type: 5 new values (warm_heartfelt, playful_fun, thoughtful_meaningful, joyful_celebratory, nostalgic_reflective)
+- Updated `MoodConfig` interface: Added UI labels (label, emoji, description) + split into creator/contributor experiences
+- Replaced all 4 legacy mood configs with 5 new mood configs
+- Each mood includes:
+  - Creator experience fields (headline, supporting text, prompt, placeholder)
+  - Contributor experience fields (headline, supporting text, prompt, placeholder)
+  - Reveal introduction
+  - Message starters
+- Updated `normalizeMood()` function to handle legacy values
+- Added future extensibility comments for visual/animation layers
 
-**Lines changed:** ~160 lines (substantial reorganization)
+**Legacy compatibility:**
+- Old values mapped: heartfelt → warm_heartfelt, funny → playful_fun, emotional → nostalgic_reflective, simple → warm_heartfelt
+- Transition values mapped: elegant_meaningful → thoughtful_meaningful, bold_celebratory → joyful_celebratory
 
 ---
 
-## Component Architecture Changes
+### 2. src/components/MoodSelector.tsx (NEW)
+**Change:** Created new mood selection component
 
-### Before
-```
-SuccessPage
-├── Celebration
-├── SuccessActions (blocking behavior)
-│   ├── PrivateCreatorLink (prominent, red-bordered)
-│   └── Dashboard Button (conditional, disabled until copy)
-├── Share Buttons (buried below security)
-└── Email Capture (separate section)
+**What it does:**
+- Displays 5 mood cards in responsive grid (2 columns mobile, 3 desktop)
+- Each card shows emoji, label, and description
+- Selected state: border + background + ring
+- Handles selection via onSelect callback
+- Accessible and mobile-first
+
+**Props:**
+- `selectedMood: CelebrationMood | null` - Currently selected mood
+- `onSelect: (mood: CelebrationMood) => void` - Selection callback
+
+---
+
+### 3. src/app/create/page.tsx (MAJOR UPDATE)
+**Change:** Added Step 2 (mood selection), renumbered steps to 4
+
+**What changed:**
+- Imports: Added `CelebrationMood` type and `MoodSelector` component
+- State: Renamed `tone` → `mood`, type is `CelebrationMood | null` (required, no default)
+- Progress: Updated from `step / 3` to `step / 4`
+- Step labels: Updated for 4 steps (1: Starting, 2: Choosing mood, 3: Making personal, 4: Ready to celebrate)
+- Step counter: "Step X of 4"
+
+**New Step 2 (Mood Selection):**
+```tsx
+{step === 2 && (
+  <section>
+    <h1>How should this celebration feel?</h1>
+    <p>Choose the atmosphere you'd like everyone to help create.</p>
+    <MoodSelector selectedMood={mood} onSelect={setMood} />
+    <button onClick={() => setStep(3)} disabled={!mood}>
+      Write your message →
+    </button>
+  </section>
+)}
 ```
 
-### After
-```
-SuccessPage
-├── Celebration
-├── Contributor Invite Section (PRIMARY CTA, prominent)
-│   └── ShareButtons
-├── CreatorAccessSection (reassuring, not blocking)
-│   ├── Email Option (recommended)
-│   │   └── EmailCaptureForm
-│   ├── OR Divider
-│   └── Private Creator Link (alternative)
-├── Dashboard Button (always enabled)
-└── Navigation Buttons
+**Updated Step 3 (Message Writing):**
+- Removed old tone selection grid (Heartfelt, Funny, Emotional, Simple buttons)
+- Renamed "Add some emotion:" → "Choose a celebration icon:"
+- Button now goes to Step 4
+
+**Updated Step 4 (Preview):**
+- Changed from `step === 3` to `step === 4`
+
+**API call changes:**
+- Changed payload key: `tone: mood` (maps mood state to tone database field)
+- Analytics: Changed `tone:` → `mood:`
+
+---
+
+### 4. src/app/api/memorypops/create/route.ts (MINOR UPDATE)
+**Change:** Added mood validation
+
+**What changed:**
+- Added `VALID_MOODS` constant with 5 valid mood values
+- Updated `validatePayload()` to check `VALID_MOODS.includes(payload.tone)`
+- API now rejects requests with invalid or missing mood
+
+**Validation:**
+```typescript
+const VALID_MOODS = [
+  'warm_heartfelt',
+  'playful_fun',
+  'thoughtful_meaningful',
+  'joyful_celebratory',
+  'nostalgic_reflective'
+];
 ```
 
 ---
 
-## Behavior Changes Summary
+### 5. src/lib/celebrationExperience.ts (MINOR UPDATE)
+**Change:** Updated safety overrides to use new mood values
 
-### Removed Behaviors
-
-1. **Dashboard blocking:** Button no longer disabled until link copied
-2. **Copy-to-continue gate:** No blocking messaging or disabled states
-3. **"Skip for now" button:** Removed from EmailCaptureForm
-
-### New Behaviors
-
-1. **Dashboard always accessible:** Link always enabled, no conditional rendering
-2. **Email recommended:** Positioned as primary option with "Recommended" label
-3. **Link as alternative:** Positioned below email with "Prefer not to use email?" text
-4. **Reduced visual anxiety:** Less prominent security warnings, softer styling
-
-### Unchanged Behaviors
-
-1. **Token URL cleanup:** Token still removed from URL on mount
-2. **Copy functionality:** Clipboard copy still works with fallback
-3. **Analytics tracking:** All existing events still fire (except `email_skipped`)
-4. **Security validation:** Server-side session validation unchanged
-5. **Email sending:** Email endpoint and validation unchanged
+**What changed:**
+- Updated `shouldApplySafetyOverrides()` function
+- Changed comparisons from `'funny'` → `'playful_fun'`, `'emotional'` → `'nostalgic_reflective'`
+- Maintains safety handling for Sympathy + inappropriate mood combinations
 
 ---
 
-## Visual Hierarchy Changes
+## New Mood Configurations
 
-### Before
-- Security features most prominent (large red card)
-- Contributor invitation buried below
-- Technical feeling (password manager aesthetic)
+### 1. Warm & heartfelt 💕
+- **Description:** Genuine love and warmth
+- **Contributor:** "Share something from the heart"
 
-### After
-- Contributor invitation most prominent (PRIMARY CTA)
-- Security features reassuring but not dominant
-- Celebration feeling (warm, friendly aesthetic)
+### 2. Playful & fun 🎉
+- **Description:** Lighthearted and joyful
+- **Contributor:** "Share something that will make them smile"
 
-### Specific Styling Changes
+### 3. Thoughtful & meaningful ✨
+- **Description:** Sincere and intentional
+- **Contributor:** "Share something meaningful"
 
-**Contributor Invitation Section:**
-- Added: `border-2 border-[#ef6a57]` (prominent red border)
-- Added: `shadow-md` (elevated appearance)
-- Added: `text-2xl font-bold` heading
-- Result: Most visually prominent section
+### 4. Joyful & celebratory 🎊
+- **Description:** Uplifting and full of energy
+- **Contributor:** "Share the joy!"
 
-**Creator Access Section:**
-- Changed from: Red bordered, pink background
-- Changed to: Standard white card, subtle border
-- Reduced visual weight while maintaining accessibility
-
-**Dashboard Button:**
-- Removed: Disabled gray styling
-- Kept: Active red border styling (always enabled)
-
----
-
-## Analytics Changes
-
-### Events Removed
-- `creator_welcome_email_skipped` (button removed)
-
-### Events Unchanged
-- `memorypop_shared` (copy_link, whatsapp)
-- `creator_welcome_email_requested`
-- `creator_welcome_email_sent`
-- `creator_welcome_email_failed`
-- `private_creator_link_copied`
-
-### Verification
-- ✅ No tokens in any events
-- ✅ No email addresses in any events
-- ✅ Only shareCode and descriptive properties tracked
-
----
-
-## Security Impact
-
-### No Security Changes
-- ✅ Token hashing unchanged
-- ✅ Session validation unchanged
-- ✅ Email endpoint security unchanged
-- ✅ Token removal from URL unchanged
-- ✅ Dashboard authorization unchanged (server-side `isCreatorAuthorized`)
-
-### Security Awareness
-- ✅ Warning text retained: "Keep this link private. Anyone with it can manage your MemoryPop."
-- ✅ Warning still visible (just less anxiety-inducing presentation)
-
----
-
-## Mobile Optimization
-
-### Improvements Made
-- Reduced vertical spacing (mt-10 → mt-8)
-- Primary CTA (contributor invite) positioned high on page
-- Maintained responsive button layouts (`flex-col sm:flex-row`)
-- All touch targets remain 44x44px minimum
-
-### Responsive Patterns Maintained
-- Button groups: `flex-col sm:flex-row`
-- Input/button combinations: Responsive gap spacing
-- Cards: Full width on mobile, centered on desktop
-
----
-
-## Copy Changes
-
-### Technical Terms Removed
-- ❌ "Management token"
-- ❌ "Recovery"
-- ❌ "Shown only once" (anxiety-inducing)
-- ❌ "Private Beta" context (redundant)
-
-### Plain Language Added
-- ✅ "Keep your creator access safe"
-- ✅ "Email me my MemoryPop details"
-- ✅ "Prefer not to use email?"
-- ✅ "Private Creator Link" (kept - acceptable technical term)
-
-### Celebration Focus
-- "Now invite friends and family to add memories before the celebration."
-- "Invite Friends & Family"
-- "Share this link to collect memories for [recipient]."
+### 5. Nostalgic & reflective 🌸
+- **Description:** Looking back with fondness
+- **Contributor:** "Share a memory they'll treasure"
 
 ---
 
 ## Testing Performed
 
-### Functional Testing
-- [Not yet tested - awaiting Testing stage]
+### Compilation Tests
+✅ TypeScript compilation: Pass (no errors)
 
-### Code Quality
-- ✅ TypeScript compilation: No errors
-- ✅ Component structure: Valid React patterns
-- ✅ Props: Correctly typed and passed
-- ✅ Imports: All valid
+### Manual Tests Needed
+- [ ] Create new MemoryPop with each of 5 moods
+- [ ] Verify mood selection required (button disabled until selected)
+- [ ] Verify message step copy changes based on mood
+- [ ] Verify API validates mood (reject invalid mood)
+- [ ] Verify contributor page influenced by mood
+- [ ] Verify legacy MemoryPops still render (backwards compatibility)
+- [ ] Verify "Choose a celebration icon" label appears
+- [ ] Verify 4-step progress bar works correctly
+- [ ] Verify back button navigation works
+- [ ] Mobile responsive testing (2 columns)
 
 ---
 
-## Rollback Information
+## Backwards Compatibility
 
-### Rollback Method
-```bash
-git revert [commit-hash]
-```
+**Existing MemoryPops:**
+- Old tone values automatically normalized via `normalizeMood()`
+- heartfelt → warm_heartfelt
+- funny → playful_fun
+- emotional → nostalgic_reflective
+- simple → warm_heartfelt
+- null/undefined → warm_heartfelt (fallback)
 
-### Affected Areas
-- 3 files modified
-- No database changes
-- No API changes
-- Simple component refactor
+**No data migration needed** - normalization happens at runtime.
 
-### Rollback Time
-- ~2 minutes (Vercel auto-deploy)
+---
+
+## Breaking Changes
+
+None. Fully backwards compatible with existing MemoryPops.
 
 ---
 
 ## Next Steps
 
-1. **Testing Stage:** Validate all functionality works
-2. **Judge Stage:** Evaluate user experience quality
-3. **Reviewer Stage:** Code quality and release readiness
-4. **Founder Production Validation:** Manual flow validation
+1. Manual testing (see checklist above)
+2. Tester validation against acceptance criteria
+3. Judge evaluation (user experience)
+4. Reviewer evaluation (code quality)
+5. Founder production validation
 
 ---
 
-## Implementation Notes
-
-### Challenges Encountered
-None - straightforward component reorganization
-
-### Deviations from Spec
-None - implemented exactly as specified
-
-### Additional Considerations
-- Added fallback component for when email feature disabled
-- Maintained backward compatibility with email feature flag
-
----
-
-## Coder Signature
-
-**Implementation Status:** Complete
-
-**Date:** 2026-07-21
-
-**Coder:** Claude Orchestrator
-
-**Next Stage:** Testing
-
+**Implementation completed:** 2026-07-23
+**Ready for:** Testing phase

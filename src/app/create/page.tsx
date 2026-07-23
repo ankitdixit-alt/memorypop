@@ -3,14 +3,16 @@ import { ChangeEvent, useState, useMemo, useEffect } from "react";
 import { getCelebrationExperience } from "@/lib/celebrationExperience";
 import { getCoverTheme } from "@/lib/coverTheme";
 import { trackEvent } from "@/lib/analytics";
+import { type CelebrationMood } from "@/lib/celebrationMood";
 import OccasionSelector from "@/components/OccasionSelector";
+import MoodSelector from "@/components/MoodSelector";
 
 export default function CreatePage() {
   const [step, setStep] = useState(1);
   const [occasion, setOccasion] = useState("Birthday");
   const [recipient, setRecipient] = useState("");
   const [story, setStory] = useState("");
-  const [tone, setTone] = useState("Heartfelt");
+  const [mood, setMood] = useState<CelebrationMood | null>(null); // Required, no default
   const [photos, setPhotos] = useState<string[]>([]);
   const [isCreating, setIsCreating] = useState(false);
   const [createError, setCreateError] = useState("");
@@ -18,7 +20,7 @@ export default function CreatePage() {
   const [celebrationDate, setCelebrationDate] = useState("");
   const [showOccasionSelector, setShowOccasionSelector] = useState(false);
 
-  const progress = (step / 3) * 100;
+  const progress = (step / 3) * 100; // 3 steps (1, 2, 3)
 
   // Track creation funnel entry
   useEffect(() => {
@@ -33,12 +35,12 @@ export default function CreatePage() {
     if (occasion && recipient) {
       return getCelebrationExperience({
         occasion,
-        mood: tone,
+        mood: mood,
         recipientName: recipient
       });
     }
     return null;
-  }, [occasion, tone, recipient]);
+  }, [occasion, mood, recipient]);
 
   // Get adaptive theme for preview
   // Text colors adapt to selected cover style background
@@ -66,7 +68,7 @@ async function saveMemoryPop() {
         recipient_name: recipient,
         occasion,
         story,
-        tone,
+        tone: mood, // Map mood to tone field for database
         celebration_date: celebrationDate || null,
         cover_style: selectedCover,
       }),
@@ -86,7 +88,7 @@ async function saveMemoryPop() {
       occasion: occasion,
       recipient_name: recipient,
       celebration_date: celebrationDate || null,
-      tone: tone,
+      mood: mood,
       has_story: !!story,
       has_photos: photos.length > 0,
       photo_count: photos.length,
@@ -214,7 +216,24 @@ async function saveMemoryPop() {
 
         {step === 2 && (
           <section className="rounded-[2rem] bg-white p-8 shadow-xl">
-            <h1 className="text-4xl font-bold">Make it personal</h1>
+            {/* Mood Selection at Top */}
+            <h1 className="text-4xl font-bold">How should this celebration feel?</h1>
+            <p className="mt-4 text-gray-600">
+              Choose the atmosphere you&apos;d like everyone to help create.
+            </p>
+
+            <div className="mt-8 mb-8">
+              <MoodSelector
+                selectedMood={mood}
+                onSelect={(selectedMood) => setMood(selectedMood)}
+              />
+            </div>
+
+            {/* Visual Separation */}
+            <div className="border-t border-[#F0DED2] my-8"></div>
+
+            {/* Message Writing Section */}
+            <h2 className="text-2xl font-bold">Make it personal</h2>
             <p className="mt-4 text-gray-600">
               If someone asked why {recipient} is special, what would you say?
             </p>
@@ -267,7 +286,7 @@ async function saveMemoryPop() {
             {celebrationExperience?.emojiShortcuts && (
               <div className="mt-4">
                 <label className="block font-semibold text-sm text-[#6B5B52] mb-2">
-                  Add some emotion:
+                  Choose a celebration icon:
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {celebrationExperience.emojiShortcuts.map((emoji, idx) => (
@@ -299,23 +318,6 @@ async function saveMemoryPop() {
                 </div>
               </div>
             )}
-
-            <label className="mt-6 block font-semibold">Choose the mood of this MemoryPop</label>
-            <div className="mt-3 grid grid-cols-2 gap-3">
-              {["Heartfelt", "Funny", "Emotional", "Simple"].map((item) => (
-                <button
-                  key={item}
-                  onClick={() => setTone(item)}
-                  className={`rounded-2xl border p-4 text-left font-semibold transition-all ${
-                    tone === item
-                      ? "border-[#FF6B57] bg-[#FFF1EC]"
-                      : "border-[#F0DED2]"
-                  } active:ring-2 active:ring-[#FF6B57] active:ring-offset-1`}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
 
             {/* Cover Presets */}
             {celebrationExperience?.coverPresets && (
@@ -379,7 +381,7 @@ async function saveMemoryPop() {
 
             <button
               onClick={() => setStep(3)}
-              disabled={!story}
+              disabled={!mood || !story}
               className="mt-8 rounded-full bg-[#FF6B57] px-7 py-4 font-semibold text-white disabled:opacity-40 disabled:cursor-not-allowed active:ring-2 active:ring-white active:ring-offset-2 transition-all"
             >
               See your MemoryPop →
