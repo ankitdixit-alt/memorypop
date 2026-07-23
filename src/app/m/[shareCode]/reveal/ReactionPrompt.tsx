@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
 
 interface Props {
   memorypopId: string;
@@ -26,28 +25,29 @@ export default function ReactionPrompt({ memorypopId, onReactionSelect }: Props)
     setIsSubmitting(true);
 
     try {
-      // Insert reaction into database
-      const { error } = await supabase
-        .from("memorypop_reactions")
-        .insert({
-          memorypop_id: memorypopId,
-          reaction_type: reactionType,
-        });
+      // Call API to insert reaction (server-side)
+      const response = await fetch('/api/reactions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          memorypopId,
+          reactionType,
+        }),
+      });
 
-      if (error) {
-        // If duplicate (unique constraint violation), user already reacted
-        // This is a safety net - UI should prevent this, but database constraint is authoritative
-        if (error.code === '23505') { // PostgreSQL unique violation code
-          console.log("Already reacted (unique constraint)");
-          // Still show thank you screen
-          onReactionSelect(reactionType);
-        } else {
-          console.error("Failed to save reaction:", error);
-          alert("Failed to save your reaction. Please try again.");
-          setIsSubmitting(false);
-          setSelectedType(null);
-        }
+      if (!response.ok) {
+        console.error("Failed to save reaction");
+        alert("Failed to save your reaction. Please try again.");
+        setIsSubmitting(false);
+        setSelectedType(null);
         return;
+      }
+
+      const data = await response.json();
+
+      // If duplicate (user already reacted), still show thank you screen
+      if (data.duplicate) {
+        console.log("Already reacted (duplicate)");
       }
 
       // Success - move to thank you screen

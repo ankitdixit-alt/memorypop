@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
-import { transitionToReady, canTransitionToReady } from "@/lib/memoryPopStates";
+import { canTransitionToReady } from "@/lib/memoryPopStates";
 import PrepareRevealModal from "./PrepareRevealModal";
 import RevealLinkSection from "./RevealLinkSection";
 
@@ -29,12 +28,23 @@ export default function DashboardClientSection({
 
   const handlePrepareReveal = async () => {
     setIsTransitioning(true);
-    const result = await transitionToReady(supabase, memorypopId);
 
-    if (result.success) {
-      setStatus('ready');
-      setShowModal(false);
-    } else {
+    try {
+      // Call API to update status (server-side)
+      const response = await fetch(`/api/memorypops/${memorypopId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'ready' }),
+      });
+
+      if (response.ok) {
+        setStatus('ready');
+        setShowModal(false);
+      } else {
+        alert('Failed to prepare reveal. Please try again.');
+      }
+    } catch (error) {
+      console.error('Status update error:', error);
       alert('Failed to prepare reveal. Please try again.');
     }
 

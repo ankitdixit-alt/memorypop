@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { getCelebrationExperience } from "@/lib/celebrationExperience";
 import { getCoverHeroStyle } from "@/lib/coverStyles";
 import { getCoverTheme } from "@/lib/coverTheme";
-import { supabase } from "@/lib/supabase";
 import ReactionPrompt from "./ReactionPrompt";
 import ReactionThankYou from "./ReactionThankYou";
 
@@ -25,6 +24,7 @@ interface Props {
   coverStyle?: string | null;
   shareCode: string;
   mood?: string | null;
+  existingReaction?: { reaction_type: string } | null;
 }
 
 export default function RevealExperience({
@@ -36,10 +36,13 @@ export default function RevealExperience({
   coverStyle,
   shareCode,
   mood,
+  existingReaction,
 }: Props) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [hasReacted, setHasReacted] = useState<boolean | null>(null); // null = loading, true/false = known
-  const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
+  const [hasReacted, setHasReacted] = useState<boolean>(!!existingReaction); // Initialize from server prop
+  const [selectedReaction, setSelectedReaction] = useState<string | null>(
+    existingReaction?.reaction_type || null
+  );
 
   // Step 0: Welcome
   // Step 0.5: Mood Introduction (NEW)
@@ -76,30 +79,10 @@ export default function RevealExperience({
   }
 
   // Calculate total steps based on whether user has reacted
-  const totalSteps = hasReacted === null
-    ? memories.length + 4 // loading state, assume reaction screens needed
-    : hasReacted
-      ? memories.length + 3 // already reacted: welcome + memories + final + thank you
-      : memories.length + 4; // not reacted: welcome + memories + final + reaction + thank you
-
-  // Check if user already reacted (run on mount)
-  useEffect(() => {
-    async function checkReaction() {
-      const { data, error } = await supabase
-        .from('memorypop_reactions')
-        .select('reaction_type')
-        .eq('memorypop_id', memorypopId)
-        .maybeSingle();
-
-      if (data) {
-        setHasReacted(true);
-        setSelectedReaction(data.reaction_type); // Store actual reaction for returning users
-      } else {
-        setHasReacted(false);
-      }
-    }
-    checkReaction();
-  }, [memorypopId]);
+  // Phase 2: hasReacted is initialized from server prop, no loading state
+  const totalSteps = hasReacted
+    ? memories.length + 3 // already reacted: welcome + memories + final + thank you
+    : memories.length + 4; // not reacted: welcome + memories + final + reaction + thank you
 
   const handleNext = () => {
     if (currentStep < totalSteps - 1) {

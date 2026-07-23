@@ -85,6 +85,13 @@ export default async function RevealPage({
     throw new Error(`Failed to fetch memories: ${memoriesError.message}`);
   }
 
+  // Check if user already reacted (Phase 2: server-side query)
+  const { data: existingReaction } = await supabaseServer
+    .from('memorypop_reactions')
+    .select('reaction_type')
+    .eq('memorypop_id', memoryPop.id)
+    .maybeSingle();
+
   // Pass to client component
   return (
     <RevealExperience
@@ -96,6 +103,7 @@ export default async function RevealPage({
       coverStyle={memoryPop.cover_style}
       shareCode={shareCode}
       mood={memoryPop.tone}
+      existingReaction={existingReaction}
     />
   );
 }
