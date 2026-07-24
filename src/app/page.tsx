@@ -308,9 +308,32 @@ const testimonials = [
 ]
 
 const footerColumns = [
-  { heading: "Product", links: ["How it works", "Occasions", "Pricing", "Gift cards"] },
-  { heading: "Company", links: ["About", "Careers", "Press", "Contact"] },
-  { heading: "Support", links: ["Help center", "Privacy", "Terms", "Status"] },
+  {
+    heading: "Product",
+    links: [
+      { label: "How it works", href: "/how-it-works" },
+      { label: "Occasions", href: "/occasions" },
+      { label: "Pricing", href: "/pricing" }
+    ]
+  },
+  {
+    heading: "Company",
+    links: [
+      { label: "About", href: "/about" },
+      { label: "Careers", href: "/careers" },
+      { label: "Press", href: "/press" },
+      { label: "Contact", href: "/contact" }
+    ]
+  },
+  {
+    heading: "Support",
+    links: [
+      { label: "Help center", href: "/help-center" },
+      { label: "Privacy", href: "/privacy" },
+      { label: "Terms", href: "/terms" },
+      { label: "Status", href: "/status" }
+    ]
+  },
 ]
 
 /* -------------------------------------------------------------------------- */
@@ -691,10 +714,10 @@ function SiteFooter() {
               <h3 className="text-sm font-semibold text-foreground">{col.heading}</h3>
               <ul className="mt-4 space-y-2.5">
                 {col.links.map((link) => (
-                  <li key={link}>
-                    <a href="#" className="text-sm text-muted-foreground transition-colors hover:text-foreground active:bg-secondary rounded px-2 py-1">
-                      {link}
-                    </a>
+                  <li key={link.label}>
+                    <Link href={link.href} className="text-sm text-muted-foreground transition-colors hover:text-foreground active:bg-secondary rounded px-2 py-1">
+                      {link.label}
+                    </Link>
                   </li>
                 ))}
               </ul>

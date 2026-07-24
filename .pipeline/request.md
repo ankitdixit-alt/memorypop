@@ -1,96 +1,239 @@
-# Feature Request: Celebration Mood Selection Step
+# Feature Request: Public Website & SEO Foundations
 
-**Date:** 2026-07-23
-**Requester:** Founder
-**Type:** New Feature
-
----
-
-## Raw Request
-
-Add a dedicated Celebration Mood step to the MemoryPop creation flow.
+**Date:** 2026-07-24
+**Requestor:** Founder
+**Type:** Public Website Evolution + SEO Strategy
 
 ---
 
-## Normalized Request
+## Raw Requirement
 
-### Goal
-Separate emotional tone (mood) from event type (occasion) in the creation flow, allowing creators to personalize how their celebration feels independently from what they're celebrating.
+Evolve MemoryPop from an MVP application into a credible public website with strong SEO foundations.
 
-### User Problem
-Currently, occasion and mood are conflated. A birthday can feel playful OR elegant depending on the recipient and relationship, but creators have no way to express this preference during creation.
+Every visible footer link should resolve to a genuine page that provides value today while laying the foundation for future SEO growth.
 
-### User Impact
-- Creators gain control over emotional tone
-- Personal message writing becomes more guided based on mood
-- Celebrations feel more personalized to relationships, not just events
-
-### Constraints
-1. Must maintain mobile-first, simple UI
-2. Cannot impact existing MemoryPops (migration safe)
-3. Must integrate cleanly with existing occasion system
-4. Cannot delay the creation flow significantly
-5. Must support future theming/styling (but not implement it yet)
-
-### Product Principles
-- **Occasion answers: WHAT are we celebrating?**
-- **Mood answers: HOW should it feel?**
-- These are separate, orthogonal dimensions
-- Mood must be stored independently from occasion
-- Do not overload occasion configuration with mood logic
-
-### Requirements
-
-**Flow Change:**
-```
-Current: Choose occasion → Write message → Continue
-New:     Choose occasion → Choose mood → Write message → Continue
-```
-
-**Initial Mood Options:**
-1. Warm & heartfelt
-2. Playful & fun
-3. Elegant & meaningful
-4. Bold & celebratory
-5. Nostalgic & reflective
-
-**Technical Requirements:**
-1. Add dedicated Mood selection step before personal-message step
-2. Selected mood influences message heading, helper text, and placeholder
-3. Mood stored independently from occasion in database
-4. Use composition layer that combines occasionConfig + celebrationMood
-5. Rename emoji selector from "Add some emotion" to neutral label (e.g., "Choose a celebration icon")
-6. Keep UI simple, warm, mobile-first
-
-**Scope Boundaries:**
-- ✅ Collect mood
-- ✅ Persist mood
-- ✅ Use mood to personalise message-writing step
-- ❌ Do NOT implement visual theming yet
-- ❌ Do NOT change cover styles based on mood
-- ❌ Do NOT add mood-based animations
-
-### Assumptions
-- Five mood options are sufficient for MVP
-- Mood can default to "Warm & heartfelt" if needed for backwards compatibility
-- Mood selection adds ~10 seconds to creation flow (acceptable)
-- Personal message step is the primary place mood should influence UX
-
-### Open Questions
-None blocking - request is well-specified.
+This is NOT about creating placeholder pages. It is about building the first version of MemoryPop's public website.
 
 ---
 
-## Requested Outputs (Pre-Implementation)
+## Objective
 
-Before coding:
-1. Product Owner recommendation (build now / next sprint / backlog / reject)
-2. Exact user flow
-3. Data-model recommendation
-4. Proposed mood configuration shape
-5. Copy for each mood
-6. Files likely to change
-7. Acceptance criteria
-8. Risks and edge cases
+Build meaningful first versions of every recommended footer page that:
+- Strengthens trust in MemoryPop
+- Provides real value today
+- Lays foundation for SEO growth
+- Feels intentional and complete
 
-Then: Founder approval before implementation.
+---
+
+## Part 1: Footer Audit
+
+Audit every footer link and classify as:
+- Exists and complete
+- Exists but needs improvement
+- Missing
+- Should be removed for MVP
+
+Current footer includes:
+
+**Product**
+- How it Works
+- Occasions
+- Pricing
+- Gift Cards
+
+**Company**
+- About
+- Careers
+- Press
+- Contact
+
+**Support**
+- Help Centre
+- Privacy
+- Terms
+- Status
+
+For every link explain:
+- Should it exist today?
+- Why?
+- MVP recommendation
+
+---
+
+## Part 2: Create MVP Pages
+
+Create meaningful first versions of every recommended page with:
+- SEO title
+- Meta description
+- H1
+- Intro copy
+- Helpful content
+- Internal links
+- Appropriate CTA
+
+### Suggested Pages
+
+**How it Works**
+Explain: Create → Invite → Collect Memories → Reveal → Treasure Forever
+
+**Occasions**
+Overview page introducing all celebration types.
+Link naturally to future occasion pages.
+
+**Pricing**
+Explain: Standard, Premium, Keepsake
+Current pricing only.
+
+**About**
+Tell the MemoryPop story.
+Mission: Helping people celebrate life's meaningful moments together.
+
+**Careers**
+Title: Careers at MemoryPop
+Copy: Not currently hiring, but interested in meeting thoughtful people.
+
+**Press**
+Short company overview, brand description.
+Logo/resources coming later.
+
+**Contact**
+General enquiries, support enquiries, business enquiries.
+
+**Help Centre**
+Small FAQ including:
+- How do I create a MemoryPop?
+- How do contributors add memories?
+- Can I edit my MemoryPop?
+- How do I access my creator dashboard?
+- Can I add photos?
+- Is MemoryPop free?
+
+**Privacy**
+Ensure complete.
+
+**Terms**
+Ensure complete.
+
+**Status**
+Simple page showing current status: All systems operational.
+
+**Gift Cards**
+Product Owner should decide whether this belongs in MVP.
+If not, recommend removing footer link until feature exists.
+
+---
+
+## Part 3: SEO Foundation
+
+Build long-term SEO strategy.
+
+MemoryPop's growth will come from high-quality pages that answer real search intent.
+
+Identify search opportunities and recommend dedicated landing pages such as:
+- /birthday-memory-book
+- /retirement-memory-book
+- /wedding-memory-book
+- /graduation-memory-book
+- /new-baby-memory-book
+- /farewell-memory-book
+- /teacher-appreciation-memory-book
+- /leaving-work-memory-book
+- /engagement-memory-book
+- /anniversary-memory-book
+
+For each landing page provide:
+- Target search intent
+- Target keyword
+- Suggested H1
+- Suggested page title
+- Suggested meta description
+- Content outline
+- Internal linking opportunities
+- CTA
+
+Prioritize into:
+- P0 (build now)
+- P1 (next)
+- P2 (future)
+
+with reasoning.
+
+---
+
+## Part 4: Site Architecture
+
+Recommend the ideal public site structure for MemoryPop over the next year.
+
+Include:
+- Marketing pages
+- Occasion pages
+- Feature pages
+- Help Centre
+- Legal
+- Company
+- Future blog/resources
+
+Design this so it scales cleanly as MemoryPop grows.
+
+---
+
+## Product Principles
+
+- Be honest
+- Be warm
+- Be human
+- Every page should feel intentional
+- No Lorem Ipsum
+- No "Coming Soon" pages unless absolutely necessary
+- Every page should strengthen trust in MemoryPop
+
+---
+
+## Success Outcome
+
+A credible public website where:
+- Every footer link resolves to a genuine, valuable page
+- The site feels complete and trustworthy
+- SEO foundations are established
+- Future growth is supported by a clear architecture
+- Users can discover and understand MemoryPop through search
+- The site reflects MemoryPop's warm, premium brand
+
+---
+
+## Constraints
+
+- Must work within Next.js app router structure
+- Must maintain existing application functionality
+- Must not break current creation flow
+- Must feel consistent with existing MemoryPop brand
+- Must be mobile-first
+- Must strengthen trust, not create placeholder bloat
+
+---
+
+## Open Questions
+
+1. Should Gift Cards link exist before feature is built?
+2. What occasion landing pages should be P0 vs P1?
+3. Should we build a blog structure now or defer?
+4. What Help Centre articles are most urgent?
+5. Are Privacy and Terms complete or need updates?
+
+---
+
+## Deliverables Expected BEFORE Coding
+
+1. Footer audit
+2. Recommended sitemap
+3. Missing pages list
+4. Existing pages requiring improvement
+5. Proposed copy for every MVP page
+6. SEO recommendations
+7. Occasion landing-page strategy
+8. Prioritized implementation roadmap
+
+---
+
+**Note:** Stop after Product Owner recommendation and implementation plan for Founder approval. Do not write code yet.
