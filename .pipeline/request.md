@@ -1,239 +1,226 @@
-# Feature Request: Public Website & SEO Foundations
+# Feature Request: Phase 2 - SEO Landing Pages & Growth
 
 **Date:** 2026-07-24
-**Requestor:** Founder
-**Type:** Public Website Evolution + SEO Strategy
+**Requester:** Founder
+**Type:** Feature Request (SEO & User Acquisition)
 
 ---
 
-## Raw Requirement
+## Raw Request
 
-Evolve MemoryPop from an MVP application into a credible public website with strong SEO foundations.
-
-Every visible footer link should resolve to a genuine page that provides value today while laying the foundation for future SEO growth.
-
-This is NOT about creating placeholder pages. It is about building the first version of MemoryPop's public website.
+"lets do phase 2"
 
 ---
 
-## Objective
+## Context
 
-Build meaningful first versions of every recommended footer page that:
-- Strengthens trust in MemoryPop
-- Provides real value today
-- Lays foundation for SEO growth
-- Feels intentional and complete
+**Phase 1 Status: ✅ COMPLETE**
+- 12 pages built (How It Works, Occasions, Pricing, About, Careers, Press, Contact, Help Center, Status, Privacy, Terms)
+- Footer updated with 12 working links
+- Complete company website foundation established
+- Trust and credibility foundations in place
 
----
+**Original Phase 2 Plan (from initial prioritization):**
+- Occasions overview page → ✅ Already built in Phase 1
+- Pricing page → ✅ Already built in Phase 1
 
-## Part 1: Footer Audit
-
-Audit every footer link and classify as:
-- Exists and complete
-- Exists but needs improvement
-- Missing
-- Should be removed for MVP
-
-Current footer includes:
-
-**Product**
-- How it Works
-- Occasions
-- Pricing
-- Gift Cards
-
-**Company**
-- About
-- Careers
-- Press
-- Contact
-
-**Support**
-- Help Centre
-- Privacy
-- Terms
-- Status
-
-For every link explain:
-- Should it exist today?
-- Why?
-- MVP recommendation
+**Original Phase 3 Plan (SEO Landing Pages):**
+- Build occasion-specific landing pages for organic acquisition
+- Target high-intent search queries like "birthday memory book"
+- Drive traffic from people actively searching for solutions
+- 10+ landing pages prioritized by search volume and intent
 
 ---
 
-## Part 2: Create MVP Pages
+## Interpreted Goal
 
-Create meaningful first versions of every recommended page with:
-- SEO title
-- Meta description
-- H1
-- Intro copy
-- Helpful content
-- Internal links
-- Appropriate CTA
+Since original Phase 2 deliverables (Occasions + Pricing) were completed in Phase 1 per Founder's strategic refinement, "Phase 2" now likely refers to the SEO landing pages strategy (originally Phase 3).
 
-### Suggested Pages
-
-**How it Works**
-Explain: Create → Invite → Collect Memories → Reveal → Treasure Forever
-
-**Occasions**
-Overview page introducing all celebration types.
-Link naturally to future occasion pages.
-
-**Pricing**
-Explain: Standard, Premium, Keepsake
-Current pricing only.
-
-**About**
-Tell the MemoryPop story.
-Mission: Helping people celebrate life's meaningful moments together.
-
-**Careers**
-Title: Careers at MemoryPop
-Copy: Not currently hiring, but interested in meeting thoughtful people.
-
-**Press**
-Short company overview, brand description.
-Logo/resources coming later.
-
-**Contact**
-General enquiries, support enquiries, business enquiries.
-
-**Help Centre**
-Small FAQ including:
-- How do I create a MemoryPop?
-- How do contributors add memories?
-- Can I edit my MemoryPop?
-- How do I access my creator dashboard?
-- Can I add photos?
-- Is MemoryPop free?
-
-**Privacy**
-Ensure complete.
-
-**Terms**
-Ensure complete.
-
-**Status**
-Simple page showing current status: All systems operational.
-
-**Gift Cards**
-Product Owner should decide whether this belongs in MVP.
-If not, recommend removing footer link until feature exists.
+**Primary Objective:** Drive organic user acquisition through occasion-specific SEO landing pages.
 
 ---
 
-## Part 3: SEO Foundation
+## Proposed Scope: SEO Landing Pages
 
-Build long-term SEO strategy.
+Build dedicated landing pages for specific occasions, each optimized for search intent:
 
-MemoryPop's growth will come from high-quality pages that answer real search intent.
+### Top Priority Occasions (Highest Search Volume / Intent)
+1. `/birthday-memory-book` - Highest search volume
+2. `/retirement-memory-book` - High intent, growing demographic
+3. `/wedding-memory-book` - High value, premium market
+4. `/graduation-memory-book` - Seasonal, recurring
+5. `/anniversary-memory-book` - High emotional value
 
-Identify search opportunities and recommend dedicated landing pages such as:
-- /birthday-memory-book
-- /retirement-memory-book
-- /wedding-memory-book
-- /graduation-memory-book
-- /new-baby-memory-book
-- /farewell-memory-book
-- /teacher-appreciation-memory-book
-- /leaving-work-memory-book
-- /engagement-memory-book
-- /anniversary-memory-book
+### Medium Priority
+6. `/new-baby-memory-book` - Milestone moment
+7. `/farewell-memory-book` - Workplace + personal
+8. `/teacher-appreciation-memory-book` - Niche but passionate
 
-For each landing page provide:
-- Target search intent
-- Target keyword
-- Suggested H1
-- Suggested page title
-- Suggested meta description
-- Content outline
-- Internal linking opportunities
-- CTA
-
-Prioritize into:
-- P0 (build now)
-- P1 (next)
-- P2 (future)
-
-with reasoning.
+### Lower Priority
+9. `/engagement-memory-book`
+10. `/leaving-work-memory-book`
 
 ---
 
-## Part 4: Site Architecture
+## Landing Page Template Structure
 
-Recommend the ideal public site structure for MemoryPop over the next year.
+Each page follows consistent SEO-optimized pattern:
 
-Include:
-- Marketing pages
-- Occasion pages
-- Feature pages
-- Help Centre
-- Legal
-- Company
-- Future blog/resources
+```
+SEO Title: [Occasion] Memory Book | Create Beautiful Keepsakes | MemoryPop
+Meta Description: Create a meaningful [occasion] memory book by collecting photos, messages, and memories from loved ones. Simple, thoughtful, unforgettable.
 
-Design this so it scales cleanly as MemoryPop grows.
+H1: [Occasion] Memory Book
 
----
+Sections:
+1. Hero: What is a [occasion] memory book?
+   - Emotional hook specific to this occasion
+   - Clear value proposition
 
-## Product Principles
+2. Why MemoryPop for [occasion]
+   - Benefits specific to this celebration
+   - What makes it special for this moment
 
-- Be honest
-- Be warm
-- Be human
-- Every page should feel intentional
-- No Lorem Ipsum
-- No "Coming Soon" pages unless absolutely necessary
-- Every page should strengthen trust in MemoryPop
+3. How it works (5 steps)
+   - Tailored messaging for this occasion
+   - Occasion-specific examples
 
----
+4. Real examples
+   - Sample memories for this occasion
+   - Suggested contributions
 
-## Success Outcome
+5. Testimonials (if available)
+   - User stories for this occasion type
 
-A credible public website where:
-- Every footer link resolves to a genuine, valuable page
-- The site feels complete and trustworthy
-- SEO foundations are established
-- Future growth is supported by a clear architecture
-- Users can discover and understand MemoryPop through search
-- The site reflects MemoryPop's warm, premium brand
+6. FAQ
+   - Occasion-specific questions
+   - Common concerns
 
----
+7. CTA
+   - "Create your [occasion] MemoryPop"
+   - Link to /create?occasion=[slug]
 
-## Constraints
-
-- Must work within Next.js app router structure
-- Must maintain existing application functionality
-- Must not break current creation flow
-- Must feel consistent with existing MemoryPop brand
-- Must be mobile-first
-- Must strengthen trust, not create placeholder bloat
+Internal Links:
+- Link to /how-it-works
+- Link to /occasions (overview hub)
+- Link to related occasions
+- Link to /help-center for questions
+```
 
 ---
 
-## Open Questions
+## SEO Strategy
 
-1. Should Gift Cards link exist before feature is built?
-2. What occasion landing pages should be P0 vs P1?
-3. Should we build a blog structure now or defer?
-4. What Help Centre articles are most urgent?
-5. Are Privacy and Terms complete or need updates?
+**Target Keywords:**
+- Primary: "[occasion] memory book"
+- Secondary: "[occasion] keepsake", "collect memories for [occasion]", "[occasion] gift idea"
+- Long-tail: "how to create a [occasion] memory book", "best [occasion] memory book online", "digital [occasion] memory book"
+
+**Content Requirements:**
+- 1,200-1,800 words per page (comprehensive, not thin)
+- Natural keyword usage (no stuffing)
+- Semantic variations and related terms
+- Clear heading hierarchy (H1 > H2 > H3)
+- Internal linking to relevant pages
+- External links (if needed for credibility)
+
+**Technical SEO:**
+- Proper meta tags (title, description, OG tags)
+- Semantic HTML structure
+- Mobile-first responsive design
+- Fast page load times
+- Clean URL structure (/[occasion]-memory-book)
 
 ---
 
-## Deliverables Expected BEFORE Coding
+## Business Goals
 
-1. Footer audit
-2. Recommended sitemap
-3. Missing pages list
-4. Existing pages requiring improvement
-5. Proposed copy for every MVP page
-6. SEO recommendations
-7. Occasion landing-page strategy
-8. Prioritized implementation roadmap
+**Primary:** Drive organic user acquisition
+- Target: People actively searching for occasion-specific solutions
+- Intent: High (ready to create)
+- Conversion potential: Very high
+
+**Secondary:** Build SEO authority
+- Establish MemoryPop as authority for memory books
+- Build link equity across occasion pages
+- Create content hub via /occasions overview page
+
+**Metrics:**
+- Organic search traffic to landing pages
+- Conversion rate (landing page → /create)
+- Search rankings for target keywords
+- Time on page and engagement metrics
 
 ---
 
-**Note:** Stop after Product Owner recommendation and implementation plan for Founder approval. Do not write code yet.
+## Questions for Product Owner
+
+1. Should we build all 10 landing pages at once, or prioritize top 3-5?
+2. Do we have testimonials/user stories to include yet?
+3. Should landing pages link to /create with occasion pre-filled?
+4. What's the priority: SEO content volume vs. conversion optimization?
+5. Should we implement analytics tracking first to measure impact?
+6. Any other growth priorities competing with SEO landing pages?
+
+---
+
+## Assumptions
+
+- Founder wants organic acquisition growth
+- SEO landing pages align with growth strategy
+- No technical blockers for 10+ new static pages
+- Copy/content can be created efficiently
+- Budget available for multi-page implementation
+
+---
+
+## Success Criteria (Draft)
+
+To be validated by Product Owner:
+
+**Must Have:**
+- Top 3-5 occasion landing pages live
+- Each page targets specific search intent
+- Proper SEO metadata implemented
+- Internal linking structure in place
+- Mobile-responsive and accessible
+- Consistent with MemoryPop brand
+
+**Should Have:**
+- All 10 landing pages complete
+- Occasion selector in /create flow
+- Analytics tracking on all pages
+- A/B testing framework for CTA optimization
+
+**Could Have:**
+- User testimonials section
+- Video or visual content
+- Social proof elements
+- Related articles/resources
+
+---
+
+## Alternative Interpretations
+
+If "Phase 2" means something different:
+
+**Option B: Conversion Optimization**
+- Optimize existing 12 pages for conversion
+- Add testimonials and social proof
+- Implement analytics and tracking
+- A/B testing framework
+
+**Option C: Analytics & Measurement**
+- Google Analytics 4 setup
+- Event tracking for key actions
+- Conversion funnel analysis
+- Dashboard for key metrics
+
+**Option D: Something Else**
+- Wait for Founder clarification
+- Product Owner determines strategic priority
+
+---
+
+**Status:** Ready for Product Owner analysis
+**Next Step:** Product Owner evaluates whether SEO landing pages are the right Phase 2 priority

@@ -1,0 +1,20 @@
+# MemoryPop Robots.txt
+# Part of Phase 2C: SEO Foundation
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Allow landing pages (high-priority for organic discovery)
+Allow: /birthday-memory-book
+Allow: /retirement-memory-book
+Allow: /farewell-memory-book
+
+# Disallow private/dynamic pages
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /manage/
+Disallow: /m/
+
+# Sitemap location
+Sitemap: https://memorypop.app/sitemap.xml

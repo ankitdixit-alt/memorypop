@@ -1,1037 +1,476 @@
-# Feature Spec: Public Website & SEO Foundations (Phase 1 - REVISED)
+# Feature Specification: Phase 2 - SEO Foundation + Analytics + Top 3 Landing Pages (Option C)
 
-**Date:** 2026-07-24 (Revised after Founder feedback)
-**Feature:** Complete Company Website
-**Scope:** 12 static pages + footer update
-**Approved by:** Product Owner (20/25), Founder (with strategic refinement)
-
----
-
-## Founder Strategic Refinement
-
-**Original Plan:** Build 7 essential pages, remove 5 footer links (Occasions, Pricing, Careers, Press, Gift Cards)
-
-**Founder Decision:** Build complete company website with 12 pages, only remove Gift Cards
-
-**Reasoning:**
-> "A small but genuine page is better than removing navigation. I want MemoryPop to feel like a complete company, not just a web application."
-
-**Revised Scope:**
-- **Keep all 12 footer links** (remove only Gift Cards)
-- **Build minimal but genuine pages** for Careers, Press, Occasions, Pricing
-- **Goal:** Professional, complete company presence
+**Date:** 2026-07-24
+**Planner:** MemoryPop Planner Agent
+**Product Owner Decision:** BUILD NOW (Foundation First, Data-Driven Expansion)
+**Founder Approval:** Option C - Comprehensive Approach
+**Estimated Timeline:** 5-7 days total
 
 ---
 
-## Request
+## Request Summary
 
-Build complete public website for MemoryPop by creating **12 pages** that resolve all active footer links. Current state: all 13 footer links go nowhere (href="#").
+Build complete technical SEO and analytics infrastructure, plus create 3 high-performing occasion-specific landing pages to establish organic acquisition channel for MemoryPop.
 
-**Goal:** MemoryPop should feel like a complete, professional company with genuine public pages.
+**Approved Scope (Option C):**
+1. SEO Foundation (sitemap.xml, robots.txt, canonical URLs, meta robots tags, schema markup)
+2. Analytics Foundation (Google Analytics 4 setup, event tracking, 5 core events)
+3. Top 3 Landing Pages (Birthday, Retirement, Farewell memory book pages)
 
 ---
 
 ## Goal
 
-### User Goal
-- Click any footer link and find a genuine, helpful page
-- Understand what MemoryPop does and how it works
-- Learn about pricing and occasions
-- See MemoryPop as a real company (not just an app)
-- Get answers to common questions without emailing support
+**Primary Goal:** Unlock organic discovery for MemoryPop by establishing complete SEO and measurement infrastructure, validated with 3 high-intent landing pages.
 
-### Business Goal
-- Present MemoryPop as a complete, credible company
-- Enable organic search discovery
-- Reduce support burden via self-serve help
-- Establish foundation for future SEO growth (occasions hub)
-- Create professional presence for partnerships and press
+**Success Outcome:**
+- All 12 existing pages become indexable and trackable
+- 3 landing pages target highest-intent searches ("birthday memory book", "retirement memory book", "farewell memory book")
+- Complete measurement capability for organic traffic attribution and conversion tracking
+- Foundation for sustainable organic growth (10-15% organic traffic by Month 3)
 
 ---
 
-## Current State
+## Key Implementation Notes
 
-**Footer Links (13 total):**
-```
-Product: How it works | Occasions | Pricing | Gift cards
-Company: About | Careers | Press | Contact
-Support: Help center | Privacy | Terms | Status
-```
+### Landing Page Copy
+Complete copy for all 3 landing pages is provided below. Each page is 1,200-1,500 words with:
+- SEO-optimized metadata
+- Hero section with occasion-specific messaging
+- Benefits section
+- 5-step How It Works
+- 3 example memories
+- 5 FAQs
+- Final CTA
 
-**Reality:**
-- All links use `href="#"` (go nowhere)
-- No public pages exist beyond homepage and application flows
-- Zero organic discoverability
-- Users clicking footer hit dead ends
+### SEO Infrastructure
+- Organization schema at root layout
+- Event schema on landing pages
+- Canonical URLs on all pages
+- Enhanced sitemap with landing pages
+- Updated robots.txt
 
-**Source:** `src/app/page.tsx` lines 310-314 (footerColumns array)
-
----
-
-## In Scope (Phase 1 - REVISED)
-
-### Pages to Create (10 new pages)
-
-**Product Section (3 pages):**
-1. `/how-it-works` - Explain MemoryPop in 5 steps
-2. `/occasions` - Overview of celebrations MemoryPop supports (hub for future SEO pages)
-3. `/pricing` - Standard, Premium, Keepsake pricing
-
-**Company Section (4 pages):**
-4. `/about` - Mission, story, values
-5. `/careers` - Not hiring but interested in meeting thoughtful people
-6. `/press` - Brand overview + press contact
-7. `/contact` - 3 email categories
-
-**Support Section (3 pages):**
-8. `/help-center` - 6 core FAQs
-9. `/status` - System operational status
-10. `/privacy` - Privacy policy (audit/create)
-11. `/terms` - Terms of service (audit/create)
-
-### Footer Update
-12. Update `footerColumns` array in `src/app/page.tsx`:
-   - **Remove:** Gift cards only
-   - **Keep:** All 12 other links
-   - Update all links from `href="#"` to actual routes
+### Analytics Infrastructure
+- GA4 alongside existing Mixpanel
+- 5 core events implemented
+- Source attribution for conversion funnel
+- GDPR-compliant consent management
 
 ---
 
-## Out of Scope (Phase 1)
+## Implementation Timeline
 
-**Deferred to Phase 2+:**
-- ❌ Occasion-specific SEO landing pages (/birthday-memory-book, etc.)
-- ❌ Blog structure
-- ❌ Contact form (email links only for Phase 1)
-- ❌ Search functionality
-- ❌ Dynamic status monitoring
-- ❌ User testimonials / social proof
-- ❌ FAQ search or filtering
-- ❌ Multi-language support
-- ❌ CMS integration
-- ❌ Detailed pricing calculator
-- ❌ Press kit downloads (logos, assets)
+**Total: 5-7 days**
+
+- **Day 1-2:** SEO Foundation (utilities + root layout + metadata)
+- **Day 2-3:** Analytics Foundation (GA4 setup + events)
+- **Day 4-6:** Landing Pages (3 complete pages + create flow enhancement)
+- **Day 7:** Testing & Validation (SEO + Analytics + Landing Pages)
 
 ---
 
-## Files to Create
+## Full Specification
 
-### New Page Routes (10 files)
+Complete implementation details, file paths, function signatures, landing page copy, acceptance criteria, and testing plan are available in the detailed specification document.
 
-**Product Section:**
-1. `src/app/how-it-works/page.tsx` - 5-step process
-2. `src/app/occasions/page.tsx` - Celebrations overview
-3. `src/app/pricing/page.tsx` - Three-tier pricing
-
-**Company Section:**
-4. `src/app/about/page.tsx` - Mission and story
-5. `src/app/careers/page.tsx` - Not hiring but open
-6. `src/app/press/page.tsx` - Brand + press contact
-7. `src/app/contact/page.tsx` - Contact options
-
-**Support Section:**
-8. `src/app/help-center/page.tsx` - 6 FAQs
-9. `src/app/status/page.tsx` - Operational status
-10. `src/app/privacy/page.tsx` - Privacy policy (if doesn't exist)
-11. `src/app/terms/page.tsx` - Terms of service (if doesn't exist)
+**See complete specification sections:**
+1. Files to Create (SEO utilities, GA4 utilities, 3 landing pages)
+2. Files to Modify (layout, homepage, create page, sitemap, robots.txt, analytics)
+3. Complete Landing Page Copy (Birthday, Retirement, Farewell - 1,200-1,500 words each)
+4. Implementation Steps (sequenced by day)
+5. Acceptance Criteria (50+ testable criteria)
+6. Success Metrics (30-day and 90-day targets)
+7. Risks & Mitigations (10 identified risks)
 
 ---
 
-## Files to Modify
+## Landing Page Copy
 
-### `src/app/page.tsx` (lines 310-314)
-
-**Current:**
-```typescript
-const footerColumns = [
-  { heading: "Product", links: ["How it works", "Occasions", "Pricing", "Gift cards"] },
-  { heading: "Company", links: ["About", "Careers", "Press", "Contact"] },
-  { heading: "Support", links: ["Help center", "Privacy", "Terms", "Status"] },
-]
-```
-
-**Change to:**
-```typescript
-const footerColumns = [
-  {
-    heading: "Product",
-    links: [
-      { label: "How it works", href: "/how-it-works" },
-      { label: "Occasions", href: "/occasions" },
-      { label: "Pricing", href: "/pricing" }
-    ]
-  },
-  {
-    heading: "Company",
-    links: [
-      { label: "About", href: "/about" },
-      { label: "Careers", href: "/careers" },
-      { label: "Press", href: "/press" },
-      { label: "Contact", href: "/contact" }
-    ]
-  },
-  {
-    heading: "Support",
-    links: [
-      { label: "Help center", href: "/help-center" },
-      { label: "Privacy", href: "/privacy" },
-      { label: "Terms", href: "/terms" },
-      { label: "Status", href: "/status" }
-    ]
-  },
-]
-```
-
-**Note:** Gift cards link removed. All other links present with real routes.
-
----
-
-## Page Specifications
-
-### 1. How It Works (`/how-it-works`)
+### 1. Birthday Memory Book Landing Page
 
 **Metadata:**
-```typescript
-export const metadata: Metadata = {
-  title: 'How MemoryPop Works',
-  description: 'Learn how MemoryPop helps you collect memories from loved ones and create a beautiful keepsake book in 5 simple steps.',
-  openGraph: {
-    title: 'How MemoryPop Works',
-    description: 'Learn how MemoryPop helps you collect memories from loved ones and create a beautiful keepsake book in 5 simple steps.',
-    url: '/how-it-works',
-  },
-};
-```
+- Title: Birthday Memory Book | Create Beautiful Birthday Keepsakes | MemoryPop
+- Description: Create a meaningful birthday memory book by collecting photos, messages, and memories from loved ones. Simple, thoughtful, unforgettable.
+- Canonical: https://memorypop.app/birthday-memory-book
 
-**Copy:**
-```markdown
-# How MemoryPop Works
+**Hero Section:**
 
-Create a beautiful celebration in 5 simple steps
+# Create a Birthday Memory Book That Lasts Forever
+
+Collect birthday wishes, funny stories, and favorite memories from friends and family—all in one beautiful place.
+
+[Create Your Birthday MemoryPop →]
 
 ---
 
-## 1. Create Your MemoryPop ✨
+**Why MemoryPop for Birthdays:**
 
-Choose the occasion you're celebrating, add a personal message to your recipient, and give your MemoryPop a name. The whole process takes less than 2 minutes.
+Birthdays are meant to be celebrated, remembered, and treasured. MemoryPop helps you create a collaborative birthday memory book that brings everyone together to celebrate someone special.
 
----
+**Make Every Birthday Unforgettable**
 
-## 2. Invite Contributors 📨
-
-Share a unique link with friends, family, colleagues, or anyone you want to include. Anyone with the link can contribute—no signup required.
-
----
-
-## 3. Contributors Add Memories 💝
-
-Contributors write personal messages, upload photos, choose emojis that capture the mood, and add their memories. Each contribution becomes part of something beautiful.
+- **Collect from everyone:** Friends, family, coworkers, classmates—everyone can contribute, no account required
+- **Photos and messages together:** Combine heartfelt messages with favorite photos in one beautiful keepsake
+- **Delivered with delight:** Share the completed memory book on their special day as a digital surprise
+- **Keep forever:** Unlike cards that get lost or thrown away, MemoryPop memories last forever
 
 ---
 
-## 4. You Collect and Curate 🎁
+**How It Works:**
 
-Access your creator dashboard anytime to review submissions and see who's contributed. You control when the MemoryPop is ready to reveal.
+**1. Start Your Birthday MemoryPop**
+Choose the birthday occasion, add the recipient's name, and write your first message. Takes less than 2 minutes.
 
----
+**2. Invite Contributors**
+Share your unique link with friends, family, coworkers, or anyone you want to include. They can contribute from any device—no signup required.
 
-## 5. Reveal and Treasure Forever 🎉
+**3. Contributors Add Birthday Wishes**
+Each person writes a message, shares a favorite memory, uploads photos, and adds their birthday wishes. MemoryPop makes it easy and fun.
 
-Share the completed MemoryPop with your recipient. They'll experience all the memories in one beautiful place. Keep it as a digital keepsake forever.
+**4. Review and Curate**
+See contributions come in through your creator dashboard. You control when the birthday MemoryPop is ready to reveal.
 
----
-
-## Ready to create your first MemoryPop?
-
-[Create Your MemoryPop]
-
-Have questions? Visit our [Help Center](/help-center)
-Explore celebrations we support: [Occasions](/occasions)
-```
+**5. Share on Their Special Day**
+Deliver the completed birthday memory book as a surprise on their birthday. They'll experience all the love, laughter, and memories in one beautiful place.
 
 ---
 
-### 2. Occasions (`/occasions`) — NEW
+**Example Birthday Memories:**
 
-**Purpose:** Overview page for all celebrations MemoryPop supports. Future hub for occasion-specific SEO landing pages.
+**"Happy 50th to the best dad ever!"**
+*"Remember that time you tried to teach me to drive and we ended up in the grocery store parking lot for 3 hours? You were so patient. Thanks for always believing in me, even when I didn't believe in myself. Love you, Dad."*
+— Sarah M., Daughter
+
+**"Cheers to 30 years of friendship!"**
+*"From college roommates to wedding parties to raising kids in the same neighborhood—you've been there for every chapter. Can't wait to see what adventures the next 30 years bring. Happy birthday, bestie!"*
+— Emma K., Best Friend
+
+**"The office won't be the same without you (on your birthday)!"**
+*"You bring so much energy and laughter to our team. Thanks for always being the first to celebrate everyone's wins and the last to leave after a long project. Have the most amazing birthday—you deserve it!"*
+— Team Marketing, Coworkers
+
+---
+
+**Frequently Asked Questions:**
+
+**How much does a birthday MemoryPop cost?**
+Creating a birthday MemoryPop is free. You can collect unlimited text messages and up to 3 photos on the free plan. Want more? Upgrade to MemoryPop Plus for unlimited photos, videos, premium themes, and more.
+
+**Can I keep the birthday MemoryPop private until the big day?**
+Yes! Your birthday MemoryPop stays private until you're ready to share it. You control exactly when your recipient sees the surprise.
+
+**What if contributors don't know what to write?**
+MemoryPop includes helpful prompts to inspire meaningful messages. Contributors can share favorite memories, birthday wishes, funny stories, or just express what the person means to them.
+
+**How do I share the birthday MemoryPop with the recipient?**
+Once your birthday memory book is complete, you'll get a shareable link. Send it via email, text, social media, or even present it in person on their birthday.
+
+**Can I add my own message to the birthday MemoryPop?**
+Absolutely! As the creator, you can write your own birthday message and upload photos along with all the contributions from others.
+
+---
+
+**Final CTA:**
+
+Ready to Create a Birthday Memory Book?
+Start collecting birthday wishes, photos, and memories in less than 2 minutes.
+
+[Create Your Birthday MemoryPop →]
+
+**Secondary Links:**
+- See all occasions we support: [Occasions](/occasions)
+- Learn how the process works: [How It Works](/how-it-works)
+- Compare plans and pricing: [Pricing](/pricing)
+
+---
+
+### 2. Retirement Memory Book Landing Page
 
 **Metadata:**
-```typescript
-export const metadata: Metadata = {
-  title: 'Occasions',
-  description: 'Celebrate every meaningful moment with MemoryPop. Birthdays, weddings, farewells, retirements, and more—collect memories together.',
-  openGraph: {
-    title: 'Occasions | MemoryPop',
-    description: 'Celebrate every meaningful moment with MemoryPop. Birthdays, weddings, farewells, retirements, and more—collect memories together.',
-    url: '/occasions',
-  },
-};
-```
+- Title: Retirement Memory Book | Celebrate Careers with Meaningful Keepsakes | MemoryPop
+- Description: Create a thoughtful retirement memory book by collecting messages, photos, and memories from colleagues. Honor their career and celebrate their next chapter.
+- Canonical: https://memorypop.app/retirement-memory-book
 
-**Copy:**
-```markdown
-# Occasions
+**Hero Section:**
 
-Every celebration deserves one beautiful home
+# Create a Retirement Memory Book to Honor Their Career
+
+Collect messages, photos, and reflections from colleagues, mentors, and friends to celebrate a career well-lived.
+
+[Create Your Retirement MemoryPop →]
 
 ---
 
-MemoryPop helps you celebrate life's meaningful moments by collecting memories from the people who matter most.
+**Why MemoryPop for Retirements:**
 
-Whether you're celebrating a birthday, marking a milestone, saying goodbye, or just saying thank you—MemoryPop brings everyone together in one beautiful place.
+Retirement marks the end of one chapter and the beginning of another. MemoryPop helps you create a meaningful retirement memory book that honors their career, celebrates their impact, and sends them off with gratitude.
 
----
+**Honor Their Legacy, Celebrate Their Future**
 
-## Celebrations We Support
-
-**Birthdays**
-Collect birthday wishes, funny stories, and favorite memories from friends and family.
-
-**Farewells**
-Create a thoughtful send-off for colleagues, friends, or loved ones moving on to new adventures.
-
-**Retirements**
-Celebrate a career well-lived with memories, thank-yous, and messages from coworkers.
-
-**Weddings**
-Gather well-wishes and advice for the happy couple from friends and family.
-
-**Anniversaries**
-Mark special milestones with memories and messages celebrating your journey together.
-
-**New Arrivals**
-Welcome a new baby with messages of love, hope, and wisdom from family and friends.
-
-**Thank You**
-Show appreciation for teachers, mentors, coaches, or anyone who's made a difference.
-
-**Graduations**
-Celebrate achievements with messages of congratulations and encouragement for the future.
-
-**And more...**
-Whatever the occasion, MemoryPop helps you celebrate together.
+- **Gather the team:** Colleagues across departments, offices, and years can contribute from anywhere
+- **Professional and personal:** Balance workplace achievements with personal anecdotes and well-wishes
+- **More than a card:** Create a lasting keepsake that captures the full story of their career journey
+- **Delivered with care:** Present it at the retirement party or share it as a heartfelt digital gift
 
 ---
 
-## How It Works
+**How It Works:**
 
-1. Choose your occasion
-2. Invite contributors
-3. Collect memories
-4. Reveal and treasure forever
+**1. Start Your Retirement MemoryPop**
+Choose the retirement occasion, add the retiree's name, and write your first message celebrating their career. Takes less than 2 minutes.
 
-[Create Your MemoryPop]
+**2. Invite Colleagues and Friends**
+Share your unique link with coworkers, managers, clients, or anyone who's worked with them. No account required to contribute.
 
-Want to see the process? [How it works](/how-it-works)
-```
+**3. Contributors Share Memories**
+Each person writes a message reflecting on their time together, shares favorite work moments, uploads photos from company events, and offers well-wishes for retirement.
 
-**Design Notes:**
-- Keep list format simple (no heavy visuals needed for Phase 1)
-- Each occasion is a brief 1-sentence description
-- Future: Each occasion name can become link to dedicated SEO page (/birthday-memory-book, etc.)
-- Expandable: Easy to add more occasions as product grows
+**4. Review and Organize**
+Watch contributions come in through your creator dashboard. You decide when the retirement memory book is ready to present.
+
+**5. Present at the Retirement Party**
+Reveal the completed retirement MemoryPop at the farewell party, send it as a surprise, or share it during a virtual send-off. A gift they'll treasure forever.
 
 ---
 
-### 3. Pricing (`/pricing`) — NEW
+**Example Retirement Memories:**
 
-**Purpose:** Explain MemoryPop's three-tier pricing model (Standard, Premium, Keepsake)
+**"Thanks for 30 years of mentorship"**
+*"You taught me everything I know about leading with integrity and empathy. Your door was always open, your advice always thoughtful. Enjoy every moment of retirement—you've earned it!"*
+— David L., Direct Report
+
+**"Cheers to the best project partner"**
+*"From late nights before big launches to celebrating wins as a team, you made work feel less like work. Thanks for your patience, your humor, and your dedication. Happy retirement!"*
+— Jennifer S., Colleague
+
+**"The office won't be the same without you"**
+*"Your energy, your stories, and your kindness made every day brighter. We'll miss you, but we're so excited for this next chapter. Go enjoy that cabin in the mountains!"*
+— The Sales Team
+
+---
+
+**Frequently Asked Questions:**
+
+**How much does a retirement MemoryPop cost?**
+Creating a retirement MemoryPop is free. You can collect unlimited text messages and up to 3 photos on the free plan. Upgrade to MemoryPop Plus for unlimited photos, videos, and premium features.
+
+**Can multiple people help organize the retirement MemoryPop?**
+Yes! Share the contribution link with a planning committee or HR team member. Everyone can add messages, and you (the creator) control when it's ready to reveal.
+
+**What if our team is remote or spread across offices?**
+MemoryPop is perfect for remote and distributed teams. Contributors can add messages from anywhere in the world—no coordination required.
+
+**Can we print the retirement MemoryPop?**
+MemoryPop is designed as a digital keepsake, but you can share the link or present it on a tablet or screen during the retirement party. Print options may be available in the future.
+
+**How do I present the retirement memory book at the party?**
+You can share the link via email, project it on a screen during the event, or open it on a tablet and pass it around for the retiree to enjoy.
+
+---
+
+**Final CTA:**
+
+Ready to Create a Retirement Memory Book?
+Honor their career and celebrate their next chapter in less than 2 minutes.
+
+[Create Your Retirement MemoryPop →]
+
+**Secondary Links:**
+- See all occasions we support: [Occasions](/occasions)
+- Learn how the process works: [How It Works](/how-it-works)
+- Compare plans and pricing: [Pricing](/pricing)
+
+---
+
+### 3. Farewell Memory Book Landing Page
 
 **Metadata:**
-```typescript
-export const metadata: Metadata = {
-  title: 'Pricing',
-  description: 'MemoryPop pricing: Standard (free), Premium (enhanced features), and Keepsake (physical memory book). Celebrate together, your way.',
-  openGraph: {
-    title: 'Pricing | MemoryPop',
-    description: 'MemoryPop pricing: Standard (free), Premium (enhanced features), and Keepsake (physical memory book). Celebrate together, your way.',
-    url: '/pricing',
-  },
-};
+- Title: Farewell Memory Book | Send-Off Gifts for Friends & Colleagues | MemoryPop
+- Description: Create a heartfelt farewell memory book by collecting messages, photos, and well-wishes. Perfect for coworkers, friends, or loved ones moving on to new adventures.
+- Canonical: https://memorypop.app/farewell-memory-book
+
+**Hero Section:**
+
+# Create a Farewell Memory Book to Send Them Off with Love
+
+Collect messages, photos, and well-wishes from friends, coworkers, or loved ones moving on to new adventures.
+
+[Create Your Farewell MemoryPop →]
+
+---
+
+**Why MemoryPop for Farewells:**
+
+Saying goodbye is never easy, but it's also an opportunity to celebrate the impact someone's made and send them off with gratitude. MemoryPop helps you create a meaningful farewell memory book that captures shared memories and well-wishes for the journey ahead.
+
+**Say Goodbye, Celebrate the Journey**
+
+- **Bring everyone together:** Friends, colleagues, neighbors, or classmates can contribute from anywhere
+- **Bittersweet and beautiful:** Balance nostalgia with excitement for their next chapter
+- **More than a goodbye card:** Create a lasting keepsake filled with photos, stories, and heartfelt messages
+- **Perfect for any farewell:** Moving cities, changing jobs, graduating, or embarking on new adventures
+
+---
+
+**How It Works:**
+
+**1. Start Your Farewell MemoryPop**
+Choose the farewell occasion, add the recipient's name, and write your first message. Takes less than 2 minutes.
+
+**2. Invite Contributors**
+Share your unique link with coworkers, friends, classmates, neighbors—anyone who wants to say goodbye and share memories.
+
+**3. Contributors Add Farewell Messages**
+Each person writes a message, shares a favorite memory, uploads photos from shared experiences, and offers well-wishes for the future.
+
+**4. Review and Curate**
+Watch contributions come in through your creator dashboard. You control when the farewell memory book is ready to share.
+
+**5. Present Before They Leave**
+Share the completed farewell MemoryPop at the going-away party, send it as a surprise, or reveal it during a final goodbye. A gift they'll carry with them always.
+
+---
+
+**Example Farewell Memories:**
+
+**"You'll be missed, but we know you'll do amazing things"**
+*"Working with you for the past 3 years has been a gift. Your optimism, your creativity, your willingness to always help—you made this place better. Good luck in San Francisco!"*
+— Maria T., Coworker
+
+**"Thanks for being the best neighbor"**
+*"From borrowing sugar to late-night talks on the porch, you've been more than a neighbor—you've been family. We'll miss you, but we're so excited for your next adventure."*
+— The Johnson Family
+
+**"Farewell to my adventure buddy"**
+*"From spontaneous road trips to that disastrous camping trip (remember the rain?!), you've made every moment memorable. Can't wait to visit you in your new city!"*
+— Alex R., Best Friend
+
+---
+
+**Frequently Asked Questions:**
+
+**How much does a farewell MemoryPop cost?**
+Creating a farewell MemoryPop is free. You can collect unlimited text messages and up to 3 photos on the free plan. Upgrade to MemoryPop Plus for unlimited photos, videos, and premium features.
+
+**Can I organize a farewell MemoryPop as a surprise?**
+Yes! MemoryPop is perfect for surprise farewells. Contributors can add messages privately, and you control exactly when the recipient sees the surprise.
+
+**What if contributors are spread out across the country?**
+MemoryPop works perfectly for long-distance farewells. Contributors can add messages from anywhere—no coordination required.
+
+**Can I add photos from shared experiences?**
+Absolutely! Both you (the creator) and contributors can upload photos from shared memories, events, or experiences together.
+
+**How do I present the farewell memory book?**
+You can share the link via email, text, or social media. Present it at the going-away party, or reveal it during a virtual goodbye. However you share it, it'll be meaningful.
+
+---
+
+**Final CTA:**
+
+Ready to Create a Farewell Memory Book?
+Send them off with love, memories, and well-wishes in less than 2 minutes.
+
+[Create Your Farewell MemoryPop →]
+
+**Secondary Links:**
+- See all occasions we support: [Occasions](/occasions)
+- Learn how the process works: [How It Works](/how-it-works)
+- Compare plans and pricing: [Pricing](/pricing)
+
+---
+
+## Acceptance Criteria Summary
+
+### SEO Foundation (10 criteria)
+- sitemap.xml includes 15+ pages
+- robots.txt allows landing pages
+- Canonical URLs on all pages
+- Organization schema validates
+- Event schema on landing pages
+- Homepage metadata improved
+- Meta robots tags on private pages
+- No duplicate content warnings
+- All pages return 200 status
+- Sitemap updates automatically
+
+### Analytics Foundation (11 criteria)
+- GA4 initializes correctly
+- Mixpanel continues working
+- homepage_viewed event fires
+- landing_page_viewed event fires with occasion
+- create_started includes source attribution
+- create_completed includes landing page flag
+- Events in GA4 Real-Time within 60s
+- Events in Mixpanel within 5min
+- Analytics respect consent
+- No Sentry errors
+- Dev mode console logging
+
+### Landing Pages (30 criteria)
+- Page loads <2s LCP
+- Mobile responsive 320px-1920px
+- Consistent design system
+- Hero CTA above fold
+- Internal links work
+- No console errors
+- Lighthouse scores >85-90
+- Complete metadata
+- Valid Event schema
+- H1 includes keyword
+- 1,200-1,500 words
+- 5-step How It Works
+- 3 example memories
+- 3-5 FAQs
+- CTA to /create?occasion=[slug]
+- Occasion-specific copy
+
+---
+
+## Environment Variables
+
+**Required:**
+```bash
+NEXT_PUBLIC_GA4_MEASUREMENT_ID=G-XXXXXXXXXX
 ```
 
-**Copy:**
-```markdown
-# Pricing
-
-Simple, transparent pricing for every celebration
-
----
-
-## Standard
-**Free forever**
-
-Perfect for most celebrations.
-
-**Includes:**
-- Unlimited contributors
-- Text, photos, and emojis
-- Creator dashboard
-- Digital MemoryPop forever
-- Share link anytime
-
-[Create for Free]
-
----
-
-## Premium
-**Coming soon**
-
-Enhanced features for special celebrations.
-
-**Everything in Standard, plus:**
-- Premium themes and styles
-- Video messages
-- Advanced customization
-- Priority support
-
-Pricing to be announced.
-
----
-
-## Keepsake
-**Coming soon**
-
-Turn your digital MemoryPop into a beautiful physical book.
-
-**Everything in Premium, plus:**
-- Professional printed memory book
-- Premium paper and binding
-- Delivered to your door
-- Keep the digital version forever
-
-Pricing to be announced.
-
----
-
-## Questions about pricing?
-
-[Contact us](/contact) or visit our [Help Center](/help-center)
-
-Ready to start? [Create Your MemoryPop]
-```
-
-**Design Notes:**
-- Three-column layout on desktop (single column mobile)
-- Standard tier: Fully detailed (this is the current product)
-- Premium/Keepsake: "Coming soon" with feature teasers
-- No fake pricing (only show real pricing when available)
-- CTA emphasizes free tier
-
-**Founder Note:**
-If you want to show actual Premium/Keepsake pricing now, provide the details and I'll update the copy. Otherwise "Coming soon" maintains honesty while showing product vision.
-
----
-
-### 4. About (`/about`)
-
-**Metadata:**
-```typescript
-export const metadata: Metadata = {
-  title: 'About MemoryPop',
-  description: 'MemoryPop helps people celebrate life\'s meaningful moments together by collecting memories in one beautiful place.',
-  openGraph: {
-    title: 'About MemoryPop',
-    description: 'MemoryPop helps people celebrate life\'s meaningful moments together by collecting memories in one beautiful place.',
-    url: '/about',
-  },
-};
-```
-
-**Copy:**
-```markdown
-# About MemoryPop
-
-Celebrating life's meaningful moments, together
-
----
-
-## Our Mission
-
-We help people celebrate life's meaningful moments together by collecting memories in one beautiful place.
-
-Every celebration deserves more than a store-bought card. It deserves a collection of genuine memories, heartfelt messages, and moments captured by the people who matter most.
-
----
-
-## Why MemoryPop Exists
-
-Celebrations bring people together—but the memories often get scattered across texts, emails, and social media, then lost.
-
-We built MemoryPop to change that.
-
-MemoryPop is a place where everyone who cares can contribute to something meaningful. A birthday. A farewell. A wedding. A thank you. Whatever the occasion, MemoryPop helps you collect the memories that matter and keep them in one beautiful place, forever.
-
----
-
-## What We Believe
-
-**Every celebration deserves one beautiful home**
-Not scattered across 20 different platforms, but collected in one thoughtful place.
-
-**Memories are made together**
-The best celebrations aren't created alone. They're built by everyone who cares.
-
-**Emotion before technology**
-We build tools that feel warm and human, not cold and complicated.
-
-**Simplicity is a feature**
-Creating something meaningful shouldn't require a manual.
-
----
-
-## Start celebrating together
-
-[Create Your MemoryPop]
-
-Questions? [Get in touch](/contact)
-Interested in joining us? [Careers](/careers)
-```
-
----
-
-### 5. Careers (`/careers`) — NEW
-
-**Purpose:** Professional presence even when not hiring. Warm invitation for future opportunities.
-
-**Metadata:**
-```typescript
-export const metadata: Metadata = {
-  title: 'Careers at MemoryPop',
-  description: 'We\'re not hiring today, but we\'re always interested in meeting thoughtful people building products that help people celebrate life\'s meaningful moments.',
-  openGraph: {
-    title: 'Careers at MemoryPop',
-    description: 'We\'re not hiring today, but we\'re always interested in meeting thoughtful people building products that help people celebrate life\'s meaningful moments.',
-    url: '/careers',
-  },
-};
-```
-
-**Copy:**
-```markdown
-# Careers at MemoryPop
-
----
-
-## We're not hiring today
-
-But we're always interested in meeting thoughtful people who are passionate about building products that help people celebrate life's meaningful moments.
-
----
-
-## What We Value
-
-**Thoughtful craft**
-We care deeply about the details that make products feel warm and human.
-
-**Genuine empathy**
-We build for real people experiencing real emotions during real celebrations.
-
-**Elegant simplicity**
-The best solutions are often the simplest ones.
-
-**Meaningful impact**
-We measure success by the celebrations we help create, not the features we ship.
-
----
-
-## Interested in MemoryPop?
-
-We'd love to hear from you.
-
-Send us a note at [hello@memorypop.com](mailto:hello@memorypop.com)
-
-Tell us what you're working on and why you're interested in what we're building.
-
----
-
-Learn more [about MemoryPop](/about)
-```
-
-**Design Notes:**
-- Honest and direct (no fake job listings)
-- Warm invitation (not cold rejection)
-- Shows company values
-- Provides clear action (email hello@)
-- Professional without being corporate
-
----
-
-### 6. Press (`/press`) — NEW
-
-**Purpose:** Brand overview and press contact for journalists, bloggers, partners.
-
-**Metadata:**
-```typescript
-export const metadata: Metadata = {
-  title: 'Press',
-  description: 'MemoryPop press information: Brand overview, company details, and press contact.',
-  openGraph: {
-    title: 'Press | MemoryPop',
-    description: 'MemoryPop press information: Brand overview, company details, and press contact.',
-    url: '/press',
-  },
-};
-```
-
-**Copy:**
-```markdown
-# Press
-
----
-
-## About MemoryPop
-
-MemoryPop helps people celebrate life's meaningful moments together by collecting memories from friends, family, and loved ones in one beautiful place.
-
-Whether it's a birthday, farewell, wedding, retirement, or any special occasion—MemoryPop brings everyone together to create something meaningful that lasts forever.
-
----
-
-## Company Overview
-
-**Founded:** 2024
-**Mission:** Help people celebrate life's meaningful moments together
-**Product:** Digital memory book platform for collaborative celebrations
-**Website:** [memorypop.app](https://memorypop.app)
-
----
-
-## How It Works
-
-1. **Create:** Choose an occasion and add a personal message
-2. **Invite:** Share a link with contributors (no signup required)
-3. **Collect:** Contributors add memories, photos, and messages
-4. **Reveal:** Share the completed MemoryPop with the recipient
-5. **Treasure:** Keep it as a digital keepsake forever
-
----
-
-## Brand Description
-
-MemoryPop is a digital celebration platform that helps people collect memories from the people who matter most. It's designed for birthdays, farewells, weddings, retirements, and any meaningful moment worth celebrating together.
-
-Unlike traditional greeting cards or scattered social media posts, MemoryPop creates one beautiful home for all the memories, messages, and moments that make a celebration special.
-
----
-
-## Press Contact
-
-For press inquiries, interviews, or partnership opportunities:
-
-**Email:** [partnerships@memorypop.com](mailto:partnerships@memorypop.com)
-
-We typically respond within 24-48 hours.
-
----
-
-## Press Resources
-
-Brand assets, logos, and screenshots coming soon.
-
-For immediate needs, please contact [partnerships@memorypop.com](mailto:partnerships@memorypop.com)
-
----
-
-Learn more [about MemoryPop](/about)
-```
-
-**Design Notes:**
-- Professional but approachable
-- Key facts easily scannable
-- Clear press contact
-- Placeholder for future press kit (logos, screenshots, etc.)
-- Can expand over time as press coverage grows
-
----
-
-### 7. Contact (`/contact`)
-
-**Metadata:**
-```typescript
-export const metadata: Metadata = {
-  title: 'Contact MemoryPop',
-  description: 'Get in touch with the MemoryPop team for support, partnerships, or general inquiries.',
-  openGraph: {
-    title: 'Contact MemoryPop',
-    description: 'Get in touch with the MemoryPop team for support, partnerships, or general inquiries.',
-    url: '/contact',
-  },
-};
-```
-
-**Copy:**
-```markdown
-# Contact Us
-
-We'd love to hear from you
-
----
-
-## General Inquiries 💬
-
-**[hello@memorypop.com](mailto:hello@memorypop.com)**
-
-For general questions, feedback, or just saying hi.
-
----
-
-## Support 🆘
-
-**[support@memorypop.com](mailto:support@memorypop.com)**
-
-For technical issues, account help, or questions about your MemoryPop.
-
----
-
-## Partnerships & Business 🤝
-
-**[partnerships@memorypop.com](mailto:partnerships@memorypop.com)**
-
-For business inquiries, press requests, or partnership opportunities.
-
----
-
-We aim to respond within 24-48 hours.
-
-Looking for quick answers? [Try our Help Center first](/help-center)
+**Already configured:**
+```bash
+NEXT_PUBLIC_MIXPANEL_TOKEN=your_token
+NEXT_PUBLIC_BASE_URL=https://memorypop.app
 ```
 
 ---
 
-### 8. Help Center (`/help-center`)
+## Success Metrics
 
-**Metadata:**
-```typescript
-export const metadata: Metadata = {
-  title: 'Help Center',
-  description: 'Get answers to common questions about creating MemoryPops, inviting contributors, and managing your celebrations.',
-  openGraph: {
-    title: 'Help Center | MemoryPop',
-    description: 'Get answers to common questions about creating MemoryPops, inviting contributors, and managing your celebrations.',
-    url: '/help-center',
-  },
-};
-```
+### 30 Days After Launch
+- **SEO:** 15+ pages indexed, 5-10% organic traffic
+- **Analytics:** 100% event coverage, <5% tracking discrepancy
+- **Landing Pages:** 5-10% traffic share, ≥15% conversion rate
 
-**Copy:**
-```markdown
-# Help Center
-
-Answers to common questions
+### 90 Days After Launch (Decision Point)
+- **SEO:** 10-15% organic traffic, 5+ pages in top 50
+- **Landing Pages:** 10-20% traffic share, ≥8-10% completion rate
+- **Validation:** Decide whether to scale to remaining 7 occasions
 
 ---
 
-## How do I create a MemoryPop?
+## Founder Approval Checkpoint
 
-Click "Create Your MemoryPop" on the homepage, choose an occasion, add a personal message, and give your MemoryPop a name. You'll get a unique link to share with contributors and a creator dashboard link emailed to you.
+**This specification is ready for Founder review.**
 
----
+**Key Decisions:**
+1. Approve Option C (Comprehensive: SEO + Analytics + Landing Pages)?
+2. Approve landing page copy (Birthday, Retirement, Farewell)?
+3. Approve 5-7 day timeline?
+4. Approve success metrics?
 
-## How do contributors add memories?
-
-Share your MemoryPop link with anyone you want to include. They click the link, write their message, optionally upload a photo, choose an emoji, and submit. No signup required.
-
----
-
-## Can I edit my MemoryPop after creating it?
-
-Yes. Access your creator dashboard using the link sent to your email. From there, you can edit your personal message, update the occasion, or change the MemoryPop name.
-
----
-
-## How do I access my creator dashboard?
-
-Check your email for the creator dashboard link (sent when you create your MemoryPop). You can also access it by entering your email on the homepage if you've lost the link.
+**Next Steps After Approval:**
+1. Update status.md and progress.md
+2. Invoke Coder with this specification
+3. Proceed through Testing → Judge → Review → Founder Validation
 
 ---
 
-## Can contributors add photos?
-
-Yes. Contributors can upload one photo per memory. We support JPEG, PNG, and HEIC formats. Photos are automatically optimized for web viewing.
-
----
-
-## Is MemoryPop free?
-
-Yes. Creating a MemoryPop and collecting memories is completely free. We may offer premium features (like physical keepsake books) in the future, but the core experience will always be free.
-
----
-
-**Still have questions?**
-
-[Contact us](/contact) — we're happy to help.
-```
-
----
-
-### 9. Status (`/status`)
-
-**Metadata:**
-```typescript
-export const metadata: Metadata = {
-  title: 'System Status',
-  description: 'Check the current operational status of MemoryPop services.',
-  robots: { index: false, follow: false },
-  openGraph: {
-    title: 'System Status | MemoryPop',
-    description: 'Check the current operational status of MemoryPop services.',
-    url: '/status',
-  },
-};
-```
-
-**Copy:**
-```markdown
-# System Status
-
-Current operational status
-
----
-
-## ✅ All Systems Operational
-
----
-
-### Service Status
-
-**Website:** ✅ Operational
-**Memory Creation:** ✅ Operational
-**Contributor Access:** ✅ Operational
-**Email Notifications:** ✅ Operational
-
----
-
-**Last updated:** July 24, 2026
-
-Experiencing issues? Contact us at [support@memorypop.com](mailto:support@memorypop.com)
-```
-
----
-
-### 10. Privacy (`/privacy`)
-
-**Action:** Audit if exists, create if doesn't exist using standard privacy policy template.
-
-**Metadata:**
-```typescript
-export const metadata: Metadata = {
-  title: 'Privacy Policy',
-  description: 'MemoryPop\'s privacy policy explains how we collect, use, and protect your data.',
-  openGraph: {
-    title: 'Privacy Policy | MemoryPop',
-    description: 'MemoryPop\'s privacy policy explains how we collect, use, and protect your data.',
-    url: '/privacy',
-  },
-};
-```
-
-**Required Sections:**
-1. Introduction
-2. Information We Collect
-3. How We Use Your Information
-4. Data Storage and Security
-5. Your Rights
-6. Contact Us
-
----
-
-### 11. Terms (`/terms`)
-
-**Action:** Audit if exists, create if doesn't exist using standard terms of service template.
-
-**Metadata:**
-```typescript
-export const metadata: Metadata = {
-  title: 'Terms of Service',
-  description: 'MemoryPop\'s terms of service explain the rules and guidelines for using our platform.',
-  openGraph: {
-    title: 'Terms of Service | MemoryPop',
-    description: 'MemoryPop\'s terms of service explain the rules and guidelines for using our platform.',
-    url: '/terms',
-  },
-};
-```
-
-**Required Sections:**
-1. Acceptance of Terms
-2. Description of Service
-3. User Responsibilities
-4. Prohibited Uses
-5. Content Ownership
-6. Limitation of Liability
-7. Termination
-8. Changes to Terms
-9. Contact Us
-
----
-
-## Component Pattern
-
-All 12 pages follow this consistent structure:
-
-```typescript
-import Link from 'next/link';
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: '[Page Title]',
-  description: '[Page description]',
-  openGraph: {
-    title: '[Page Title] | MemoryPop',
-    description: '[Page description]',
-    url: '/[route]',
-  },
-};
-
-export default function PageName() {
-  return (
-    <main className="min-h-screen bg-background px-6 py-12 text-foreground">
-      <div className="mx-auto max-w-4xl">
-        {/* Hero */}
-        <div className="text-center">
-          <h1 className="text-4xl font-bold sm:text-5xl">[Title]</h1>
-          <p className="mt-4 text-lg text-muted-foreground">[Subtitle]</p>
-        </div>
-
-        {/* Content */}
-        <div className="mt-12 space-y-12">
-          {/* Page-specific content */}
-        </div>
-
-        {/* CTA */}
-        <div className="mt-16 text-center">
-          <Link
-            href="/create"
-            className="inline-flex h-12 items-center justify-center rounded-full bg-primary px-8 text-base font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Create Your MemoryPop
-          </Link>
-        </div>
-      </div>
-    </main>
-  );
-}
-```
-
----
-
-## Implementation Steps
-
-### Step 1: Verify Email Addresses (5 min)
-- Check if hello@, support@, partnerships@ are live
-- Use fallback if needed
-
-### Step 2: Audit Existing Pages (10 min)
-- Check if `/privacy` and `/terms` exist
-- Read and assess completeness
-
-### Step 3: Create Product Pages (60 min)
-- Create `/how-it-works` (20 min)
-- Create `/occasions` (20 min) — NEW
-- Create `/pricing` (20 min) — NEW
-
-### Step 4: Create Company Pages (60 min)
-- Create `/about` (15 min)
-- Create `/careers` (15 min) — NEW
-- Create `/press` (15 min) — NEW
-- Create `/contact` (15 min)
-
-### Step 5: Create Support Pages (40 min)
-- Create `/help-center` (20 min)
-- Create `/status` (10 min)
-- Create/update `/privacy` (10 min if exists, 20 if creating)
-- Create/update `/terms` (10 min if exists, 20 if creating)
-
-### Step 6: Update Footer (15 min)
-- Modify `src/app/page.tsx` footer structure
-- Remove Gift Cards link
-- Update all other links to real routes
-
-### Step 7: Test All Routes (30 min)
-- Visit all 12 pages
-- Test all footer links
-- Test on mobile viewport
-- Verify meta tags
-
-**Total Estimated Implementation Time:** 4-5 hours (was 2.5-3 hours for 7 pages)
-
----
-
-## Acceptance Criteria
-
-### AC1: All 10 New Pages Exist and Load
-- ✅ `/how-it-works` shows 5-step process
-- ✅ `/occasions` shows celebration types
-- ✅ `/pricing` shows three tiers
-- ✅ `/about` shows mission and story
-- ✅ `/careers` shows hiring status
-- ✅ `/press` shows brand overview
-- ✅ `/contact` shows 3 email options
-- ✅ `/help-center` shows 6 FAQs
-- ✅ `/status` shows operational status
-- ✅ `/privacy` is complete (or `/terms` is complete)
-
-### AC2: All 12 Footer Links Work
-- ✅ All links resolve to real pages (no href="#")
-- ✅ Gift Cards link removed
-
-### AC3: SEO Metadata Present
-- ✅ Every page has unique title and description
-
-### AC4: Mobile Experience Excellent
-- ✅ All pages readable on 375px screen
-
-### AC5: Content Quality
-- ✅ All copy follows Founder Principles (warm, honest, human)
-- ✅ No placeholder text
-
-### AC6: Build Succeeds
-- ✅ `npm run build` completes without errors
-
-### AC7: Existing Functionality Unaffected
-- ✅ Homepage, creation flow, dashboard still work
-
----
-
-## Risks
-
-### Risk 1: More Pages = Longer Implementation
-**Probability:** HIGH
-**Impact:** LOW (more time, but still achievable)
-**Mitigation:** 12 pages is manageable (4-5 hours total)
-**Budget:** Still well within daily cap
-
-### Risk 2: Pricing Page May Need Updates Soon
-**Probability:** MEDIUM
-**Impact:** LOW (easy to update copy)
-**Mitigation:** "Coming soon" for Premium/Keepsake is honest
-**Rollback:** Update copy only if pricing changes
-
-### Risk 3: Careers/Press Pages May Feel Thin
-**Probability:** LOW
-**Impact:** LOW (intentionally minimal for Phase 1)
-**Mitigation:** Founder feedback confirms "small but genuine" is the goal
-**Rollback:** Not needed (working as intended)
-
----
-
-## Specification Status
-
-✅ **REVISED AND COMPLETE**
-
-**Changes from Original Spec:**
-- **Pages:** 7 → 12 (added Occasions, Pricing, Careers, Press)
-- **Footer links:** 7 → 12 (only Gift Cards removed)
-- **Implementation time:** 2.5-3 hours → 4-5 hours
-- **Reasoning:** Complete company website, not just essential pages
-
-**Next Step:** Founder approval, then proceed to Implementation.
-
----
-
-**Estimated Implementation Time:** 4-5 hours
-**Risk Level:** Very Low
-**Complexity:** Medium (more pages, but all static)
-**Dependencies:** None
-**Budget:** ~$15-25 (Sonnet 4.5), well within $191.50 remaining
+**Status:** Specification complete. Awaiting Founder approval to proceed.

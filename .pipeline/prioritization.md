@@ -1,719 +1,750 @@
-# Product Owner: Public Website & SEO Foundations
+# Prioritization: Phase 2 - SEO Foundation vs. Landing Pages
 
-**Date:** 2026-07-24 (Revised after Founder feedback)
-**Product Owner Decision:** BUILD NOW (Phase 1 - Revised Scope)
-**Score:** 21/25 (increased from 20/25 due to complete company presence)
-
----
-
-## Founder Strategic Refinement (2026-07-24)
-
-**Original Product Owner Recommendation:** Build 7 pages, remove 5 footer links
-
-**Founder Decision:** Build complete company website with 12 pages, remove only Gift Cards
-
-**Founder Reasoning:**
-> "I do not want to minimise the public website by removing pages that represent the company. Instead I want to build the company website properly. A small but genuine page is better than removing navigation. I want MemoryPop to feel like a complete company, not just a web application."
-
-**Revised Scope Approved:** 12 pages (only Gift Cards link removed)
+**Date:** 2026-07-24
+**Product Owner:** MemoryPop Product Owner Agent
+**Feature Request:** Phase 2 - Interpreted as SEO landing pages for organic acquisition
+**Context:** Phase 1 complete (12 pages built including Occasions + Pricing)
 
 ---
 
-## Decision: BUILD NOW (Phase 1 - Revised) ✅
+## Feature Summary
 
-MemoryPop currently lacks credible public website infrastructure. Every footer link goes nowhere. This creates trust issues and limits discoverability.
+Build occasion-specific SEO landing pages (e.g., `/birthday-memory-book`, `/retirement-memory-book`) to drive organic user acquisition through high-intent search queries.
 
-**Phase 1 builds complete company website**: Build 12 genuine pages (only remove Gift Cards). Even minimal pages are better than missing navigation. MemoryPop should feel like a complete, professional company.
+**Original request:** "lets do phase 2"
 
----
-
-## Product Value Assessment
-
-### Customer Value: 5/5 (VERY HIGH)
-- **Trust:** Users visiting footer links find genuine, helpful pages (not 404s)
-- **Clarity:** Clear explanation of how MemoryPop works
-- **Support:** Self-serve help for common questions
-- **Professionalism:** Site feels complete and intentional
-- **Discovery:** Users can find MemoryPop organically when ready
-
-### MVP Importance: 5/5 (CRITICAL)
-- **Current state is embarrassing:** All 13 footer links go nowhere
-- **Trust deficit:** Users clicking footer links hit dead ends
-- **SEO invisible:** Zero organic discovery possible today
-- **Competitive gap:** Every competitor has basic public pages
-- **Blocking growth:** Can't run paid acquisition without credible landing pages
-
-### Complexity: 2/5 (LOW-MEDIUM)
-- **Phase 1:** 7 static pages + footer update (manageable)
-- **Content-focused:** Mostly copywriting, minimal technical complexity
-- **Architecture:** Leverage existing Next.js App Router patterns
-- **No backend:** Pure frontend pages, no database changes
-- **Risk:** Low (static content, easy to revise)
-
-### Learning Value: 4/5 (HIGH)
-- **Establishes patterns:** Public page architecture for future growth
-- **SEO learning:** Understand what content drives traffic
-- **Messaging:** Learn which copy resonates
-- **User behavior:** Analytics on how users discover and explore
-- **Content gaps:** Identify missing information users seek
-
-### Revenue Potential: 4/5 (HIGH)
-- **Direct:** Organic traffic → conversions
-- **Indirect:** Trust → higher conversion rates
-- **Strategic:** Foundation for content marketing and SEO growth
-- **Scalable:** Once patterns established, can add pages efficiently
-- **Defensible:** Builds moat via organic search rankings
-
-**Total Score: 20/25** → BUILD NOW (HIGH VALUE)
+**Context:** Original Phase 2 items (Occasions + Pricing pages) were already built in Phase 1 per Founder strategic refinement. The request is now interpreted as the SEO landing pages strategy originally planned for Phase 3.
 
 ---
 
-## Footer Audit: 13 Links Analyzed
+## User Problem
 
-### Product (4 links)
+**Problem:** MemoryPop has zero organic discovery. Users actively searching for "birthday memory book" or "retirement memory book" cannot find MemoryPop through search engines.
 
-#### 1. How it Works
-- **Status:** Missing
-- **Should exist:** ✅ YES - Essential trust builder
-- **Priority:** **P0 (Phase 1)** - Top priority
-- **Rationale:** Users need to understand the product before creating
-- **MVP Recommendation:** Build now
+**Evidence:**
+- No technical SEO foundation (per SEO Foundation Audit)
+- No sitemap, robots.txt, canonical URLs, or structured data
+- Homepage and 12 foundation pages exist but not optimized for search discovery
+- Target keywords like "birthday memory book" (1K-5K monthly searches) have low-medium competition
+- Organic traffic = 0% (100% reliant on referrals and direct)
 
-#### 2. Occasions
-- **Status:** Missing
-- **Should exist:** ⚠️ YES, but not yet
-- **Priority:** **P1 (Phase 2)** - Defer
-- **Rationale:** Requires clear product positioning (which occasions are core vs. nice-to-have)
-- **MVP Recommendation:** Defer until product clarity improves
-- **Action:** Remove from footer temporarily or mark as P1
-
-#### 3. Pricing
-- **Status:** Missing
-- **Should exist:** ⚠️ YES, but not yet
-- **Priority:** **P1 (Phase 2)** - Defer
-- **Rationale:** Pricing model is evolving (Standard/Premium/Keepsake unclear)
-- **MVP Recommendation:** Defer until pricing strategy solidifies
-- **Action:** Remove from footer temporarily or mark as P1
-
-#### 4. Gift Cards
-- **Status:** Missing (feature doesn't exist)
-- **Should exist:** ❌ NO (not yet)
-- **Priority:** **P2 (Future)** - Remove link
-- **Rationale:** Feature doesn't exist; no placeholder pages allowed
-- **MVP Recommendation:** **Remove footer link entirely**
-- **Action:** Delete from footer until feature ships
+**User Impact:**
+- High-intent users searching for solutions cannot discover MemoryPop
+- Missing 20-40% potential traffic share by Month 6
+- Competitors dominate "group card" searches; MemoryPop positioning as "collaborative keepsake" creates differentiation opportunity
 
 ---
 
-### Company (4 links)
+## Product Decision
 
-#### 5. About
-- **Status:** Missing
-- **Should exist:** ✅ YES - Core trust page
-- **Priority:** **P0 (Phase 1)** - Build now
-- **Rationale:** Users want to know who's behind MemoryPop
-- **MVP Recommendation:** Build warm, authentic About page
-
-#### 6. Careers
-- **Status:** Missing
-- **Should exist:** ⚠️ YES, but minimal
-- **Priority:** **P1 (Phase 2)** - Defer
-- **Rationale:** Not actively hiring; minimal ROI today
-- **MVP Recommendation:** Defer or create ultra-minimal version ("Not hiring now, but interested in meeting thoughtful people")
-- **Action:** Consider removing link or deferring to P1
-
-#### 7. Press
-- **Status:** Missing
-- **Should exist:** ⚠️ YES, but minimal
-- **Priority:** **P1 (Phase 2)** - Defer
-- **Rationale:** No press coverage yet; low urgency
-- **MVP Recommendation:** Defer or create minimal version (brand description + "Contact us for press inquiries")
-- **Action:** Consider removing link or deferring to P1
-
-#### 8. Contact
-- **Status:** Missing
-- **Should exist:** ✅ YES - Essential
-- **Priority:** **P0 (Phase 1)** - Build now
-- **Rationale:** Users need a way to reach MemoryPop
-- **MVP Recommendation:** Build simple contact page with email categories
+**NEXT SPRINT** (Conditional: Complete P0 SEO Foundation First)
 
 ---
 
-### Support (4 links)
+## Score
 
-#### 9. Help Centre
-- **Status:** Missing
-- **Should exist:** ✅ YES - Critical for support
-- **Priority:** **P0 (Phase 1)** - Build now
-- **Rationale:** Reduces support burden, builds trust
-- **MVP Recommendation:** Build with 6-8 core FAQs
+**Customer Value:** 3/5
+- Indirect value: helps future users discover MemoryPop
+- Does not improve experience for existing users
+- Solves acquisition problem, not product problem
 
-#### 10. Privacy
-- **Status:** Unknown (needs audit)
-- **Should exist:** ✅ YES - Legally required
-- **Priority:** **P0 (Phase 1)** - Audit and ensure complete
-- **Rationale:** Legal compliance, trust
-- **MVP Recommendation:** Verify completeness, update if needed
+**MVP Importance:** 2/5
+- Not critical for Founding Members phase
+- Product works without landing pages
+- Growth enabler, not product completion
+- Strategic value but not immediate necessity
 
-#### 11. Terms
-- **Status:** Unknown (needs audit)
-- **Should exist:** ✅ YES - Legally required
-- **Priority:** **P0 (Phase 1)** - Audit and ensure complete
-- **Rationale:** Legal compliance, user protection
-- **MVP Recommendation:** Verify completeness, update if needed
+**Complexity:** 2/5 (Lower score = higher complexity)
+- 10 landing pages × 1,200-1,800 words each = 12K-18K words
+- Content creation (occasion-specific copy, examples, FAQs)
+- Design consistency and mobile optimization
+- Estimated 3-5 days for all 10 pages
+- **Critical blocker:** No technical SEO foundation exists (sitemap, robots.txt, canonical URLs, schema)
 
-#### 12. Status
-- **Status:** Missing
-- **Should exist:** ✅ YES - Trust signal
-- **Priority:** **P0 (Phase 1)** - Build simple version
-- **Rationale:** Shows transparency and reliability
-- **MVP Recommendation:** Build simple status page ("All systems operational")
+**Learning Value:** 3/5
+- Will reveal which occasions drive organic traffic
+- Can validate search volume assumptions
+- **But:** Cannot measure impact without analytics foundation
+- Learning delayed 3-6 months (SEO takes time to show results)
 
----
+**Revenue Potential:** 3/5
+- Long-term growth driver (organic = sustainable acquisition)
+- High-intent traffic (users actively searching for solutions)
+- **But:** Indirect path to revenue
+- Payoff timeline: 3-6 months minimum
 
-### Summary: Footer Audit
-
-| Link | Status | Priority | Phase 1? | Action |
-|------|--------|----------|----------|--------|
-| How it Works | Missing | P0 | ✅ YES | Build now |
-| Occasions | Missing | P1 | ❌ NO | Defer to Phase 2 |
-| Pricing | Missing | P1 | ❌ NO | Defer to Phase 2 |
-| Gift Cards | Missing | P2 | ❌ NO | **Remove link** |
-| About | Missing | P0 | ✅ YES | Build now |
-| Careers | Missing | P1 | ❌ NO | Defer to Phase 2 |
-| Press | Missing | P1 | ❌ NO | Defer to Phase 2 |
-| Contact | Missing | P0 | ✅ YES | Build now |
-| Help Centre | Missing | P0 | ✅ YES | Build now |
-| Privacy | Unknown | P0 | ✅ YES | Audit + update |
-| Terms | Unknown | P0 | ✅ YES | Audit + update |
-| Status | Missing | P0 | ✅ YES | Build now |
-
-**Phase 1 Total:** 7 pages (5 new pages + 2 audits/updates) + remove 1 link
+**Total Score:** 13/25
 
 ---
 
-## Smallest Useful Slice: Phase 1
+## Decision Rationale
 
-### Scope: Trust Foundations
+**Score interpretation:**
+- 20-25: build now
+- 15-19: next sprint
+- 10-14: backlog ← **Current score**
+- Below 10: reject for now
 
-**Ship this (Phase 1):**
+**Override:** Score suggests backlog, but strategic importance elevates to "next sprint" with **critical sequencing requirement**: Complete P0 technical SEO foundation FIRST, then revisit landing pages.
 
-1. **How it Works** - Explain MemoryPop in 5 steps
-2. **About** - Tell the MemoryPop story
-3. **Contact** - Simple contact page with email options
-4. **Help Centre** - 6-8 core FAQs
-5. **Privacy** - Audit and ensure complete
-6. **Terms** - Audit and ensure complete
-7. **Status** - Simple operational status page
-8. **Footer Update** - Remove "Gift Cards" link
+### Why Not "Build Now"
 
-**Rationale:**
-- Builds trust foundation (users find real pages, not 404s)
-- Provides essential support infrastructure
-- Establishes public site patterns for future growth
-- Small, achievable scope (5 new pages + 2 audits + footer update)
-- No product ambiguity (all content is clear today)
+1. **Foundation gap:** Landing pages won't work without technical SEO infrastructure
+2. **Analytics blind spot:** Cannot measure impact without analytics foundation
+3. **Premature scaling:** Building 10 pages before validating approach
+4. **Higher priority work:** P0 technical foundations unlock more value faster
 
-**Do NOT ship (Phase 1):**
-- Occasions page (product positioning unclear)
-- Pricing page (pricing model evolving)
-- Careers page (not hiring)
-- Press page (no press yet)
-- SEO landing pages (premature without trust foundation)
-- Blog structure (future content marketing)
+### Why "Next Sprint" (Not Backlog)
+
+1. **Strategic importance:** Organic acquisition is critical for sustainable growth
+2. **Competitive advantage:** First-mover opportunity in "memory book" category
+3. **High-intent traffic:** Users searching for solutions have strong commercial intent
+4. **Foundation enables:** Once SEO foundation exists, landing pages can be added incrementally
 
 ---
 
-## Phase 1 Detailed Scope
+## Alternative Recommendation: P0 SEO Foundation First
 
-### 1. How it Works (`/how-it-works`)
+### The Real Phase 2 Priority
 
-**Goal:** Explain MemoryPop simply and clearly
+After reviewing SEO Foundation Audit, the **true Phase 2 priority** should be:
 
-**Structure:**
-```
-SEO Title: How MemoryPop Works | Create Beautiful Memory Books Together
-Meta Description: Learn how MemoryPop helps you collect memories from loved ones and create a beautiful keepsake book. Simple, thoughtful, unforgettable.
-H1: How MemoryPop Works
+**Build the technical SEO infrastructure that makes ALL pages discoverable.**
 
-5-Step Flow:
-1. Create your MemoryPop (choose occasion, add personal message)
-2. Invite contributors (share unique link)
-3. Contributors add memories (text, photos, videos)
-4. You collect and curate (review submissions)
-5. Reveal and treasure forever (digital or print keepsake)
+### Why Foundation > Landing Pages
 
-Visual: Simple iconography for each step
-CTA: "Create your MemoryPop" button → /create
-```
+**Without foundation:**
+- Landing pages won't be indexed (no sitemap.xml)
+- Search engines won't discover pages (no robots.txt)
+- Duplicate content risk (no canonical URLs)
+- No trust signals (no structured data/schema)
+- Private MemoryPops may be exposed (no meta robots tags)
 
-**Internal Links:**
-- Link to /about (learn more about us)
-- Link to /help-center (common questions)
-- Link to /contact (need help?)
+**With foundation:**
+- All 12 existing pages become discoverable immediately
+- Homepage can rank for "memory book" and "collaborative keepsake"
+- Future landing pages work immediately when added
+- Analytics can measure organic traffic impact
+- Prevents SEO penalties (duplicate content, indexation issues)
 
----
+### Foundation Quick Wins (< 1 Day Total)
 
-### 2. About (`/about`)
+**SEO Quick Wins (3 hours):**
+1. **robots.txt** (15 min) - Crawler guidance + sitemap reference
+2. **Organization schema** (45 min) - Trust signals in search results
+3. **Homepage metadata** (30 min) - Better title/description for rankings
+4. **Canonical URLs** (1 hour) - Prevent duplicate content penalties
 
-**Goal:** Tell the MemoryPop story warmly and authentically
+**Impact:** Immediate indexability and trust signals with minimal effort.
 
-**Structure:**
-```
-SEO Title: About MemoryPop | Celebrating Life's Meaningful Moments
-Meta Description: MemoryPop helps people celebrate life's meaningful moments together by collecting memories in one beautiful place.
-H1: About MemoryPop
+**ROI:** Unlocks organic discovery for 12 existing pages without building new content.
 
-Copy:
-- Mission: Helping people celebrate life's meaningful moments together
-- Origin story: Why MemoryPop exists (brief, warm)
-- What we believe: Every celebration deserves one beautiful home
-- How we're different: Thoughtful, premium, focused on emotion
+### Foundation Phase 1 (2-3 Days)
 
-CTA: "Create your first MemoryPop" → /create
-```
+**Complete P0 Technical SEO:**
+- **sitemap.xml** (4-6 hours) - Dynamic sitemap with all public pages
+- **Meta robots tags** (2 hours) - Protect private MemoryPops from indexing
+- **Root metadata improvements** (1-2 hours) - Optimize homepage and key pages
+- **Structured data** (2-3 hours) - Organization + Event schemas for rich snippets
+- **Canonical URLs** (2-3 hours) - Implement across all pages
 
-**Tone:** Warm, human, authentic (no corporate speak)
+**Business Impact:**
+- 12 existing pages become discoverable
+- Prevents SEO penalties (duplicate content, poor indexation)
+- Establishes trust signals (schema markup)
+- **Unblocks future landing pages**
+- Creates repeatable pattern for adding new pages
 
----
-
-### 3. Contact (`/contact`)
-
-**Goal:** Provide clear contact options for different needs
-
-**Structure:**
-```
-SEO Title: Contact MemoryPop | Get in Touch
-Meta Description: Have a question? Need support? Want to partner with us? Get in touch with the MemoryPop team.
-H1: Contact Us
-
-Contact Options:
-1. General Inquiries: hello@memorypop.com
-2. Support: support@memorypop.com
-3. Business/Partnerships: partnerships@memorypop.com
-
-Note: We aim to respond within 24-48 hours
-```
-
-**No form (Phase 1):** Email links only (reduces spam, complexity)
+**Estimated ROI:**
+- 5-10% organic traffic by Month 3
+- 20-40% organic traffic by Month 6
+- 15-30% CTR increase from rich snippets
+- Foundation for sustainable growth
 
 ---
 
-### 4. Help Centre (`/help-center`)
+## Smallest Useful Slice
 
-**Goal:** Answer common questions to reduce support burden
+**If building landing pages (after foundation complete), start with:**
 
-**Structure:**
-```
-SEO Title: Help Centre | MemoryPop Support
-Meta Description: Get answers to common questions about creating MemoryPops, inviting contributors, and managing your celebrations.
-H1: Help Centre
+### Top 3 Occasion Pages Only
 
-FAQs (6-8 core questions):
-1. How do I create a MemoryPop?
-2. How do contributors add memories?
-3. Can I edit my MemoryPop after creating it?
-4. How do I access my creator dashboard?
-5. Can contributors add photos?
-6. Is MemoryPop free?
-7. How do I share my MemoryPop link?
-8. What happens after I reveal my MemoryPop?
+**Priority 1: Birthday** (`/birthday-memory-book`)
+- Largest search volume (1K-5K monthly searches)
+- Broadest consumer demand
+- Most familiar use case
+- **Why first:** Validates landing page approach with highest traffic potential
 
-CTA: "Still have questions?" → /contact
-```
+**Priority 2: Retirement** (`/retirement-memory-book`)
+- High commercial intent
+- Corporate farewell market entry point
+- Stronger willingness to pay (B2B)
+- **Why second:** Tests professional/workplace positioning
 
-**Format:** Accordion or simple Q&A list
+**Priority 3: Farewell** (`/farewell-memory-book`)
+- Workplace + personal use cases
+- Complements Retirement positioning
+- High emotional value
+- **Why third:** Validates professional celebration segment
 
----
+### Validation Metrics
 
-### 5. Privacy (`/privacy`)
+**Success criteria for top 3:**
+- Each page ranks in top 50 for target keyword within 60 days
+- Landing pages drive ≥5% of total traffic by Month 3
+- Landing page → /create conversion rate ≥15%
+- At least one page achieves featured snippet by Month 6
 
-**Goal:** Legal compliance and user trust
-
-**Action:**
-1. Audit existing privacy policy (if exists)
-2. Ensure completeness (data collection, usage, rights, contact)
-3. Update if needed
-4. Ensure readable, accessible format
-
-**SEO:**
-```
-SEO Title: Privacy Policy | MemoryPop
-Meta Description: MemoryPop's privacy policy explains how we collect, use, and protect your data.
-H1: Privacy Policy
-```
+**Decision tree:**
+- **If successful:** Scale to remaining 7 occasions
+- **If unsuccessful:** Revisit content strategy before scaling
+- **If mixed results:** Iterate on top 3, delay expansion
 
 ---
 
-### 6. Terms (`/terms`)
+## In Scope (If Building Top 3 Landing Pages)
 
-**Goal:** Legal compliance and user protection
+### Content Requirements
+- 3 occasion-specific landing pages
+- 1,200-1,800 words per page (comprehensive, not thin)
+- Occasion-tailored hero messaging
+- "Why MemoryPop for [occasion]" benefit section
+- 5-step how-it-works with occasion-specific examples
+- Real contribution examples for each occasion
+- 3-5 FAQs per occasion (occasion-specific questions)
+- Clear CTA: "Create your [occasion] MemoryPop"
 
-**Action:**
-1. Audit existing terms of service (if exists)
-2. Ensure completeness (user rights, prohibited uses, liability, termination)
-3. Update if needed
-4. Ensure readable, accessible format
+### SEO Requirements
+- **Primary keyword:** "[occasion] memory book"
+- **Secondary keywords:** "[occasion] keepsake", "collect memories for [occasion]", "[occasion] gift idea"
+- **Long-tail keywords:** "how to create a [occasion] memory book", "best [occasion] memory book online", "digital [occasion] memory book"
+- Meta tags (title, description, Open Graph tags)
+- Clean heading hierarchy (H1 > H2 > H3)
+- Internal links (to /how-it-works, /occasions, /create)
+- Structured data (Event schema for each occasion type)
 
-**SEO:**
-```
-SEO Title: Terms of Service | MemoryPop
-Meta Description: MemoryPop's terms of service explain the rules and guidelines for using our platform.
-H1: Terms of Service
-```
+### Technical Requirements
+- Mobile-first responsive design
+- Fast page load (consistent with existing pages)
+- Semantic HTML structure
+- Accessible navigation (WCAG 2.1 AA)
+- CTA links to `/create?occasion=[slug]` (pre-select occasion)
 
----
-
-### 7. Status (`/status`)
-
-**Goal:** Transparency and trust
-
-**Structure:**
-```
-SEO Title: System Status | MemoryPop
-Meta Description: Check the current operational status of MemoryPop services.
-H1: System Status
-
-Current Status: ✅ All Systems Operational
-
-Services:
-- Website: Operational
-- Memory Creation: Operational
-- Contributor Access: Operational
-- Email Notifications: Operational
-
-Last Updated: [Auto-updated timestamp]
-
-Note: "If you're experiencing issues, please contact support@memorypop.com"
-```
-
-**Technical Note:** Static for Phase 1 (manual updates). Can automate in Phase 2.
+### Design Requirements
+- Consistent with existing MemoryPop pages
+- Reuse existing components and design patterns
+- Occasion-specific imagery (if available)
+- Clear visual hierarchy
+- One obvious next action per page (CTA to /create)
 
 ---
 
-### 8. Footer Update
+## Out of Scope
 
-**Current Footer:**
-```
-Product: How it works | Occasions | Pricing | Gift cards
-Company: About | Careers | Press | Contact
-Support: Help center | Privacy | Terms | Status
-```
+### Not Building (Phase 2)
+- All 10 landing pages at once (start with 3 maximum)
+- Testimonials section (no user testimonials yet)
+- Video content (premature for MVP)
+- User-generated content sections (no UGC strategy yet)
+- Social proof widgets (insufficient data)
+- A/B testing different page structures (validate baseline first)
+- Localization (English only for MVP)
+- Schema beyond Organization and Event types
+- Custom occasion illustrations (stock/AI images acceptable)
+- Print/PDF landing page versions
 
-**Phase 1 Footer:**
-```
-Product: How it works
-Company: About | Contact
-Support: Help center | Privacy | Terms | Status
-```
+### Dependencies Not Included
+- **Technical SEO foundation** (must complete FIRST)
+- **Analytics foundation** (needed to measure landing page impact)
+- Occasion pre-selection in /create flow (separate feature)
+- Link building strategy (future SEO work)
+- Content marketing plan (future growth work)
+- Email capture for SEO traffic (future conversion optimization)
 
-**Removed:**
-- Occasions (defer to Phase 2)
-- Pricing (defer to Phase 2)
-- Gift cards (remove entirely)
-- Careers (defer to Phase 2)
-- Press (defer to Phase 2)
-
-**Rationale:** Only show links that resolve to real, valuable pages
-
----
-
-## Out of Scope (Phase 1)
-
-### Defer to Phase 2
-- **Occasions page** (requires product positioning work)
-- **Pricing page** (pricing model needs clarity)
-- **Careers page** (not hiring)
-- **Press page** (no press yet)
-- **Blog structure** (content marketing infrastructure)
-- **SEO landing pages** (10+ occasion-specific pages like /birthday-memory-book)
-
-### Defer to Phase 3
-- **Dynamic content** (testimonials, case studies)
-- **Interactive features** (pricing calculator, occasion quiz)
-- **Advanced SEO** (programmatic pages, structured data)
-- **Localization** (multi-language support)
+### Deferred Decisions
+- Whether to add remaining 7 occasions (data-driven decision)
+- Landing page template variations (iterate after validation)
+- Paid search landing pages (separate use case from organic)
+- Regional or demographic page variations
+- Premium landing page variants for Plus features
 
 ---
 
 ## Success Outcome
 
-### For Users:
-- **Trust:** "Every link I click works and provides value"
-- **Clarity:** "I understand what MemoryPop does and how it works"
-- **Support:** "I can find answers to my questions without emailing support"
-- **Professionalism:** "This feels like a real, credible service"
+### For Creators (Organic Discovery)
 
-### For Product:
-- **Credibility:** MemoryPop no longer feels like an incomplete MVP
-- **Discoverability:** Foundation for organic search traffic
-- **Support efficiency:** Reduced support burden via self-serve help
-- **Growth foundation:** Patterns established for future page additions
+**Scenario:** A user searches Google for "birthday memory book" and discovers MemoryPop for the first time.
 
-### Measurable Success Criteria:
-1. **Zero 404s:** All active footer links resolve to real pages
-2. **Organic traffic:** Begin receiving organic search traffic within 30 days
-3. **Support reduction:** 20% reduction in "how does this work" support emails
-4. **Completion rates:** Creation flow completion rate remains stable or improves
-5. **Bounce rate:** Public page bounce rate <60% (industry standard)
+**User Journey:**
+1. Searches "birthday memory book" on Google
+2. Finds MemoryPop's `/birthday-memory-book` in search results
+3. Lands on page, reads birthday-specific value proposition
+4. Sees how-it-works tailored to birthday celebrations
+5. Reviews FAQs about birthday use cases
+6. Clicks "Create your Birthday MemoryPop" CTA
+7. Arrives at /create with birthday occasion pre-selected
+8. Completes MemoryPop creation in <5 minutes
 
----
+**Success Criteria:**
+- User discovers MemoryPop through organic search (vs. never finding it)
+- Landing page feels specific to birthday need (not generic template)
+- Clear path from landing page to creation flow
+- Landing page → /create conversion rate ≥15%
 
-## SEO Strategy: Phase 2 & Beyond
+### For MemoryPop Business
 
-### Phase 2 (P1): Growth Pages
-Once trust foundation is established, add:
-1. **Occasions** - Overview page linking to specific occasions
-2. **Pricing** - Clear pricing page (once model is finalized)
+**After 3 months (Phase 2B):**
+- Top 3 landing pages drive 5-10% of total traffic
+- At least 1 page ranks in top 50 for target keyword
+- Organic acquisition channel established (previously 0%)
+- Data validates which occasions drive highest search intent
 
-### Phase 3 (P2): SEO Landing Pages
-Build 10+ occasion-specific landing pages targeting search intent:
-
-**Top Priority Occasions:**
-- /birthday-memory-book (highest search volume)
-- /retirement-memory-book (high intent, aging population)
-- /wedding-memory-book (high value, premium market)
-
-**Medium Priority:**
-- /graduation-memory-book
-- /anniversary-memory-book
-- /new-baby-memory-book
-
-**Lower Priority:**
-- /farewell-memory-book
-- /teacher-appreciation-memory-book
-- /engagement-memory-book
-- /leaving-work-memory-book
-
-**Landing Page Template:**
-```
-SEO Title: [Occasion] Memory Book | MemoryPop
-Meta Description: Create a beautiful [occasion] memory book by collecting photos, videos, and messages from loved ones. Simple, meaningful, unforgettable.
-H1: [Occasion] Memory Book
-
-Sections:
-1. Hero: What is a [occasion] memory book?
-2. Why MemoryPop: Benefits specific to this occasion
-3. How it works: 5-step flow tailored to occasion
-4. Examples: Sample memories for this occasion
-5. Testimonials: User stories (if available)
-6. FAQ: Occasion-specific questions
-7. CTA: Create your [occasion] MemoryPop → /create?occasion=[slug]
-
-Internal Links:
-- Link to /how-it-works
-- Link to /occasions (overview)
-- Link to related occasions
-```
-
-**SEO Notes:**
-- Target keyword: "[occasion] memory book"
-- Secondary keywords: "[occasion] keepsake", "collect memories for [occasion]", "[occasion] gift idea"
-- Long-tail keywords: "how to create a [occasion] memory book", "best [occasion] memory book", etc.
+**After 6 months (Phase 2C decision point):**
+- Landing pages drive 10-20% of total traffic
+- 2-3 pages rank in top 20 for target keywords
+- Clear signal on whether to scale to remaining 7 occasions
+- SEO ROI proven (or strategy pivoted based on data)
 
 ---
 
-## Site Architecture: 12-Month Vision
+## Risks and Trade-offs
 
-### Recommended Public Site Structure
+### Risk 1: Premature Content Investment
 
-```
-/ (Homepage - existing)
-├── /create (Creation flow - existing)
-├── /m/[shareCode] (Contributor experience - existing)
-├── /dashboard (Creator dashboard - existing)
-│
-├── /how-it-works (NEW - P0)
-├── /about (NEW - P0)
-├── /contact (NEW - P0)
-├── /help-center (NEW - P0)
-│   └── /help-center/[slug] (Future: Individual help articles)
-├── /privacy (NEW - P0)
-├── /terms (NEW - P0)
-├── /status (NEW - P0)
-│
-├── /occasions (P1 - Overview)
-│   ├── /birthday-memory-book (P2 - Landing page)
-│   ├── /retirement-memory-book (P2)
-│   ├── /wedding-memory-book (P2)
-│   ├── /graduation-memory-book (P2)
-│   ├── /anniversary-memory-book (P2)
-│   ├── /new-baby-memory-book (P2)
-│   ├── /farewell-memory-book (P2)
-│   ├── /teacher-appreciation-memory-book (P2)
-│   ├── /engagement-memory-book (P2)
-│   └── /leaving-work-memory-book (P2)
-│
-├── /pricing (P1)
-├── /careers (P1)
-├── /press (P1)
-│
-└── /blog (P3 - Future content marketing)
-    └── /blog/[slug] (Articles, guides, inspiration)
-```
+**Risk:** Building 10 landing pages before technical foundation = wasted effort
+- Pages won't rank without sitemap, robots.txt, canonical URLs
+- Cannot measure impact without analytics foundation
+- Content may need rewrite if product positioning evolves during Founding Members phase
 
-### Architecture Notes:
-- **Static pages first:** Build trust before growth
-- **Occasion-driven SEO:** Each occasion gets dedicated landing page
-- **Help Centre scalable:** Start simple, expand to individual articles later
-- **Blog deferred:** Content marketing comes after trust + SEO foundations
-- **Clean URLs:** Use semantic, readable paths (no `/pages/` prefix)
+**Mitigation:** Complete SEO foundation first, start with top 3 pages only
 
----
+### Risk 2: SEO Timeline Mismatch
 
-## Implementation Complexity
+**Risk:** SEO takes 3-6 months to show meaningful results
+- Delayed learning and validation
+- Founding Members won't benefit from organic traffic (launch is immediate)
+- May not inform Q3/Q4 product priorities in time
+- Investment now, payoff much later
 
-### Effort: MEDIUM (7-10 days)
-**Breakdown:**
-- Content writing: 3-4 days (copywriting for 7 pages)
-- Implementation: 2-3 days (static pages, routing, SEO setup)
-- Design/styling: 1-2 days (consistent with existing brand)
-- Testing: 1 day (mobile, accessibility, SEO validation)
+**Mitigation:**
+- Set realistic expectations (6-month ROI horizon)
+- Focus foundation on existing 12 pages for faster impact
+- Run parallel growth experiments (referral loops, social, email)
 
-### Technical Complexity: LOW
-- **Leverage App Router:** All pages use Next.js App Router patterns
-- **Static content:** No database changes, no backend logic
-- **SEO setup:** Basic meta tags, structured data (minimal)
-- **Existing patterns:** Follow existing page structure (e.g., `/about` similar to existing auth pages)
+### Risk 3: Content Quality vs. Volume
 
-### Risk: VERY LOW
-- **No breaking changes:** Existing app functionality untouched
-- **Pure additive:** Only adding new pages
-- **Easy rollback:** Can remove pages if needed
-- **No data migration:** No database changes
-- **No external dependencies:** Self-contained content
+**Risk:** 10 pages × 1,500 words = 15,000 words of quality content
+- Time-intensive content creation (writing, editing, reviewing)
+- Risk of thin or repetitive content if rushed
+- May compromise quality to hit volume targets
+- SEO penalties for thin/duplicate content
+
+**Mitigation:** Start with 3 high-quality pages, validate performance before scaling
+
+### Risk 4: Positioning Evolution
+
+**Risk:** Product positioning may evolve during Founding Members feedback
+- Landing page copy may need significant updates
+- Occasion priorities may shift based on real user behavior
+- "Memory book" positioning may not resonate as expected
+- Rework effort if positioning pivots
+
+**Mitigation:** Start with 3 occasions, keep copy flexible and modular
+
+### Risk 5: Analytics Blind Spot
+
+**Risk:** Without analytics foundation, cannot measure landing page effectiveness
+- No traffic attribution (organic vs. referral)
+- No conversion tracking (landing page → create → complete)
+- No optimization data (which copy/CTA performs best)
+- Flying blind on ROI
+
+**Mitigation:** Implement Analytics + SEO foundations in parallel (both P0)
+
+### Risk 6: Opportunity Cost
+
+**Risk:** SEO landing pages may not be highest ROI Phase 2 priority
+- **Alternative:** Conversion optimization on existing pages (faster payback)
+- **Alternative:** Referral loops and viral mechanics (compound growth)
+- **Alternative:** Founding Member onboarding and retention (product-market fit validation)
+- SEO is long-term play; other initiatives may deliver faster value
+
+**Mitigation:** Evaluate all Phase 2 candidates, sequence based on strategic priorities
 
 ---
 
-## Risk Assessment
+## Learning Questions
 
-### Product Risks: LOW
-- ⚠️ **Content might need iteration:** Copy may need tweaking based on user feedback
-  - **Mitigation:** Start with good-enough copy, iterate based on data
-- ⚠️ **SEO takes time:** Won't see organic traffic immediately
-  - **Mitigation:** Set realistic expectations (3-6 months for SEO impact)
-- ⚠️ **Scope creep risk:** Team may want to add more pages
-  - **Mitigation:** Stick to Phase 1 scope; defer extras to Phase 2
+### Before Building Landing Pages
 
-### Technical Risks: VERY LOW
-- ✅ No backend changes
-- ✅ No database migrations
-- ✅ No breaking changes
-- ✅ Easy to rollback
+1. **Do existing 12 pages rank after SEO foundation implementation?**
+   - If homepage and /occasions rank for "memory book" keywords, validates SEO approach
+   - If zero organic traffic after foundation, content strategy needs fundamental revisit
 
-### UX Risks: VERY LOW
-- ✅ Doesn't affect existing user flows
-- ✅ Pure additive (footer links now work)
-- ✅ Improves trust and clarity
+2. **Which occasions drive organic search volume?**
+   - Use Google Search Console data after 30 days
+   - Birthday may dominate volume, but retirement/farewell may have higher intent
+   - Informs which 3 pages to prioritize
 
----
+3. **What content length and structure performs best for target keywords?**
+   - 1,200 words vs. 1,800 words performance
+   - FAQ placement and comprehensiveness
+   - Example memory positioning and depth
 
-## Open Questions
+4. **Does "memory book" positioning resonate with target users?**
+   - Validate through Founding Member interviews during Phase 1
+   - May need to pivot to "collaborative keepsake" or "group celebration"
+   - Competitor research: what language do users actually search?
 
-### Blocking Questions: NONE
+5. **What's the baseline SEO performance without landing pages?**
+   - Measure organic traffic to homepage, /occasions, /how-it-works after foundation
+   - Establishes baseline to measure incremental value of landing pages
 
-All necessary context exists to proceed to Planning.
+### After Building Top 3 Pages
 
-### Non-Blocking Questions (Can resolve during Planning):
+1. **Which occasion landing page performs best?**
+   - Traffic volume (absolute and as % of total)
+   - Conversion rate (landing page → create started → create completed)
+   - Ranking position for target keywords
+   - Time on page and engagement metrics
 
-1. **Privacy & Terms Audit:**
-   - Are existing Privacy/Terms pages complete?
-   - Do they need updates for current product state?
-   - **Resolution:** Planner to audit during planning phase
+2. **What content elements drive conversion?**
+   - Hero messaging variants (emotional vs. functional)
+   - Example memories (specific vs. generic)
+   - FAQ topics (which questions matter most)
+   - CTA placement and copy (above fold vs. below)
 
-2. **Email Setup:**
-   - Are hello@, support@, partnerships@ email addresses live?
-   - If not, what email should we use for Phase 1?
-   - **Resolution:** Planner to verify and specify in spec
+3. **Should we scale to remaining 7 occasions?**
+   - If top 3 drive <3% traffic after 90 days: reconsider entire approach
+   - If top 3 drive >10% traffic after 90 days: scale aggressively
+   - If results mixed: iterate on top 3 before expanding
 
-3. **Help Centre FAQs:**
-   - Should we start with 6 or 8 FAQs?
-   - Which specific questions are most common?
-   - **Resolution:** Planner to prioritize based on support data (if available)
-
-4. **Status Page:**
-   - Should Phase 1 be static or include basic automation?
-   - **Resolution:** Planner to recommend (suggest: static for Phase 1, automate later)
-
-5. **Analytics:**
-   - What analytics should we track on new pages?
-   - **Resolution:** Planner to specify Google Analytics events/goals
-
----
-
-## Budget Implications
-
-### Estimated Cost: $21-43 (well within $200 daily cap)
-
-**Stage Breakdown:**
-- Product Owner: ~$1-2 (COMPLETE)
-- Planning: ~$5-10 (Opus 4.6 for detailed spec + copy)
-- Implementation: ~$10-20 (Sonnet 4.5 for pages + routing + SEO)
-- Testing: ~$2-5 (Sonnet 4.5 for validation)
-- Judge: ~$1-2 (Sonnet 4.5 for UX evaluation)
-- Design Guardian: ~$1-2 (Sonnet 4.5 for design review)
-- Reviewer: ~$1-2 (Sonnet 4.5 for code review)
-
-**Timeline:** 1-2 days (well within daily budget)
-**Safe checkpoints:** After each stage
+4. **Does organic traffic convert differently than referral traffic?**
+   - Compare conversion rates across traffic sources
+   - Measure quality of organic vs. referral users
+   - Informs future acquisition channel prioritization
 
 ---
 
 ## Notes for Planner
 
-### Architecture Guidance
-- **Use Next.js App Router:** All pages under `src/app/`
-- **Static pages:** Use `page.tsx` for each route
-- **Shared components:** Create reusable components for common elements (hero, CTA, FAQ accordion)
-- **SEO:** Use Next.js built-in `metadata` API for meta tags
-- **Styling:** Follow existing Tailwind patterns from current pages
+### If Founder Approves Landing Pages (After Foundation)
 
-### Content Requirements
-- **Tone:** Warm, human, authentic (refer to Founder Principles)
-- **Length:** Concise but helpful (500-800 words per page typical)
-- **CTA placement:** Every page should have clear next action
-- **Internal linking:** Link between related pages naturally
-- **Mobile-first:** All copy should work on small screens
+**Critical pre-requisites (Non-negotiable):**
 
-### Technical Requirements
-- **Responsive:** Mobile-first, works on all screen sizes
-- **Accessible:** WCAG 2.1 AA compliance (semantic HTML, alt text, color contrast)
-- **Fast:** Optimize images, minimal JavaScript
-- **SEO-ready:** Proper meta tags, semantic HTML, internal linking
-- **Analytics:** Google Analytics tracking on all pages
+1. **SEO Foundation MUST be complete first**
+   - sitemap.xml (dynamic, includes all public pages)
+   - robots.txt (crawler guidance + sitemap reference)
+   - Canonical URLs (all pages, prevent duplicate content)
+   - Meta robots tags (protect private MemoryPops)
+   - Organization schema (trust signals)
+   - Reference doc: `/Users/adixit/Downloads/MemoryPop/.pipeline/foundations/SEO-FOUNDATION.md`
 
-### Footer Update
-- **File:** `src/app/page.tsx` (existing footer definition)
-- **Action:** Update `footerColumns` array to remove deferred links
-- **Testing:** Verify all remaining links work
+2. **Analytics Foundation MUST be implemented in parallel**
+   - Cannot measure landing page impact without event tracking
+   - Minimum events: `landing_page_viewed`, `create_started`, `create_completed`
+   - Properties: `occasion`, `referrer`, `landing_page_url`
+   - Reference doc: `/Users/adixit/Downloads/MemoryPop/.pipeline/foundations/ANALYTICS-FOUNDATION.md`
 
-### Privacy & Terms Audit
-- **Action:** Check if `/privacy` and `/terms` routes exist
-- **If exist:** Read content, verify completeness
-- **If missing:** Create from scratch using standard legal templates
-- **Consultation:** May need legal review (note for Founder)
+3. **Start with 3 pages maximum (Not 10)**
+   - Birthday, Retirement, Farewell only
+   - Validate approach before scaling
+   - Prevents overinvestment in unproven strategy
+
+### Content Guidelines
+
+**Occasion-specific authenticity:**
+- Each page MUST feel tailored to that specific occasion (not generic template with word swap)
+- Use occasion-appropriate language, tone, and emotional resonance
+- **Birthday:** Joyful, celebratory, surprise-oriented
+- **Retirement:** Reflective, appreciative, legacy-focused
+- **Farewell:** Bittersweet, grateful, connection-focused
+
+**SEO writing principles:**
+- Target keyword: "[occasion] memory book" (primary)
+- Natural keyword density (avoid stuffing, write for humans first)
+- 1,200-1,800 words per page (comprehensive enough to rank, not thin content)
+- Clear H1-H2-H3 hierarchy (semantic structure for crawlers)
+- Internal linking to /how-it-works, /occasions, /create (PageRank distribution)
+- External links only if genuinely helpful (credibility signals)
+
+**Meta tags template:**
+```
+Title: [Occasion] Memory Book | Create Beautiful Keepsakes | MemoryPop
+Description: Create a meaningful [occasion] memory book by collecting photos, messages, and memories from loved ones. Simple, thoughtful, unforgettable.
+```
+
+**Design consistency:**
+- Reuse existing components from homepage, /occasions, /how-it-works
+- Mobile-first (majority of organic search traffic is mobile)
+- Consistent spacing, typography, colors per MemoryPop Design Principles
+- One obvious CTA per page: "Create your [occasion] MemoryPop"
+- CTA links to `/create?occasion=[birthday|retirement|farewell]`
+
+### Technical Constraints
+
+**Must preserve:**
+- Existing Next.js metadata implementation pattern
+- Dynamic routing pattern (if using catch-all routes)
+- Consistent footer and navigation structure
+- Accessibility standards (WCAG 2.1 AA)
+- Page load performance targets (<2s LCP)
+
+**Must not:**
+- Create duplicate content with /occasions overview page
+- Break existing internal linking structure
+- Introduce new design patterns without Design Guardian approval
+- Compromise mobile performance (image optimization critical)
+- Allow private MemoryPops to be indexed (meta robots tags on /m/[shareCode])
+
+### Success Metrics to Track
+
+**Must implement analytics tracking for:**
+- `landing_page_viewed` (which occasion, referrer, landing_page_url)
+- `create_started` (from_landing_page: true, occasion)
+- `create_completed` (attributed_to_landing_page: true, occasion)
+- Time on page (engagement signal)
+- Scroll depth (content consumption)
+- CTA clicks (conversion intent)
+
+**Conversion funnel targets:**
+- Landing page → Create started: ≥15%
+- Landing page → Create completed: ≥8-10%
+- Compare to baseline (homepage → create) to measure incremental value
 
 ---
 
-## Recommendation
+## Alternative Paths Forward
 
-**APPROVE FOR IMMEDIATE IMPLEMENTATION (PHASE 1)**
+### Option A: SEO Foundation Only (Recommended)
 
-This is a high-value, low-risk initiative that:
-1. Solves critical trust deficit (footer links go nowhere today)
-2. Establishes public site foundations for future growth
-3. Enables organic discovery and SEO strategy
-4. Small, achievable scope (7 pages + footer update)
-5. No product ambiguity (all content is clear)
-6. Low technical complexity (static pages, no backend)
-7. Well within budget ($21-43 estimated)
+**Scope:** Complete P0 technical SEO foundation (2-3 days)
 
-**Decision:** BUILD NOW (Phase 1)
-**Next Step:** Proceed to Planning phase
-**Founder Approval Required:** YES (after Planning produces full specification)
+**Deliverables:**
+- sitemap.xml (dynamic, all public pages)
+- robots.txt (crawler guidance + sitemap reference)
+- Canonical URLs (all pages)
+- Meta robots tags (protect private pages)
+- Organization schema (trust signals)
+- Homepage metadata improvements (better title/description)
+
+**Benefits:**
+- Unlocks all 12 existing pages for organic discovery immediately
+- Faster time to impact (pages can start ranking now)
+- Lower effort, higher ROI (foundation unlocks everything)
+- Unblocks future landing pages without current commitment
+- Can measure effectiveness before investing in content creation
+
+**Trade-offs:**
+- No occasion-specific landing pages yet
+- Misses high-intent "birthday memory book" searches (for now)
+- **But:** Homepage and /occasions can rank for broader terms like "memory book", "collaborative keepsake"
+
+**Recommendation:** **Do this first (Phase 2A), then revisit landing pages in 30 days with actual SEO data.**
 
 ---
 
-**Product Owner Approval:** ✅ APPROVED FOR PHASE 1
-**Date:** 2026-07-24
-**Next Stage:** Planning (Planner to produce detailed specification)
+### Option B: Foundation + Top 3 Landing Pages
+
+**Scope:** SEO foundation (2-3 days) + 3 landing pages (1-2 days) = 3-5 days total
+
+**Deliverables:**
+- Complete SEO foundation (per Option A)
+- 3 landing pages: Birthday, Retirement, Farewell
+- Analytics tracking for landing page performance
+
+**Benefits:**
+- Foundation unlocks everything
+- Top 3 pages target highest-intent searches immediately
+- Validates landing page approach with real data
+- Small enough scope to ship without overcommitting
+
+**Trade-offs:**
+- Longer timeline to ship (3-5 days vs. 2-3 days)
+- Still cannot fully measure without analytics foundation
+- Content creation effort without proven ROI yet
+
+**Recommendation:** Only if Founder has strong conviction on immediate landing page value.
+
+---
+
+### Option C: Foundation + Analytics + Top 3 Pages (Comprehensive)
+
+**Scope:** SEO foundation (2-3 days) + Analytics foundation (2 days) + 3 landing pages (1-2 days) = 5-7 days total
+
+**Deliverables:**
+- Complete SEO foundation
+- Complete Analytics foundation (all 12 core events)
+- 3 landing pages: Birthday, Retirement, Farewell
+- Full measurement capability (traffic attribution, conversion tracking)
+
+**Benefits:**
+- Complete infrastructure for organic growth strategy
+- Can measure landing page impact immediately and accurately
+- Validates both technical approach (SEO) and content approach (landing pages)
+- Establishes sustainable growth foundation for all future work
+
+**Trade-offs:**
+- Longest timeline (5-7 days)
+- Highest effort and complexity
+- Most dependencies (SEO + Analytics + Content)
+- Highest budget usage
+
+**Recommendation:** Best long-term approach IF budget and timeline allow, AND if organic growth is confirmed top strategic priority for Phase 2.
+
+---
+
+## Product Owner Recommendation
+
+### Recommended Path: Foundation-First, Data-Driven Expansion
+
+**Phase 2A: Technical SEO + Analytics Foundations (P0) - BUILD NOW**
+
+**Effort:** 4-5 days
+**Owner:** Engineering
+**Priority:** Build now
+
+**Deliverables:**
+- SEO Foundation: sitemap.xml, robots.txt, canonical URLs, meta robots tags, Organization schema
+- Analytics Foundation: 5 core events minimum (homepage_viewed, create_started, create_completed, memorypop_shared, plus_viewed)
+- Measurement capability for all organic traffic and conversions
+
+**Business Impact:**
+- Enables organic discovery for all 12 existing pages
+- Creates measurement foundation for all future growth initiatives
+- Prevents SEO penalties (duplicate content, poor indexation)
+- Unblocks landing pages and all future SEO work
+
+---
+
+**Phase 2B: Top 3 Landing Pages (Validate) - NEXT SPRINT**
+
+**Effort:** 1-2 days
+**Owner:** Product + Content
+**Priority:** Next sprint (after 2A complete + 30 days of data)
+
+**Deliverables:**
+- `/birthday-memory-book`
+- `/retirement-memory-book`
+- `/farewell-memory-book`
+
+**Success Criteria:**
+- Landing pages drive ≥5% of total traffic by Month 3
+- At least 1 page ranks top 50 within 60 days
+- Landing page → create conversion ≥15%
+
+---
+
+**Phase 2C: Scale to 10 Pages (If Validated) - BACKLOG**
+
+**Effort:** 2-3 days
+**Owner:** Product + Content
+**Priority:** Backlog (conditional on Phase 2B success)
+
+**Deliverables:** Remaining 7 occasion landing pages
+
+**Trigger conditions:**
+- Phase 2B landing pages drive >10% traffic after 90 days
+- Conversion rates meet or exceed targets (≥15%)
+- At least 2 pages achieve top 50 rankings
+- Founder approval based on validated ROI
+
+---
+
+### Why This Sequence
+
+1. **Foundation unlocks everything** (existing 12 pages + all future pages)
+2. **Analytics enables data-driven decisions** (can prove landing page ROI)
+3. **Top 3 validates approach** (avoids premature scaling to 10 pages)
+4. **Conditional scaling** (only invest in remaining 7 if top 3 prove value)
+5. **Learning loops** (30 days of baseline SEO data before landing page investment)
+
+### ROI Comparison
+
+**Option A (Foundation Only):**
+- Effort: 2-3 days
+- Impact: 5-10% organic traffic by Month 3 (from existing 12 pages)
+- ROI: **High** (unlocks all pages with minimal effort)
+
+**Option B (Foundation + 10 Landing Pages):**
+- Effort: 5-8 days
+- Impact: 10-20% organic traffic by Month 6
+- ROI: **Medium** (high effort, delayed payoff, unproven strategy)
+
+**Option C (Foundation + Top 3 Pages):**
+- Effort: 3-5 days
+- Impact: 8-12% organic traffic by Month 3
+- ROI: **High** (balanced effort, validates approach, enables learning)
+
+**Recommendation:** Start with Foundation (Option A), collect 30 days of baseline SEO data, then build Top 3 pages if data supports the investment (Option C approach, phased).
+
+---
+
+## Final Product Owner Decision
+
+**BUILD NOW: Technical SEO + Analytics Foundations (Phase 2A) ✅**
+
+**NEXT SPRINT: Top 3 Landing Pages (Phase 2B, conditional on foundation + data) ⚠️**
+
+**BACKLOG: Remaining 7 Landing Pages (Phase 2C, validate Phase 2B first) ⏳**
+
+### Rationale Summary
+
+The "Phase 2" request correctly identifies **organic acquisition as a strategic priority**, but misses the **critical foundation layer** required for success.
+
+**Without foundation:**
+- Landing pages won't be indexed or discoverable (no sitemap, robots.txt)
+- Cannot measure impact or optimize (no analytics foundation)
+- Existing 12 pages remain invisible to search engines (wasted opportunity)
+- Risk of SEO penalties (duplicate content, poor technical SEO)
+
+**With foundation first:**
+- All 12 pages become discoverable immediately (instant value)
+- Can measure organic traffic, rankings, conversions (data-driven decisions)
+- Landing pages can be added incrementally with proven ROI (low risk)
+- Establishes repeatable pattern for all future SEO work (scalable)
+
+**Strategic principle:** Build infrastructure before scaling content. Data before investment.
+
+---
+
+## Success Metrics
+
+### Phase 2A Success (Foundations) - 30 Days
+
+- ✅ Homepage appears in Google search results for "memory book", "collaborative keepsake"
+- ✅ At least 5 existing pages indexed in Google
+- ✅ 5% of total traffic from organic search (baseline without landing pages)
+- ✅ Analytics tracking all core events (create flow, sharing, conversions)
+- ✅ Zero private MemoryPops indexed (meta robots tags working)
+
+### Phase 2A Success - 90 Days
+
+- ✅ 10-15% of total traffic from organic search
+- ✅ Homepage ranks top 50 for "collaborative memory book" or "digital keepsake"
+- ✅ Clear data on which existing pages drive organic traffic and conversions
+- ✅ SEO foundation proven (validates investment in landing pages)
+
+### Phase 2B Success (Top 3 Landing Pages) - 90 Days
+
+*Only measure if Phase 2B approved and implemented*
+
+- ✅ Birthday landing page ranks top 50 for "birthday memory book"
+- ✅ Landing pages drive 5-10% of total traffic
+- ✅ Landing page → create conversion rate ≥15%
+- ✅ Clear data on which occasion (Birthday, Retirement, Farewell) performs best
+
+### Validation Criteria for Phase 2C (Scale Decision)
+
+**If landing pages drive <3% traffic:** Reconsider content approach, don't scale
+**If landing pages drive >10% traffic:** Scale to remaining 7 occasions
+**If conversion rate <10%:** Iterate on top 3 before expanding
+**If no pages rank top 50 after 90 days:** Revisit keyword targeting and content strategy
+
+---
+
+**Status:** Product Owner analysis complete. Awaiting Founder decision on Phase 2A (foundations) vs. Phase 2B (landing pages) sequencing.
+
+**Recommended Next Step:** Proceed with Phase 2A (SEO + Analytics Foundations), defer landing pages to next sprint after validation period.
+

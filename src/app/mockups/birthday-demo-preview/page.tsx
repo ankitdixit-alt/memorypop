@@ -1,0 +1,67 @@
+export default function BirthdayDemoPreviewMockup() {
+  return (
+    <div
+      className="relative w-full overflow-hidden bg-gradient-to-br from-[#FFE5D9] to-[#FFD1BA]"
+      style={{
+        aspectRatio: '16/9',
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+      }}
+    >
+      <div className="absolute inset-0 flex items-center justify-center p-12">
+        {/* Browser Frame */}
+        <div className="w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden">
+          {/* Browser Chrome */}
+          <div className="bg-[#F3E6D8] px-4 py-3 flex items-center gap-2 border-b border-[#EAD8C9]">
+            <div className="flex gap-2">
+              <div className="w-3 h-3 rounded-full bg-[#FF6B57]"></div>
+              <div className="w-3 h-3 rounded-full bg-[#FFD1BA]"></div>
+              <div className="w-3 h-3 rounded-full bg-[#FFE5D9]"></div>
+            </div>
+            <div className="flex-1 ml-4 bg-white rounded px-3 py-1 text-sm text-[#6B5B52]">
+              memorypop.app/m/birthday123
+            </div>
+          </div>
+
+          {/* MemoryPop Content */}
+          <div className="bg-[#FFF8F2] p-8">
+            {/* Mini Navbar */}
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#F0DED2]">
+              <div className="text-xl font-bold text-[#2B1E18]">
+                Memory<span className="text-[#FF6B57]">Pop</span>
+              </div>
+            </div>
+
+            {/* Hero Section */}
+            <div className="text-center">
+              <div className="text-5xl mb-4">🎉</div>
+              <h1 className="text-3xl font-bold text-[#2B1E18] mb-3">
+                Sarah's 30th Birthday
+              </h1>
+              <p className="text-base text-[#6B5B52] mb-4">
+                "Friends and family celebrating an amazing person"
+              </p>
+              <button className="bg-[#FF6B57] text-white px-6 py-3 rounded-full font-semibold text-sm">
+                🎉 Add Your Birthday Wish
+              </button>
+            </div>
+
+            {/* Memory Preview */}
+            <div className="mt-6 bg-white rounded-xl p-4 shadow-sm">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-8 rounded-full bg-[#F3E6D8]"></div>
+                <div>
+                  <p className="font-semibold text-[#2B1E18] text-sm">Emma K.</p>
+                  <p className="text-xs text-[#6B5B52]">Jun 15, 2024</p>
+                </div>
+              </div>
+              <p className="text-sm text-[#4A372F] leading-relaxed">
+                Remember that time we got lost in Paris and ended up at that tiny café at 2am?...
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

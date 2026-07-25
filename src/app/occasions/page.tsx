@@ -40,26 +40,29 @@ export default function OccasionsPage() {
           <h2 className="text-2xl font-semibold text-center">Celebrations We Support</h2>
 
           <div className="grid gap-6 sm:grid-cols-2">
-            <div className="space-y-2">
+            <Link href="/birthday-memory-book" className="space-y-2 rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary">
               <h3 className="text-lg font-semibold">Birthdays</h3>
               <p className="text-sm text-muted-foreground">
                 Collect birthday wishes, funny stories, and favorite memories from friends and family.
               </p>
-            </div>
+              <p className="text-sm font-medium text-primary">Learn more →</p>
+            </Link>
 
-            <div className="space-y-2">
+            <Link href="/farewell-memory-book" className="space-y-2 rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary">
               <h3 className="text-lg font-semibold">Farewells</h3>
               <p className="text-sm text-muted-foreground">
                 Create a thoughtful send-off for colleagues, friends, or loved ones moving on to new adventures.
               </p>
-            </div>
+              <p className="text-sm font-medium text-primary">Learn more →</p>
+            </Link>
 
-            <div className="space-y-2">
+            <Link href="/retirement-memory-book" className="space-y-2 rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary">
               <h3 className="text-lg font-semibold">Retirements</h3>
               <p className="text-sm text-muted-foreground">
                 Celebrate a career well-lived with memories, thank-yous, and messages from coworkers.
               </p>
-            </div>
+              <p className="text-sm font-medium text-primary">Learn more →</p>
+            </Link>
 
             <div className="space-y-2">
               <h3 className="text-lg font-semibold">Weddings</h3>

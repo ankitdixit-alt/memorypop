@@ -1,15 +1,38 @@
 "use client";
 import { ChangeEvent, useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { getCelebrationExperience } from "@/lib/celebrationExperience";
 import { getCoverTheme } from "@/lib/coverTheme";
 import { trackEvent } from "@/lib/analytics";
+import { trackCreateStarted } from "@/lib/analytics-ga4";
 import { type CelebrationMood } from "@/lib/celebrationMood";
 import OccasionSelector from "@/components/OccasionSelector";
 import MoodSelector from "@/components/MoodSelector";
 
 export default function CreatePage() {
+  const searchParams = useSearchParams();
+
+  // Read occasion from URL parameter (e.g., /create?occasion=birthday)
+  const urlOccasion = searchParams.get('occasion');
+
+  // Map URL occasion values to display names
+  const occasionMap: Record<string, string> = {
+    'birthday': 'Birthday',
+    'retirement': 'Retirement',
+    'farewell': 'Farewell',
+    'wedding': 'Wedding',
+    'anniversary': 'Anniversary',
+    'new-arrival': 'New Arrival',
+    'thank-you': 'Thank You',
+    'graduation': 'Graduation',
+  };
+
+  const initialOccasion = urlOccasion && occasionMap[urlOccasion.toLowerCase()]
+    ? occasionMap[urlOccasion.toLowerCase()]
+    : "Birthday";
+
   const [step, setStep] = useState(1);
-  const [occasion, setOccasion] = useState("Birthday");
+  const [occasion, setOccasion] = useState(initialOccasion);
   const [recipient, setRecipient] = useState("");
   const [story, setStory] = useState("");
   const [mood, setMood] = useState<CelebrationMood | null>(null); // Required, no default
@@ -24,11 +47,32 @@ export default function CreatePage() {
 
   // Track creation funnel entry
   useEffect(() => {
+    // Determine source from referrer or URL params
+    const referrer = document.referrer;
+    let source = 'direct';
+
+    if (referrer.includes('birthday-memory-book')) {
+      source = 'landing_page_birthday';
+    } else if (referrer.includes('retirement-memory-book')) {
+      source = 'landing_page_retirement';
+    } else if (referrer.includes('farewell-memory-book')) {
+      source = 'landing_page_farewell';
+    } else if (referrer.includes('occasions')) {
+      source = 'occasions_page';
+    } else if (referrer) {
+      source = 'referral';
+    }
+
+    // Track with Mixpanel (existing)
     trackEvent('create_started', {
       page_path: '/create',
-      source_page: document.referrer || undefined,
+      source_page: referrer || undefined,
+      occasion: occasion,
     });
-  }, []);
+
+    // Track with GA4 (Phase 2C)
+    trackCreateStarted(source, occasion);
+  }, [occasion]);
 
   // Get composed celebration experience (occasion + mood)
   const celebrationExperience = useMemo(() => {
@@ -82,7 +126,13 @@ async function saveMemoryPop() {
       return;
     }
 
-    // Track create_completed event
+    // Determine if user came from a landing page
+    const referrer = document.referrer;
+    const fromLandingPage = referrer.includes('birthday-memory-book') ||
+      referrer.includes('retirement-memory-book') ||
+      referrer.includes('farewell-memory-book');
+
+    // Track create_completed event (Mixpanel)
     trackEvent('create_completed', {
       share_code: result.shareCode,
       occasion: occasion,
@@ -93,7 +143,12 @@ async function saveMemoryPop() {
       has_photos: photos.length > 0,
       photo_count: photos.length,
       selected_cover: selectedCover,
+      from_landing_page: fromLandingPage,
     });
+
+    // Track create_completed event (GA4 - Phase 2C)
+    const { trackCreateCompleted } = await import('@/lib/analytics-ga4');
+    trackCreateCompleted(result.shareCode, occasion, fromLandingPage);
 
     // Redirect to success page with management token
     // Session cookie already established by server

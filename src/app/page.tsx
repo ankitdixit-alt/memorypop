@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { trackEvent } from "@/lib/analytics"
+import { trackHomepageViewed } from "@/lib/analytics-ga4"
 
 /* -------------------------------------------------------------------------- */
 /*  Inline icons (no external icon library)                                   */
@@ -747,6 +748,7 @@ export default function Page() {
     // Track homepage view with UTM parameters and referrer
     const urlParams = new URLSearchParams(window.location.search);
 
+    // Mixpanel (existing)
     trackEvent('homepage_viewed', {
       utm_source: urlParams.get('utm_source') || undefined,
       utm_medium: urlParams.get('utm_medium') || undefined,
@@ -755,6 +757,9 @@ export default function Page() {
       utm_term: urlParams.get('utm_term') || undefined,
       referrer: document.referrer || undefined,
     });
+
+    // GA4 (Phase 2C)
+    trackHomepageViewed();
   }, []);
 
   return (

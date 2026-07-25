@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "screenshot:mockups": "node scripts/screenshot-mockups.js"
   },
   "dependencies": {
     "@sentry/nextjs": "^10.65.0",
