@@ -1,9 +1,9 @@
-# Progress: Phase 2C + Mockup Integration
+# Progress: Interactive Product Demonstration
 
-**Feature Name:** Phase 2C - SEO Foundation + Analytics + Landing Pages + Product Mockups
-**Current Stage:** Review Complete → Founder Validation Pending
-**Current Owner:** Awaiting Founder Production Validation
-**Percent Complete:** 95% (All workflow stages complete except final Founder validation)
+**Feature Name:** Interactive Product Demonstration (Replace "See a MemoryPop" CTA)
+**Current Stage:** Planning Complete → Awaiting Founder Specification Approval
+**Current Owner:** Planner Agent → Founder (next)
+**Percent Complete:** 30% (Product Owner + Planning complete, Implementation not started)
 
 ---
 
@@ -12,59 +12,72 @@
 ### ✅ Completed Stages
 
 1. **Intake** - Complete
-   - Raw request captured: "lets do phase 2"
-   - Context established: Phase 1 complete (12 pages built)
-   - Request normalized: SEO landing pages for organic acquisition
+   - Raw request captured: "Replace 'See a MemoryPop' CTA with interactive demo"
+   - Context established: Phase 2C complete (SEO + Analytics + Landing Pages + Mockups)
+   - Request normalized: Build genuine product demonstration
+   - Output: `.pipeline/request.md`
 
 2. **Product Owner** - Complete
-   - Decision: BUILD NOW (with sequencing: Foundation first)
-   - Score: 13/25 (elevated to "Next Sprint" due to strategic importance)
-   - Smallest useful slice: Top 3 landing pages only
-   - Alternative recommendation: Complete P0 foundations FIRST
-   - Founder override: Option C (Comprehensive approach)
+   - Decision: ✅ BUILD NOW
+   - Score: 34/40 (High priority - critical conversion optimization)
+   - Smallest useful slice: Single-story demo (Emma's 30th Birthday)
+   - Core experience: Welcome → Cover → Messages → Photos → Standard vs Premium → CTA
+   - Success metric: 15-25% demo → create conversion rate
+   - Strategic value: Canonical MemoryPop demonstration for all marketing channels
    - Output: `.pipeline/prioritization.md`
 
-3. **Planning** - Complete
-   - Implementation-ready specification created
-   - Complete landing page copy written (3 × 1,200-1,500 words)
-   - 8 files to modify identified
-   - 5 files to create identified
-   - 51 acceptance criteria defined
-   - 7-day timeline estimated
-   - Output: `.pipeline/specs.md`
-
----
-
-4. **Founder Specification Approval** - Complete
-   - Specification reviewed and approved
-   - Landing page copy approved
-   - Timeline approved (5-7 days)
-   - Success metrics approved
-
-5. **Implementation** - ✅ Complete
-   - SEO Foundation: ✅ Complete
-   - Analytics Foundation: ✅ Complete
-   - Landing Pages: ✅ Complete (2 Founder review rounds)
-   - Output: `.pipeline/changes.md`
-
-6. **Testing** - ✅ Complete
-   - Validated 51 acceptance criteria
-   - Results: 47 PASS, 4 MANUAL_CHECK, 0 FAIL
-   - Technical implementation: ✅ Verified
-   - Output: `.pipeline/tests.md`
+3. **Planning** - ✅ Complete
+   - Owner: Planner Agent
+   - Input: `.pipeline/request.md` + `.pipeline/prioritization.md`
+   - Deliverables Created:
+     ✅ Demo user journey (complete flow with emotional experience map)
+     ✅ Information architecture (route: `/demo`, SEO config, schema markup)
+     ✅ Complete storyboard (Emma's 30th Birthday with all content)
+     ✅ 5 authentic contributor messages (127, 115, 108, 103, 105 words each)
+     ✅ 6 photo descriptions (dinner, candles, selfie, friends, dance, surprise)
+     ✅ Standard vs Premium comparison strategy (visual differentiation defined)
+     ✅ Site architecture (file structure, components, data model)
+     ✅ SEO recommendations (metadata, internal linking, sitemap, schema)
+     ✅ Analytics events (8 events defined with implementation details)
+     ✅ Files to modify/create (7 new files, 4 existing files)
+     ✅ Acceptance criteria (40 testable items: Functional, Content, Technical, SEO/A11y)
+     ✅ Risk analysis (8 risks with mitigation strategies)
+     ✅ Future extensibility (multi-occasion, A/B testing, personalization)
+   - Output: `.pipeline/specs.md` (comprehensive 14-section specification)
 
 ### ⏳ Current Stage
 
-7. **Judge** - Starting Now ← YOU ARE HERE
-   - Owner: Judge Agent
-   - Focus: User experience validation
-   - Validation scope: Emotional journey, CTA clarity, visual design, mobile experience
+4. **Founder Specification Approval** - ⏳ AWAITING APPROVAL ← CRITICAL GATE
+   - Owner: Founder
+   - Gate: Specification must be explicitly approved before Implementation begins
+   - Awaiting: Founder review of complete `.pipeline/specs.md`
+   - **Decision Required:**
+     - [ ] APPROVED - Proceed to Implementation
+     - [ ] REVISE - Changes required (specify what needs adjustment)
+     - [ ] BLOCK - Do not proceed (explain why)
 
 ### ⬜ Pending Stages
+
+5. **Implementation** - Not Started
+   - Owner: Coder Agent
+   - Awaiting: Founder specification approval
+   - Will NOT begin until explicit Founder approval received
+   - Output: `.pipeline/changes.md`
+
+6. **Testing** - Not Started
+   - Owner: Tester Agent
+   - Awaiting: Implementation complete
+   - Output: `.pipeline/tests.md`
+
+7. **Judge** - Not Started
+   - Owner: Judge Agent (read-only, user experience validation)
+   - Awaiting: Testing complete
+   - Output: `.pipeline/judge.md`
 
 8. **Review** - Not Started
    - Owner: Reviewer Agent (read-only, release readiness)
    - Awaiting: Judge complete
+   - Output: `.pipeline/review.md`
 
 9. **Founder Production Validation** - Not Started
    - Owner: Founder
@@ -75,73 +88,106 @@
 
 ## Approval Status
 
-- **Product Owner Approval:** ✅ Approved (BUILD NOW)
-- **Founder Option Selection:** ✅ Approved (Option C)
-- **Founder Specification Approval:** ✅ Approved
-- **Founder Content Review #1:** ✅ Approved (restructured)
-- **Founder Content Review #2:** ✅ Approved (final polish)
-- **Testing Validation:** ✅ PASS (47/51 criteria)
-- **Judge Validation:** ⏳ In Progress
+- **Product Owner Approval:** ✅ APPROVED (BUILD NOW)
+- **Founder Specification Approval:** ⏳ PENDING REVIEW ← CURRENT GATE
+- **Testing Validation:** ⏳ Pending
+- **Judge Validation:** ⏳ Pending
 - **Review Validation:** ⏳ Pending
 - **Final Production Validation:** ⏳ Pending
 
 ---
 
+## Specification Highlights
+
+**What Founder Is Approving:**
+
+1. **Scope:** Single demo - Emma's 30th Birthday with 5 messages, 6 photos
+2. **Content:** All 5 contributor messages written (Maya Chen, Sarah Rodriguez, James Patterson, Carlos Rodriguez, Tyler Kim)
+3. **Premium Strategy:** Standard vs Premium visual differentiation defined
+4. **Route:** `/demo` with full SEO metadata and schema markup
+5. **Analytics:** 8 events (demo_viewed, scroll depths, premium toggle, completed, CTA clicked)
+6. **Success Metrics:** 15-25% conversion target, 60%+ completion rate
+7. **Implementation Time:** 2-3 days estimated (16-24 hours of work)
+8. **Acceptance Criteria:** 40 testable items
+9. **Risks:** 8 identified with mitigation strategies
+
+**Key Content for Founder Review:**
+- Section 3: Complete Storyboard (all 5 messages written, 6 photos described)
+- Section 5: Standard vs Premium Strategy (visual differentiation approach)
+- Section 11: Risk Analysis (8 risks with mitigations)
+
+---
+
 ## Blockers
 
-**Current Blocker:** None
+**Current Blocker:** Waiting for Founder specification approval
 
-**Status:** Testing complete, ready for Judge validation
+**Status:** Planning complete. Specification ready for Founder review.
+
+**Cannot Proceed:** Implementation will NOT begin without explicit Founder approval.
 
 ---
 
 ## Budget Status
 
 **Daily Budget Cap:** $30 per day
-**Estimated Budget Used Today:** ~60%
-**Estimated Budget Remaining Today:** ~40%
-**Safe to Continue:** Yes
+**Estimated Budget Used Today:** ~35%
+**Estimated Budget Remaining Today:** ~65%
+**Safe to Continue:** Yes (after approval)
 
 **Budget Breakdown:**
-- Planner: ~15%
-- Coder (Implementation): ~25%
-- Tester: ~20%
-- Judge: ~10% (estimated)
-- Reviewer: ~10% (estimated)
-- **Total Estimated:** ~80% of daily budget
+- Intake: 5% ✅
+- Product Owner: 10% ✅
+- Planning: 20% ✅ (just completed)
+- Coder: 25% (not started, awaiting approval)
+- Tester: 15% (not started)
+- Judge: 10% (not started)
+- Reviewer: 10% (not started)
+- **Total Estimated:** ~95% of daily budget (within safe limits)
+
+**Sufficient budget remaining for Implementation after approval.**
 
 ---
 
 ## Timeline
 
-**Started:** 2026-07-24
-**Planning Complete:** 2026-07-24
-**Implementation Complete:** 2026-07-24
-**Founder Reviews Complete:** 2026-07-24 (2 rounds)
-**Testing Complete:** 2026-07-24
-**Estimated Full Completion:** 2026-07-24 (today, if Judge + Reviewer pass)
+**Started:** 2026-07-25
+**Product Owner Complete:** 2026-07-25
+**Planning Complete:** 2026-07-25 (today)
+**Founder Specification Approval Target:** 2026-07-25 (today, awaiting decision)
+**Estimated Implementation Start:** 2026-07-25 (after approval)
+**Estimated Full Completion:** 2026-07-26 to 2026-07-27 (1-2 days after approval)
 
-**Actual Timeline:** 1 day (faster than 5-7 day estimate)
+**Complexity:** Medium (new route, realistic content, Standard/Premium comparison, analytics)
 
 ---
 
 ## Next Action
 
-**Immediate:** Judge Agent validates user experience
+**Immediate:** ⏸️ STOP - Present specification to Founder
 
-**Judge Focus:**
-1. Does the emotional journey feel right?
-2. Are CTAs compelling and clear?
-3. Does content hierarchy flow logically?
-4. Does visual design match MemoryPop brand?
-5. Does mobile experience feel native?
+**Founder Review Checklist:**
+- [ ] Read `.pipeline/specs.md` (complete 14-section specification)
+- [ ] Review all 5 contributor messages (Section 3.3)
+- [ ] Review Standard vs Premium strategy (Section 5)
+- [ ] Confirm scope is correct (no scope creep)
+- [ ] Approve timeline (2-3 days)
+- [ ] Approve success metrics (15-25% conversion)
+- [ ] Review risks and accept mitigation strategies
+- [ ] Make decision: APPROVED / REVISE / BLOCK
 
-**Upon Judge Approval:**
-1. Proceed to Reviewer stage
-2. Reviewer validates release readiness
-3. Founder performs production validation
-4. Mark feature complete
+**Upon Founder Approval:**
+1. Update status.md and progress.md with approval decision
+2. Invoke Coder Agent with approved specification
+3. Proceed through Implementation → Testing → Judge → Review → Validation
+
+**If Revision Needed:**
+1. Founder specifies required changes
+2. Planner updates `.pipeline/specs.md`
+3. Return to Founder for re-approval
+4. Do NOT proceed to Implementation until approved
 
 ---
 
-**Last Updated:** 2026-07-24 by Tester Agent
+**Last Updated:** 2026-07-25 by Planner Agent
+**Status:** ✅ Planning Complete - Specification ready for Founder approval

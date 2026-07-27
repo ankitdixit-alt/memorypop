@@ -159,10 +159,10 @@ function PrimaryButton({ children, className = "" }: { children: React.ReactNode
   )
 }
 
-function OutlineButton({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+function OutlineButton({ children, className = "", href = "/create" }: { children: React.ReactNode; className?: string; href?: string }) {
   return (
     <Link
-      href="/create"
+      href={href}
       className={`inline-flex h-13 items-center justify-center gap-2 rounded-full border border-border bg-card px-7 text-base font-medium text-foreground transition-colors hover:bg-secondary ${className}`}
     >
       {children}
@@ -210,30 +210,40 @@ const occasions = [
     copy: "Milestone or just because\u2014make their day unforgettable.",
     src: "/images/birthday-cover.png",
     span: "sm:col-span-2 sm:row-span-2",
+    href: "/birthday-memory-book",
+    occasionSlug: "birthday",
   },
   {
     title: "Weddings",
     copy: "Collect toasts and well-wishes from every guest.",
     src: "/images/celebration-wedding.png",
     span: "",
+    href: "/create?occasion=wedding",
+    occasionSlug: "wedding",
   },
   {
     title: "New babies",
     copy: "Welcome them with love from the whole family.",
     src: "/images/celebration-baby.png",
     span: "",
+    href: "/create?occasion=new-arrival",
+    occasionSlug: "new-arrival",
   },
   {
     title: "Graduations",
     copy: "Cheer on their next big chapter, together.",
     src: "/images/celebration-graduation.png",
     span: "",
+    href: "/create?occasion=graduation",
+    occasionSlug: "graduation",
   },
   {
     title: "Retirements",
     copy: "Honor a lifetime of memories and gratitude.",
     src: "/images/celebration-retirement.png",
     span: "",
+    href: "/retirement-memory-book",
+    occasionSlug: "retirement",
   },
 ]
 
@@ -368,10 +378,10 @@ function SiteHeader() {
 
         <div className="hidden items-center gap-2 md:flex">
           <Link
-            href="/create"
+            href="/demo"
             className="inline-flex h-11 items-center justify-center rounded-full px-5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
           >
-            See a MemoryPop
+            Experience a MemoryPop
           </Link>
           <Link
             href="/create"
@@ -406,7 +416,7 @@ function SiteHeader() {
             ))}
           </nav>
           <div className="mt-3 flex flex-col gap-2">
-            <OutlineButton className="w-full">See a MemoryPop</OutlineButton>
+            <OutlineButton href="/demo" className="w-full">Experience a MemoryPop</OutlineButton>
             <PrimaryButton className="w-full">Start a MemoryPop</PrimaryButton>
           </div>
         </div>
@@ -531,9 +541,9 @@ function Hero() {
               Start a MemoryPop
               <ArrowRight className="size-4" />
             </PrimaryButton>
-            <OutlineButton>
+            <OutlineButton href="/demo">
               <Play className="size-4" />
-              See a MemoryPop
+              Experience a MemoryPop
             </OutlineButton>
           </div>
 
@@ -576,6 +586,28 @@ function HowItWorks() {
   )
 }
 
+function handleOccasionCardClick(title: string, destination: string, occasion: string) {
+  // Google Analytics 4
+  if (typeof window !== 'undefined' && (window as any).gtag) {
+    (window as any).gtag('event', 'occasion_card_clicked', {
+      occasion: occasion,
+      occasion_title: title,
+      destination: destination,
+      source: 'homepage',
+    });
+  }
+
+  // Mixpanel
+  if (typeof window !== 'undefined' && (window as any).mixpanel) {
+    (window as any).mixpanel.track('Occasion Card Clicked', {
+      occasion: occasion,
+      occasion_title: title,
+      destination: destination,
+      source: 'homepage',
+    });
+  }
+}
+
 function Celebrations() {
   return (
     <section id="occasions" className="mx-auto max-w-6xl px-5 py-20 sm:px-6 lg:py-28">
@@ -591,7 +623,12 @@ function Celebrations() {
 
       <div className="mt-14 grid auto-rows-[220px] grid-cols-1 gap-4 sm:grid-cols-4">
         {occasions.map((o) => (
-          <article key={o.title} className={`group relative overflow-hidden rounded-3xl ring-1 ring-border ${o.span}`}>
+          <Link
+            key={o.title}
+            href={o.href}
+            onClick={() => handleOccasionCardClick(o.title, o.href, o.occasionSlug)}
+            className={`group relative overflow-hidden rounded-3xl ring-1 ring-border transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:ring-2 hover:ring-primary/20 ${o.span}`}
+          >
             <img
               src={o.src || "/placeholder.svg"}
               alt={o.title}
@@ -601,8 +638,11 @@ function Celebrations() {
             <div className="absolute bottom-0 left-0 right-0 p-5">
               <h3 className="font-heading text-xl font-semibold text-background sm:text-2xl">{o.title}</h3>
               <p className="mt-1 text-sm leading-relaxed text-background/85 text-pretty">{o.copy}</p>
+              <span className="mt-2 inline-flex items-center text-sm font-medium text-background/90 group-hover:underline">
+                Learn more →
+              </span>
             </div>
-          </article>
+          </Link>
         ))}
       </div>
     </section>
@@ -679,11 +719,11 @@ function FinalCta() {
               <ArrowRight className="size-4" />
             </Link>
             <Link
-              href="/create"
+              href="/demo"
               className="inline-flex h-13 w-full items-center justify-center gap-2 rounded-full border border-primary-foreground/30 bg-transparent px-7 text-base font-medium text-primary-foreground transition-colors hover:bg-primary-foreground/10 sm:w-auto"
             >
               <Play className="size-4" />
-              See a MemoryPop
+              Experience a MemoryPop
             </Link>
           </div>
           <p className="mt-6 text-sm text-primary-foreground/70">Free to start &middot; No credit card required</p>

@@ -60,6 +60,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
       changeFrequency: 'monthly' as const,
     },
+    {
+      url: '/demo',
+      priority: 0.8,
+      changeFrequency: 'monthly' as const,
+    },
 
     // Support pages
     {
