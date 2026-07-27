@@ -7,6 +7,9 @@ import { getCoverHeroStyle } from "@/lib/coverStyles";
 import { getCoverTheme } from "@/lib/coverTheme";
 import type { Metadata } from "next";
 
+// Opt out of static generation - this page requires database access
+export const dynamic = 'force-dynamic';
+
 /**
  * Normalize occasion string to match OG image filename
  * @param occasion - Raw occasion string from database

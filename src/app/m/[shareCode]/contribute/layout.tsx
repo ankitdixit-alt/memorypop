@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { supabaseServer } from "@/lib/supabaseServer";
 
+// Opt out of static generation - this layout requires database access
+export const dynamic = 'force-dynamic';
+
 /**
  * SEO Foundation Phase 1 - Task 3 & 4
  * Contribute page metadata with noindex/follow and canonical URL

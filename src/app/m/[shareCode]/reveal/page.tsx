@@ -3,6 +3,9 @@ import { supabaseServer } from "@/lib/supabaseServer";
 import RevealExperience from "./RevealExperience";
 import type { Metadata } from "next";
 
+// Opt out of static generation - this page requires database access
+export const dynamic = 'force-dynamic';
+
 /**
  * SEO Foundation Phase 1 - Task 3 & 4
  * Reveal page metadata with noindex/follow

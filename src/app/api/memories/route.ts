@@ -15,7 +15,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseServer } from '@/lib/supabaseServer';
+
+// Opt out of static generation for this API route
+export const dynamic = 'force-dynamic';
 
 interface CreateMemoryRequest {
   shareCode: string;
@@ -26,6 +28,9 @@ interface CreateMemoryRequest {
 
 export async function POST(request: NextRequest) {
   try {
+    // Lazy import to prevent module evaluation during build
+    const { supabaseServer } = await import('@/lib/supabaseServer');
+
     const body: CreateMemoryRequest = await request.json();
 
     // Validate required fields

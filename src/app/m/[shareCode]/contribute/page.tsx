@@ -11,6 +11,9 @@ import { notFound } from "next/navigation";
 import { supabaseServer } from "@/lib/supabaseServer";
 import ContributeForm from "./ContributeForm";
 
+// Opt out of static generation - this page requires database access
+export const dynamic = 'force-dynamic';
+
 export default async function ContributePage({
   params,
 }: {

@@ -18,10 +18,13 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseServer } from '@/lib/supabaseServer';
 import { generateManagementToken } from '@/lib/verification';
 import { setCreatorSession } from '@/lib/creatorSession';
 import crypto from 'crypto';
+
+// Opt out of static generation for this API route
+// This route requires database access and cannot be prerendered
+export const dynamic = 'force-dynamic';
 
 interface CreateMemoryPopRequest {
   recipient_name: string;
@@ -65,6 +68,9 @@ function validatePayload(body: unknown): body is CreateMemoryPopRequest {
 
 export async function POST(request: NextRequest) {
   try {
+    // Lazy import to prevent module evaluation during build
+    const { supabaseServer } = await import('@/lib/supabaseServer');
+
     // Parse and validate request
     const body = await request.json();
 

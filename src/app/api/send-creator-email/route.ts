@@ -23,7 +23,9 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabaseServer";
+
+// Opt out of static generation for this API route
+export const dynamic = 'force-dynamic';
 import { Resend } from "resend";
 import CreatorWelcomeEmail from "@/emails/CreatorWelcome";
 import { hashManagementToken } from "@/lib/verification";
@@ -113,6 +115,9 @@ function isValidEmail(email: string): boolean {
  */
 export async function POST(request: NextRequest) {
   try {
+    // Lazy import to prevent module evaluation during build
+    const { supabaseServer } = await import("@/lib/supabaseServer");
+
     // Check if feature is enabled
     if (process.env.CREATOR_EMAIL_ENABLED !== 'true') {
       return NextResponse.json(

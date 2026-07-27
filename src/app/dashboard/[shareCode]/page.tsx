@@ -13,6 +13,9 @@ import { getCoverHeroStyle } from "@/lib/coverStyles";
 import { getCoverTheme } from "@/lib/coverTheme";
 import type { Metadata } from "next";
 
+// Opt out of static generation - this page requires database access
+export const dynamic = 'force-dynamic';
+
 // Date formatting and calculation helpers
 function formatCelebrationDate(dateString: string): string {
   const date = new Date(dateString);

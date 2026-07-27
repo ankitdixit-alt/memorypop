@@ -15,7 +15,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseServer } from '@/lib/supabaseServer';
+
+// Opt out of static generation for this API route
+export const dynamic = 'force-dynamic';
 
 interface CreateReactionRequest {
   memorypopId: string;
@@ -26,6 +28,9 @@ const VALID_REACTIONS = ['loved_it', 'made_me_emotional', 'made_me_laugh'];
 
 export async function POST(request: NextRequest) {
   try {
+    // Lazy import to prevent module evaluation during build
+    const { supabaseServer } = await import('@/lib/supabaseServer');
+
     const body: CreateReactionRequest = await request.json();
 
     // Validate required fields

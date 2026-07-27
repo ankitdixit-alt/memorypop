@@ -19,14 +19,19 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseServer } from '@/lib/supabaseServer';
 import { hashManagementToken } from '@/lib/verification';
 import { setCreatorSession } from '@/lib/creatorSession';
+
+// Opt out of static generation for this route
+export const dynamic = 'force-dynamic';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ token: string }> }
 ) {
+  // Lazy import to prevent module evaluation during build
+  const { supabaseServer } = await import('@/lib/supabaseServer');
+
   const { token } = await params;
 
   if (!token) {

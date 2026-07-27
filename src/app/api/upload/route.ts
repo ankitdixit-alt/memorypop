@@ -16,13 +16,18 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseServer } from '@/lib/supabaseServer';
+
+// Opt out of static generation for this API route
+export const dynamic = 'force-dynamic';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
 
 export async function POST(request: NextRequest) {
   try {
+    // Lazy import to prevent module evaluation during build
+    const { supabaseServer } = await import('@/lib/supabaseServer');
+
     // Parse multipart/form-data
     const formData = await request.formData();
     const file = formData.get('file') as File;

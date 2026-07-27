@@ -18,7 +18,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseServer } from '@/lib/supabaseServer';
+
+// Opt out of static generation for this API route
+export const dynamic = 'force-dynamic';
 
 interface UpdateStatusRequest {
   status: string;
@@ -31,6 +33,9 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Lazy import to prevent module evaluation during build
+    const { supabaseServer } = await import('@/lib/supabaseServer');
+
     const { id } = await params;
     const body: UpdateStatusRequest = await request.json();
 

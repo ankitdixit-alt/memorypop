@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+
+// Opt out of static generation for this API route
+export const dynamic = 'force-dynamic';
 import Stripe from "stripe";
-import { supabaseServer } from "@/lib/supabaseServer";
 
 // Initialize Stripe with secret key (server-side only)
 function getStripe() {
@@ -14,8 +16,11 @@ function getStripe() {
 }
 export async function POST(request: NextRequest) {
   try {
+    // Lazy import to prevent module evaluation during build
+    const { supabaseServer } = await import("@/lib/supabaseServer");
+
     const stripe = getStripe();
-    
+
     // Parse request body
     const body = await request.json();
     const { shareCode } = body;
