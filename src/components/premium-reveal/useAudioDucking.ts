@@ -5,6 +5,7 @@ interface UseAudioDuckingReturn {
   startBackgroundMusic: () => void;
   pauseBackgroundMusic: () => void;
   resumeBackgroundMusic: () => void;
+  fadeOutAndStop: (duration?: number) => void;
   duckForVideo: (videoElement: HTMLVideoElement) => void;
   unduckAfterVideo: () => void;
   duckForMessage: () => void;
@@ -16,7 +17,7 @@ interface UseAudioDuckingReturn {
 export function useAudioDucking(): UseAudioDuckingReturn {
   const backgroundMusicRef = useRef<HTMLAudioElement>(null);
   const [isMuted, setIsMuted] = useState(false);
-  const [originalVolume] = useState(0.6); // 60% volume for background music
+  const [originalVolume] = useState(0.4); // 40% volume - subtle background presence
   const [duckedVolume] = useState(0.15); // 15% volume during video
 
   const startBackgroundMusic = useCallback(() => {
@@ -50,6 +51,25 @@ export function useAudioDucking(): UseAudioDuckingReturn {
       console.error('Failed to resume background music:', err);
     });
   }, []);
+
+  const fadeOutAndStop = useCallback((duration: number = 2000) => {
+    const audio = backgroundMusicRef.current;
+    if (!audio) return;
+
+    const currentVolume = audio.volume;
+    const fadeSteps = Math.floor(duration / 50); // Update every 50ms
+    const volumeDecrement = currentVolume / fadeSteps;
+
+    const fadeInterval = setInterval(() => {
+      if (audio.volume > 0.01) {
+        audio.volume = Math.max(0, audio.volume - volumeDecrement);
+      } else {
+        clearInterval(fadeInterval);
+        audio.pause();
+        audio.volume = originalVolume; // Reset for next time
+      }
+    }, 50);
+  }, [originalVolume]);
 
   const duckForVideo = useCallback((videoElement: HTMLVideoElement) => {
     const audio = backgroundMusicRef.current;
@@ -126,6 +146,7 @@ export function useAudioDucking(): UseAudioDuckingReturn {
     startBackgroundMusic,
     pauseBackgroundMusic,
     resumeBackgroundMusic,
+    fadeOutAndStop,
     duckForVideo,
     unduckAfterVideo,
     duckForMessage,

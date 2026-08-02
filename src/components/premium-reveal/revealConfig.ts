@@ -6,6 +6,7 @@ import {
   type ContributorMoment,
   type MediaType,
 } from './contributorMoments';
+import { getPremiumThemeAudioPath } from '@/config/premiumTheme';
 
 interface Memory {
   id: string;
@@ -118,8 +119,8 @@ export function getRevealConfig(
 
   return {
     music: {
-      src: '/music/premium-reveal-track.mp3',
-      volume: 0.6,
+      src: getPremiumThemeAudioPath(),
+      volume: 0.4, // 40% - subtle background presence
       duckedVolume: 0.15,
     },
     scenes,

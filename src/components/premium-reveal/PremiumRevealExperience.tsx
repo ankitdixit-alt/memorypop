@@ -54,6 +54,7 @@ export default function PremiumRevealExperience({
     startBackgroundMusic,
     pauseBackgroundMusic,
     resumeBackgroundMusic,
+    fadeOutAndStop,
     duckForVideo,
     unduckAfterVideo,
     duckForMessage,
@@ -183,8 +184,13 @@ export default function PremiumRevealExperience({
         },
       });
     }
-    onComplete?.();
-  }, [memorypopId, shareCode, currentScene, onComplete]);
+    // Fade out music before transitioning to gallery
+    fadeOutAndStop(2000); // 2 second fade
+    // Delay onComplete to allow fade to complete
+    setTimeout(() => {
+      onComplete?.();
+    }, 2000);
+  }, [memorypopId, shareCode, currentScene, onComplete, fadeOutAndStop]);
 
   const handleReplay = () => {
     if (typeof window !== 'undefined' && window.plausible) {
@@ -217,7 +223,12 @@ export default function PremiumRevealExperience({
         },
       });
     }
-    onComplete?.();
+    // Fade out music before transitioning to gallery
+    fadeOutAndStop(2000); // 2 second fade
+    // Delay onComplete to allow fade to complete
+    setTimeout(() => {
+      onComplete?.();
+    }, 2000);
   };
 
   // Render current scene

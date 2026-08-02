@@ -239,7 +239,7 @@ export default function ContributeForm({
             </div>
 
             <a
-              href={`/m/${shareCode}`}
+              href={`/m/${shareCode}?view=browse`}
               className="mt-8 inline-block rounded-full bg-[#FF6B57] px-8 py-4 font-semibold text-white active:ring-2 active:ring-white active:ring-offset-2 transition-all"
             >
               View All Memories
