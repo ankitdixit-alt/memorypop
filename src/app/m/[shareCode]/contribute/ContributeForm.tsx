@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useState, useMemo } from "react";
+import { ChangeEvent, useState, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getCelebrationExperience, type CelebrationExperience } from "@/lib/celebrationExperience";
 import { ShareButtons } from "@/components/ShareButtons";
@@ -36,6 +36,9 @@ export default function ContributeForm({
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [contributorCount, setContributorCount] = useState<number>(0);
 
+  const photoPreviewRef = useRef<HTMLDivElement>(null);
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
+
   // Derive celebration experience from props (no database query needed)
   const celebrationExperience = useMemo<CelebrationExperience>(() => {
     return getCelebrationExperience({
@@ -58,6 +61,14 @@ export default function ContributeForm({
 
     setPhotoFile(file);
     setPhoto(URL.createObjectURL(file));
+
+    // Scroll to show photo preview and submit button after upload
+    requestAnimationFrame(() => {
+      submitButtonRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
+    });
   }
 
   async function uploadPhotoToSupabase(file: File): Promise<string | null> {
@@ -395,11 +406,13 @@ export default function ContributeForm({
           />
 
           {photo && (
-            <img
-              src={photo}
-              alt="Selected memory"
-              className="mt-4 h-48 w-full rounded-2xl object-cover"
-            />
+            <div ref={photoPreviewRef}>
+              <img
+                src={photo}
+                alt="Selected memory"
+                className="mt-4 h-48 w-full rounded-2xl object-cover"
+              />
+            </div>
           )}
 
           {submitError && (
@@ -416,6 +429,7 @@ export default function ContributeForm({
           )}
 
           <button
+            ref={submitButtonRef}
             onClick={handleSubmit}
             disabled={isSubmitting || !name || !message}
             className="mt-8 w-full rounded-full bg-[#FF6B57] px-8 py-4 font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed active:ring-2 active:ring-white active:ring-offset-2 transition-all"
