@@ -36,7 +36,10 @@ export default function ContributeForm({
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [contributorCount, setContributorCount] = useState<number>(0);
 
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const messageTextareaRef = useRef<HTMLTextAreaElement>(null);
   const photoPreviewRef = useRef<HTMLDivElement>(null);
+  const errorMessageRef = useRef<HTMLDivElement>(null);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
 
   // Derive celebration experience from props (no database query needed)
@@ -62,11 +65,14 @@ export default function ContributeForm({
     setPhotoFile(file);
     setPhoto(URL.createObjectURL(file));
 
-    // Scroll to show photo preview and submit button after upload
+    // Scroll to reveal photo preview and next action (submit button)
+    // Use double-RAF to ensure DOM has updated with preview
     requestAnimationFrame(() => {
-      submitButtonRef.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
+      requestAnimationFrame(() => {
+        photoPreviewRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
       });
     });
   }
@@ -100,6 +106,24 @@ export default function ContributeForm({
   async function handleSubmit() {
     if (!name || !message) {
       setSubmitError("Please enter your name and message");
+
+      // Scroll to first empty required field
+      requestAnimationFrame(() => {
+        if (!name && nameInputRef.current) {
+          nameInputRef.current.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+          });
+          nameInputRef.current.focus();
+        } else if (!message && messageTextareaRef.current) {
+          messageTextareaRef.current.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+          });
+          messageTextareaRef.current.focus();
+        }
+      });
+
       return;
     }
 
@@ -130,6 +154,15 @@ export default function ContributeForm({
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
         setSubmitError(errorData.error || "Failed to save memory");
         setIsSubmitting(false);
+
+        // Scroll to error message
+        requestAnimationFrame(() => {
+          errorMessageRef.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+          });
+        });
+
         return;
       }
 
@@ -157,6 +190,14 @@ export default function ContributeForm({
     } catch (error) {
       setSubmitError("An error occurred");
       setIsSubmitting(false);
+
+      // Scroll to error message
+      requestAnimationFrame(() => {
+        errorMessageRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      });
     }
   }
 
@@ -348,6 +389,7 @@ export default function ContributeForm({
           <label className="mt-8 block font-semibold">Your Name</label>
 
           <input
+            ref={nameInputRef}
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder={celebrationExperience?.formPlaceholders?.name || "e.g. Mum"}
@@ -357,6 +399,7 @@ export default function ContributeForm({
           <label className="mt-8 block font-semibold">{celebrationExperience?.contributorPrompt}</label>
 
           <textarea
+            ref={messageTextareaRef}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder={celebrationExperience?.formPlaceholders?.message || celebrationExperience?.contributorPlaceholder}
@@ -416,7 +459,7 @@ export default function ContributeForm({
           )}
 
           {submitError && (
-            <div className="mt-6 rounded-lg border-2 border-red-300 bg-red-50 p-4 text-center">
+            <div ref={errorMessageRef} className="mt-6 rounded-lg border-2 border-red-300 bg-red-50 p-4 text-center">
               <p className="font-semibold text-red-800">Error</p>
               <p className="mt-1 text-sm text-red-600">{submitError}</p>
               <button
