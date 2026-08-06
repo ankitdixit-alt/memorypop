@@ -29,7 +29,7 @@ export default function MemoryCard({ memory, onClick }: MemoryCardProps) {
   const effectiveMediaType = (mediaType === 'photo' && !hasValidPhoto) ? 'text' : mediaType;
 
   // Check if photo is a GIF (for proper animation handling)
-  const isGif = photoUrl && photoUrl.toLowerCase().includes('.gif');
+  const isGif = !!(photoUrl && photoUrl.toLowerCase().includes('.gif'));
 
   // Use full message for preview - CSS will handle line clamping with natural fade
   const messagePreview = message || '';

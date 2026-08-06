@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { getCelebrationExperience } from "@/lib/celebrationExperience";
 import { getCoverHeroStyle } from "@/lib/coverStyles";
@@ -43,6 +43,10 @@ export default function RevealExperience({
   const [selectedReaction, setSelectedReaction] = useState<string | null>(
     existingReaction?.reaction_type || null
   );
+  const [hasSwipedOnce, setHasSwipedOnce] = useState(false);
+  const [slideDirection, setSlideDirection] = useState<'left' | 'right' | null>(null);
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
 
   // Step 0: Welcome
   // Step 0.5: Mood Introduction (NEW)
@@ -86,7 +90,31 @@ export default function RevealExperience({
 
   const handleNext = () => {
     if (currentStep < totalSteps - 1) {
-      setCurrentStep((prev) => prev + 1);
+      // Only animate during memory screens
+      if (currentStep >= 1 && currentStep <= memories.length) {
+        setSlideDirection('left');
+        setTimeout(() => {
+          setCurrentStep((prev) => prev + 1);
+          setSlideDirection(null);
+        }, 200);
+      } else {
+        setCurrentStep((prev) => prev + 1);
+      }
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 0) {
+      // Only animate during memory screens
+      if (currentStep >= 1 && currentStep <= memories.length) {
+        setSlideDirection('right');
+        setTimeout(() => {
+          setCurrentStep((prev) => prev - 1);
+          setSlideDirection(null);
+        }, 200);
+      } else {
+        setCurrentStep((prev) => prev - 1);
+      }
     }
   };
 
@@ -96,6 +124,70 @@ export default function RevealExperience({
     // Move to thank you screen
     handleNext();
   };
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only enable during memory screens (steps 1 to memories.length)
+      if (currentStep >= 1 && currentStep <= memories.length) {
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          handleNext();
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          handlePrevious();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentStep, memories.length]);
+
+  // Swipe gesture detection
+  useEffect(() => {
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartX.current = e.touches[0].clientX;
+      touchStartY.current = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (touchStartX.current === null || touchStartY.current === null) return;
+
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+
+      const deltaX = touchEndX - touchStartX.current;
+      const deltaY = touchEndY - touchStartY.current;
+
+      // Only trigger if horizontal swipe is dominant (not vertical scroll)
+      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+        // Only enable during memory screens
+        if (currentStep >= 1 && currentStep <= memories.length) {
+          if (deltaX < 0) {
+            // Swipe left → next
+            handleNext();
+            setHasSwipedOnce(true);
+          } else {
+            // Swipe right → previous
+            handlePrevious();
+            setHasSwipedOnce(true);
+          }
+        }
+      }
+
+      touchStartX.current = null;
+      touchStartY.current = null;
+    };
+
+    window.addEventListener('touchstart', handleTouchStart);
+    window.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [currentStep, memories.length]);
 
   // Conditional rendering based on currentStep
   if (currentStep === 0) {
@@ -111,7 +203,18 @@ export default function RevealExperience({
     );
   } else if (currentStep <= memories.length) {
     const memoryIndex = currentStep - 1;
-    return <MemoryScreen memory={memories[memoryIndex]} onNext={handleNext} />;
+    return (
+      <MemoryScreen
+        memory={memories[memoryIndex]}
+        onNext={handleNext}
+        onPrevious={handlePrevious}
+        currentIndex={memoryIndex}
+        totalMemories={memories.length}
+        shareCode={shareCode}
+        showOnboardingHint={memoryIndex === 0 && !hasSwipedOnce}
+        slideDirection={slideDirection}
+      />
+    );
   } else if (currentStep === memories.length + 1) {
     return <FinalScreen celebrationExperience={celebrationExperience} onNext={handleNext} celebrationDate={celebrationDate} getCelebrationMessage={getCelebrationMessage} coverStyle={coverStyle} />;
   } else if (currentStep === memories.length + 2 && !hasReacted) {
@@ -229,47 +332,170 @@ function WelcomeScreen({
 function MemoryScreen({
   memory,
   onNext,
+  onPrevious,
+  currentIndex,
+  totalMemories,
+  shareCode,
+  showOnboardingHint,
+  slideDirection,
 }: {
   memory: Memory;
   onNext: () => void;
+  onPrevious: () => void;
+  currentIndex: number;
+  totalMemories: number;
+  shareCode: string;
+  showOnboardingHint: boolean;
+  slideDirection: 'left' | 'right' | null;
 }) {
+  const isFirst = currentIndex === 0;
+  const isLast = currentIndex === totalMemories - 1;
+
+  // Animation class based on slide direction
+  const getAnimationClass = () => {
+    if (slideDirection === 'left') {
+      return 'animate-slide-out-left';
+    } else if (slideDirection === 'right') {
+      return 'animate-slide-out-right';
+    }
+    return 'animate-slide-in';
+  };
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#fff8ef] px-6">
-      {/* Contributor photo - conditional */}
-      {memory.photo_url && (
-        <div className="mb-6 overflow-hidden rounded-lg">
-          <img
-            src={memory.photo_url}
-            alt={`Photo from ${memory.contributor_name}`}
-            className="max-h-64 w-auto object-contain"
-          />
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#fff8ef] px-6">
+      {/* Browse all memories - top right corner */}
+      <div className="absolute top-6 right-6 z-10">
+        <Link
+          href={`/m/${shareCode}`}
+          className="text-sm text-[#856b5f] hover:text-[#3a241e] transition-colors"
+        >
+          Browse all memories
+        </Link>
+      </div>
+
+      {/* Memory content with animation */}
+      <div className={`w-full flex flex-col items-center ${getAnimationClass()}`}>
+        {/* Contributor photo - conditional */}
+        {memory.photo_url && (
+          <div className="mb-6 overflow-hidden rounded-lg">
+            <img
+              src={memory.photo_url}
+              alt={`Photo from ${memory.contributor_name}`}
+              className="max-h-64 w-auto object-contain"
+            />
+          </div>
+        )}
+
+        {/* Contributor name */}
+        <h2 className="mb-4 text-center text-2xl font-semibold text-[#3a241e]">
+          {memory.contributor_name}
+        </h2>
+
+        {/* Memory text */}
+        <div className="mb-12 max-h-64 max-w-2xl overflow-y-auto rounded-lg bg-white p-6 text-center text-lg leading-relaxed text-[#3a241e]">
+          {memory.message || (
+            <span className="text-[#856b5f] italic">
+              {memory.photo_url
+                ? `${memory.contributor_name} shared a photo for you.`
+                : `${memory.contributor_name} left a memory.`
+              }
+            </span>
+          )}
         </div>
-      )}
 
-      {/* Contributor name */}
-      <h2 className="mb-4 text-center text-2xl font-semibold text-[#3a241e]">
-        {memory.contributor_name}
-      </h2>
-
-      {/* Memory text */}
-      <div className="mb-12 max-h-64 max-w-2xl overflow-y-auto rounded-lg bg-white p-6 text-center text-lg leading-relaxed text-[#3a241e]">
-        {memory.message || (
-          <span className="text-[#856b5f] italic">
-            {memory.photo_url
-              ? `${memory.contributor_name} shared a photo for you.`
-              : `${memory.contributor_name} left a memory.`
-            }
+        {/* Desktop navigation controls */}
+        <div className="hidden md:flex items-center gap-4 mb-8">
+          <button
+            onClick={onPrevious}
+            disabled={isFirst}
+            className={`rounded-full px-6 py-3 text-sm font-semibold transition-all ${
+              isFirst
+                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                : 'bg-[#ef6a57] text-white hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2'
+            }`}
+          >
+            ← Previous
+          </button>
+          <span className="text-sm text-[#856b5f]">
+            {currentIndex + 1} of {totalMemories}
           </span>
+          <button
+            onClick={onNext}
+            disabled={isLast}
+            className={`rounded-full px-6 py-3 text-sm font-semibold transition-all ${
+              isLast
+                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                : 'bg-[#ef6a57] text-white hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2'
+            }`}
+          >
+            Next →
+          </button>
+        </div>
+
+        {/* Mobile Next button */}
+        <button
+          onClick={onNext}
+          className="md:hidden rounded-full bg-[#ef6a57] px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2 transition-all"
+        >
+          Next
+        </button>
+
+        {/* Mobile onboarding hint */}
+        {showOnboardingHint && (
+          <div className="md:hidden mt-4 text-center">
+            <p className="text-sm text-[#856b5f] animate-pulse">
+              ← Swipe to continue →
+            </p>
+          </div>
         )}
       </div>
 
-      {/* Next button */}
-      <button
-        onClick={onNext}
-        className="rounded-full bg-[#ef6a57] px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2 transition-all"
-      >
-        Next
-      </button>
+      <style jsx>{`
+        @keyframes slide-in {
+          from {
+            opacity: 0;
+            transform: translateX(0);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        @keyframes slide-out-left {
+          from {
+            opacity: 1;
+            transform: translateX(0);
+          }
+          to {
+            opacity: 0;
+            transform: translateX(-30px);
+          }
+        }
+
+        @keyframes slide-out-right {
+          from {
+            opacity: 1;
+            transform: translateX(0);
+          }
+          to {
+            opacity: 0;
+            transform: translateX(30px);
+          }
+        }
+
+        .animate-slide-in {
+          animation: slide-in 150ms ease-out;
+        }
+
+        .animate-slide-out-left {
+          animation: slide-out-left 200ms ease-in;
+        }
+
+        .animate-slide-out-right {
+          animation: slide-out-right 200ms ease-in;
+        }
+      `}</style>
     </div>
   );
 }

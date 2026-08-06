@@ -35,7 +35,7 @@ export default function DetailModal({ memory, isOpen, onClose }: DetailModalProp
   const effectiveMediaType = (mediaType === 'photo' && !hasValidPhoto) ? 'text' : mediaType;
 
   // Check if photo is a GIF (for proper animation handling)
-  const isGif = photoUrl && photoUrl.toLowerCase().includes('.gif');
+  const isGif = !!(photoUrl && photoUrl.toLowerCase().includes('.gif'));
 
 
   // Handle ESC key
