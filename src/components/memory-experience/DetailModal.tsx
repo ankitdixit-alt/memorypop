@@ -28,10 +28,12 @@ export default function DetailModal({ memory, isOpen, onClose }: DetailModalProp
   const { contributorName, message, photoUrl, videoUrl, mediaType } = memory;
   const videoRef = useRef<HTMLVideoElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+  const mediaContainerRef = useRef<HTMLDivElement>(null);
 
   // Determine effective media type
   const hasValidPhoto = photoUrl && photoUrl.trim().length > 0;
   const effectiveMediaType = (mediaType === 'photo' && !hasValidPhoto) ? 'text' : mediaType;
+
 
   // Handle ESC key
   useEffect(() => {
@@ -118,17 +120,15 @@ export default function DetailModal({ memory, isOpen, onClose }: DetailModalProp
       );
     }
 
-    // Photo - only render if photoUrl exists
-    if (effectiveMediaType === 'photo' && photoUrl) {
+    // Photo - render when effectiveMediaType is photo (matches MemoryCard)
+    if (effectiveMediaType === 'photo') {
       return (
         <>
           <Image
-            src={photoUrl}
+            src={photoUrl!}
             alt={`Memory from ${contributorName}`}
             fill
             className="object-cover"
-            priority
-            sizes="(max-width: 1024px) 100vw, 60vw"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
         </>
@@ -150,7 +150,7 @@ export default function DetailModal({ memory, isOpen, onClose }: DetailModalProp
     );
   };
 
-  // Text-only layout (centered, full-screen)
+  // Text-only layout (handwritten letter experience)
   if (effectiveMediaType === 'text') {
     return (
       <div
@@ -159,9 +159,17 @@ export default function DetailModal({ memory, isOpen, onClose }: DetailModalProp
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm
                    animate-in fade-in duration-200"
       >
-        <div className="relative w-full h-full max-w-4xl mx-4 bg-gradient-to-br from-[#fff8ef] via-[#ffe8d6] to-[#ffd4cc]
-                        rounded-lg overflow-hidden shadow-2xl
-                        animate-in zoom-in-95 duration-300">
+        <div
+          className="relative w-full h-full max-w-3xl mx-4 bg-gradient-to-br from-[#fdfbf7] via-[#faf6f0] to-[#f5f0e8]
+                      rounded-lg overflow-hidden shadow-2xl
+                      animate-in zoom-in-95 duration-300"
+          style={{
+            backgroundImage: `
+              url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E")
+            `,
+            backgroundBlendMode: 'multiply',
+          }}
+        >
           {/* Close button */}
           <button
             onClick={onClose}
@@ -175,25 +183,20 @@ export default function DetailModal({ memory, isOpen, onClose }: DetailModalProp
             </svg>
           </button>
 
-          <div className="flex min-h-full flex-col items-center justify-center px-8 py-12">
-            <div className="max-w-2xl w-full space-y-12">
-              {/* Contributor name tile */}
-              <div className="relative aspect-video rounded-lg overflow-hidden">
-                {renderMedia()}
-              </div>
-
-              {/* Message */}
+          <div className="flex h-full flex-col items-center justify-center px-8 md:px-16 py-16 md:py-24">
+            <div className="max-w-lg w-full space-y-14">
+              {/* Message - The Hero */}
               {message && (
-                <div className="space-y-4">
-                  <p className="text-lg md:text-xl leading-relaxed text-[#3a241e] text-center whitespace-pre-wrap">
+                <div>
+                  <p className="text-2xl md:text-3xl leading-loose tracking-wide text-[#3a241e] text-center whitespace-pre-wrap font-serif">
                     {message}
                   </p>
                 </div>
               )}
 
               {/* Signature */}
-              <div className="pt-8 border-t border-[#856b5f]/20 text-center">
-                <p className="text-base md:text-lg text-[#856b5f] italic">
+              <div className="pt-12 border-t border-[#856b5f]/12 text-center">
+                <p className="text-xl md:text-2xl text-[#856b5f] italic font-serif tracking-wide">
                   — {contributorName}
                 </p>
               </div>
@@ -228,9 +231,12 @@ export default function DetailModal({ memory, isOpen, onClose }: DetailModalProp
           </svg>
         </button>
 
-        <div className="flex min-h-full flex-col lg:flex-row">
+        <div className="flex h-full flex-col lg:flex-row">
           {/* Media Section */}
-          <div className="relative flex-shrink-0 lg:w-[60%] h-[50vh] lg:h-full">
+          <div
+            ref={mediaContainerRef}
+            className="relative flex-shrink-0 w-full lg:w-[60%] h-[50vh] lg:h-full"
+          >
             {renderMedia()}
           </div>
 

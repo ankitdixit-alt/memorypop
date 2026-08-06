@@ -438,8 +438,12 @@ export default function ContributeForm({
           )}
 
           <label className="mt-8 block font-semibold">
-            Add a favourite photo <span className="text-gray-400">(optional)</span>
+            Bring your memory to life with a photo
           </label>
+
+          <p className="mt-2 text-sm text-[#6B5B52]">
+            Photos make memories more vivid and personal. Share a favorite moment, a place you both love, or anything that captures your connection.
+          </p>
 
           <input
             type="file"
