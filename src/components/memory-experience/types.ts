@@ -11,6 +11,8 @@ export interface Memory {
   videoUrl?: string;
   mediaType: 'photo' | 'video' | 'text';
   createdAt: Date;
+  // Multi-photo support
+  multiplePhotos?: string[];
 }
 
 // MemoryPopClient memory shape (from database)

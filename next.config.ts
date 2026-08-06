@@ -12,7 +12,17 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'gvfpgawbvuttglfscngg.supabase.co',
       },
+      {
+        protocol: 'https',
+        hostname: 'media.giphy.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'commondatastorage.googleapis.com',
+      },
     ],
+    // Allow GIFs to animate (disable optimization for GIFs)
+    unoptimized: false,
   },
 };
 

@@ -34,6 +34,9 @@ export default function DetailModal({ memory, isOpen, onClose }: DetailModalProp
   const hasValidPhoto = photoUrl && photoUrl.trim().length > 0;
   const effectiveMediaType = (mediaType === 'photo' && !hasValidPhoto) ? 'text' : mediaType;
 
+  // Check if photo is a GIF (for proper animation handling)
+  const isGif = photoUrl && photoUrl.toLowerCase().includes('.gif');
+
 
   // Handle ESC key
   useEffect(() => {
@@ -92,7 +95,7 @@ export default function DetailModal({ memory, isOpen, onClose }: DetailModalProp
   const renderMedia = () => {
     if (effectiveMediaType === 'text') {
       return (
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#f5e6d3] to-[#e8d4c0] p-12">
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#f9f6f1] to-[#f5f0e8] p-12">
           <div className="text-center max-w-md">
             <p className="text-4xl md:text-5xl font-serif text-[#3a241e] mb-4">
               {contributorName}
@@ -129,6 +132,7 @@ export default function DetailModal({ memory, isOpen, onClose }: DetailModalProp
             alt={`Memory from ${contributorName}`}
             fill
             className="object-cover"
+            unoptimized={isGif}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
         </>
@@ -137,7 +141,7 @@ export default function DetailModal({ memory, isOpen, onClose }: DetailModalProp
 
     // Fallback for missing media
     return (
-      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#f5e6d3] to-[#e8d4c0] p-12">
+      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#f9f6f1] to-[#f5f0e8] p-12">
         <div className="text-center max-w-md">
           <p className="text-4xl md:text-5xl font-serif text-[#3a241e] mb-4">
             {contributorName}
@@ -150,25 +154,19 @@ export default function DetailModal({ memory, isOpen, onClose }: DetailModalProp
     );
   };
 
-  // Text-only layout (handwritten letter experience)
+  // Text-only layout (optimized for reading)
   if (effectiveMediaType === 'text') {
     return (
       <div
         ref={modalRef}
         onClick={handleBackdropClick}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40
                    animate-in fade-in duration-200"
       >
         <div
-          className="relative w-full h-full max-w-3xl mx-4 bg-gradient-to-br from-[#fdfbf7] via-[#faf6f0] to-[#f5f0e8]
-                      rounded-lg overflow-hidden shadow-2xl
+          className="relative w-full h-full max-w-2xl mx-4 bg-[#fefdfb]
+                      rounded-3xl overflow-hidden shadow-2xl
                       animate-in zoom-in-95 duration-300"
-          style={{
-            backgroundImage: `
-              url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E")
-            `,
-            backgroundBlendMode: 'multiply',
-          }}
         >
           {/* Close button */}
           <button
@@ -183,20 +181,20 @@ export default function DetailModal({ memory, isOpen, onClose }: DetailModalProp
             </svg>
           </button>
 
-          <div className="flex h-full flex-col items-center justify-center px-8 md:px-16 py-16 md:py-24">
-            <div className="max-w-lg w-full space-y-14">
-              {/* Message - The Hero */}
+          <div className="flex h-full flex-col items-center justify-center px-8 md:px-20 py-16 md:py-24">
+            <div className="max-w-xl w-full space-y-12">
+              {/* Message - optimized for reading */}
               {message && (
                 <div>
-                  <p className="text-2xl md:text-3xl leading-loose tracking-wide text-[#3a241e] text-center whitespace-pre-wrap font-serif">
+                  <p className="text-lg md:text-xl leading-relaxed text-[#2a1a14] whitespace-pre-wrap font-serif">
                     {message}
                   </p>
                 </div>
               )}
 
               {/* Signature */}
-              <div className="pt-12 border-t border-[#856b5f]/12 text-center">
-                <p className="text-xl md:text-2xl text-[#856b5f] italic font-serif tracking-wide">
+              <div className="pt-8 border-t border-[#3a241e]/10">
+                <p className="text-base md:text-lg text-[#5a4a3e] italic font-serif">
                   — {contributorName}
                 </p>
               </div>
@@ -215,8 +213,8 @@ export default function DetailModal({ memory, isOpen, onClose }: DetailModalProp
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm
                  animate-in fade-in duration-200"
     >
-      <div className="relative w-full h-full max-w-6xl mx-4 bg-gradient-to-br from-[#fff8ef] via-[#ffe8d6] to-[#ffd4cc]
-                      rounded-lg overflow-hidden shadow-2xl
+      <div className="relative w-full h-full max-w-6xl mx-4 bg-gradient-to-br from-[#f9f6f1] via-[#fefdfb] to-[#f5f0e8]
+                      rounded-3xl overflow-hidden shadow-2xl
                       animate-in zoom-in-95 duration-300">
         {/* Close button */}
         <button

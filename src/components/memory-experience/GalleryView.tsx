@@ -85,7 +85,7 @@ export default function GalleryView({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#fff8ef] via-[#ffe8d6] to-[#ffd4cc]">
+    <div className="min-h-screen bg-gradient-to-br from-[#f9f6f1] via-[#fefdfb] to-[#f5f0e8]">
       {/* Header */}
       <GalleryHeader recipientName={memoryPop.recipient_name} />
 

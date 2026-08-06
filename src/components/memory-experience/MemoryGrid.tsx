@@ -26,7 +26,7 @@ export default function MemoryGrid({ memories, onMemoryClick }: MemoryGridProps)
   return (
     <div className="w-full px-6 pb-16">
       <div
-        className="grid gap-6 md:gap-8 lg:gap-12 mx-auto
+        className="grid gap-6 md:gap-8 lg:gap-14 mx-auto
                    grid-cols-1
                    md:grid-cols-2
                    lg:grid-cols-2

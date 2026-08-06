@@ -50,7 +50,7 @@ export default function GalleryClosing({ contributors }: GalleryClosingProps) {
                     />
                   </div>
                 ) : (
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#f5e6d3] to-[#e8d4c0]
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#f9f6f1] to-[#f5f0e8]
                                   flex items-center justify-center ring-2 ring-[#856b5f]/20">
                     <span className="text-xl font-serif text-[#3a241e]">
                       {contributor.name.charAt(0).toUpperCase()}
