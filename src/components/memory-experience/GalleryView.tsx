@@ -37,16 +37,17 @@ export default function GalleryView({
 
   // Transform database memories to component format
   const memories = useMemo<Memory[]>(() => {
-    return rawMemories.map((mem) => {
+    return rawMemories.map((mem: any) => {
       // Validate and clean media URLs
       const hasValidPhotoUrl = mem.photo_url && mem.photo_url.trim().length > 0;
       const hasValidVideoUrl = mem.video_url && mem.video_url.trim().length > 0;
+      const hasMultiplePhotos = mem.multiple_photos && Array.isArray(mem.multiple_photos) && mem.multiple_photos.length > 0;
 
       // Determine media type
       let mediaType: 'photo' | 'video' | 'text' = 'text';
       if (hasValidVideoUrl) {
         mediaType = 'video';
-      } else if (hasValidPhotoUrl) {
+      } else if (hasValidPhotoUrl || hasMultiplePhotos) {
         mediaType = 'photo';
       }
 
@@ -57,6 +58,7 @@ export default function GalleryView({
         photoUrl: hasValidPhotoUrl ? mem.photo_url! : undefined,
         videoUrl: hasValidVideoUrl ? mem.video_url! : undefined,
         mediaType,
+        multiplePhotos: hasMultiplePhotos ? mem.multiple_photos : undefined,
         createdAt: new Date(mem.created_at),
       };
     });

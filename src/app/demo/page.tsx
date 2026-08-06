@@ -7,6 +7,7 @@ import { WelcomeSection } from './WelcomeSection'
 import { CoverSection } from './CoverSection'
 import { MessagesSection } from './MessagesSection'
 import { PhotosSection } from './PhotosSection'
+import { GalleryShowcaseSection } from './GalleryShowcaseSection'
 import { PremiumToggleSection } from './PremiumToggleSection'
 import { RecipientReactionSection } from './RecipientReactionSection'
 import { CreatorPerspectiveSection } from './CreatorPerspectiveSection'
@@ -101,6 +102,7 @@ export default function DemoPage() {
         onExpand={handleMessagesExpanded}
       />
       <PhotosSection photos={emmaBirthdayDemo.photos} isPremium={isPremium} />
+      <GalleryShowcaseSection isPremium={isPremium} />
       <PremiumToggleSection isPremium={isPremium} onToggle={handlePremiumToggle} />
       <RecipientReactionSection
         reaction={emmaBirthdayDemo.recipientReaction}
