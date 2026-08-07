@@ -2,17 +2,7 @@
 
 import { useEffect, useState } from 'react'
 
-interface CreatorPerspectiveSectionProps {
-  steps: string[]
-  creatorName: string
-  recipientName: string
-}
-
-export function CreatorPerspectiveSection({
-  steps,
-  creatorName,
-  recipientName,
-}: CreatorPerspectiveSectionProps) {
+export function HowItWorksSection() {
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
@@ -27,23 +17,32 @@ export function CreatorPerspectiveSection({
       { threshold: 0.2 }
     )
 
-    const section = document.getElementById('creator-perspective')
+    const section = document.getElementById('how-it-works')
     if (section) observer.observe(section)
 
     return () => observer.disconnect()
   }, [])
 
-  const simpleSteps = [
-    { icon: '💌', title: 'Invite', description: 'Share the link with friends and family' },
-    { icon: '💬', title: 'Friends contribute', description: 'They add memories, photos, and wishes' },
-    { icon: '🎁', title: 'Share', description: 'Deliver the surprise and watch the joy' },
+  const steps = [
+    {
+      icon: '🎁',
+      title: 'Create a MemoryPop',
+      description: 'Choose who you are celebrating',
+    },
+    {
+      icon: '💌',
+      title: 'Invite friends and family',
+      description: 'They add memories, photos, and wishes',
+    },
+    {
+      icon: '🎉',
+      title: 'Deliver one unforgettable surprise',
+      description: 'Watch them experience every message',
+    },
   ]
 
   return (
-    <section
-      id="creator-perspective"
-      className="py-20 px-6 bg-gradient-to-br from-gray-50 to-white"
-    >
+    <section id="how-it-works" className="py-20 px-6 bg-white">
       <div className="max-w-5xl mx-auto">
         {/* Title */}
         <h2
@@ -51,12 +50,12 @@ export function CreatorPerspectiveSection({
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
-          Three simple steps
+          How MemoryPop works
         </h2>
 
         {/* Steps */}
         <div className="grid md:grid-cols-3 gap-12">
-          {simpleSteps.map((step, idx) => (
+          {steps.map((step, idx) => (
             <div
               key={idx}
               className={`text-center transition-all duration-700 ${

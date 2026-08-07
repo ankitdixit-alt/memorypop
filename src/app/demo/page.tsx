@@ -1,21 +1,18 @@
 "use client"
 
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { emmaBirthdayDemo } from '@/data/demos/emma-birthday'
 import { trackEvent } from '@/lib/analytics'
-import { WelcomeSection } from './WelcomeSection'
-import { CoverSection } from './CoverSection'
-import { MessagesSection } from './MessagesSection'
-import { PhotosSection } from './PhotosSection'
-import { GalleryShowcaseSection } from './GalleryShowcaseSection'
-import { PremiumToggleSection } from './PremiumToggleSection'
+import { HeroSection } from './HeroSection'
+import { HowItWorksSection } from './HowItWorksSection'
+import { StandardExperienceSection } from './StandardExperienceSection'
+import { PremiumExperienceSection } from './PremiumExperienceSection'
+import { ComparisonSection } from './ComparisonSection'
 import { RecipientReactionSection } from './RecipientReactionSection'
 import { CreatorPerspectiveSection } from './CreatorPerspectiveSection'
 import { CtaSection } from './CtaSection'
 
 export default function DemoPage() {
-  const [isPremium, setIsPremium] = useState(false)
-  const [messagesExpanded, setMessagesExpanded] = useState(false)
   const [scrollDepthTracked, setScrollDepthTracked] = useState({
     '25': false,
     '50': false,
@@ -71,39 +68,17 @@ export default function DemoPage() {
     if (scrollDepthTracked['100']) {
       trackEvent('demo_completed', {
         occasion: emmaBirthdayDemo.occasion,
-        premium_viewed: isPremium,
-        messages_expanded: messagesExpanded,
       })
     }
-  }, [scrollDepthTracked, isPremium, messagesExpanded])
-
-  const handlePremiumToggle = (newIsPremium: boolean) => {
-    setIsPremium(newIsPremium)
-    trackEvent('demo_premium_toggled', {
-      to_premium: newIsPremium,
-      occasion: emmaBirthdayDemo.occasion,
-    })
-  }
-
-  const handleMessagesExpanded = () => {
-    setMessagesExpanded(true)
-    trackEvent('demo_see_more_clicked', {
-      occasion: emmaBirthdayDemo.occasion,
-    })
-  }
+  }, [scrollDepthTracked])
 
   return (
     <main ref={pageRef} className="min-h-screen bg-white">
-      <WelcomeSection demo={emmaBirthdayDemo} />
-      <CoverSection demo={emmaBirthdayDemo} isPremium={isPremium} />
-      <MessagesSection
-        messages={emmaBirthdayDemo.messages}
-        isPremium={isPremium}
-        onExpand={handleMessagesExpanded}
-      />
-      <PhotosSection photos={emmaBirthdayDemo.photos} isPremium={isPremium} />
-      <GalleryShowcaseSection isPremium={isPremium} />
-      <PremiumToggleSection isPremium={isPremium} onToggle={handlePremiumToggle} />
+      <HeroSection />
+      <HowItWorksSection />
+      <StandardExperienceSection />
+      <PremiumExperienceSection />
+      <ComparisonSection />
       <RecipientReactionSection
         reaction={emmaBirthdayDemo.recipientReaction}
         recipientName={emmaBirthdayDemo.recipient.name}

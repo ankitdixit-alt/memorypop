@@ -54,26 +54,20 @@ export function RecipientReactionSection({
       <div className="max-w-4xl mx-auto text-center">
         {/* Title */}
         <h2
-          className={`text-3xl md:text-4xl font-bold text-gray-900 mb-4 transition-all duration-500 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+          className={`text-3xl md:text-4xl font-bold text-gray-900 mb-6 transition-all duration-700 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
           The moment {recipientName} saw this
         </h2>
 
-        {/* Stats Line */}
         <p
-          className={`text-lg md:text-xl text-gray-600 mb-3 transition-all duration-500 delay-100 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+          className={`text-xl md:text-2xl font-medium text-gray-700 mb-10 transition-all duration-700 delay-100 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
           {stats.contributors} people. {stats.messages} messages. {stats.photos} photos.
-        </p>
-        <p
-          className={`text-xl md:text-2xl font-medium text-gray-800 mb-10 transition-all duration-500 delay-200 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-          }`}
-        >
+          <br />
           One unforgettable moment.
         </p>
 
