@@ -7,10 +7,14 @@ import type { DetailModalProps } from "./types";
 /**
  * Detail Modal Component
  *
- * Full-screen modal for viewing complete memory:
+ * Full-screen immersive modal for viewing complete memory.
+ * Used in production recipient experience only.
+ *
+ * Features:
  * - Photo/video display
  * - Full message text
  * - Contributor name signature
+ * - Multi-photo support
  *
  * Interaction:
  * - Click backdrop to close
@@ -18,21 +22,21 @@ import type { DetailModalProps } from "./types";
  * - Close button (X) in top-right
  * - Backdrop blur effect
  * - Body scroll lock when open
- *
- * Layout:
- * - Mobile: stacked (media top, message below)
- * - Desktop: side-by-side (60/40 split)
- * - Premium Reveal visual language
  */
 export default function DetailModal({ memory, isOpen, onClose }: DetailModalProps) {
-  const { contributorName, message, photoUrl, videoUrl, mediaType } = memory;
+  const { contributorName, message, photoUrl, videoUrl, mediaType, multiplePhotos } = memory;
   const videoRef = useRef<HTMLVideoElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const mediaContainerRef = useRef<HTMLDivElement>(null);
 
-  // Determine effective media type
+  // Check for valid visual media
   const hasValidPhoto = photoUrl && photoUrl.trim().length > 0;
-  const effectiveMediaType = (mediaType === 'photo' && !hasValidPhoto) ? 'text' : mediaType;
+  const hasMultiplePhotos = Array.isArray(multiplePhotos) && multiplePhotos.length > 0;
+  const hasVisualMedia = hasValidPhoto || hasMultiplePhotos;
+
+  // Determine effective media type
+  const effectiveMediaType =
+    (mediaType === 'photo' && !hasVisualMedia) ? 'text' : mediaType;
 
   // Check if photo is a GIF (for proper animation handling)
   const isGif = !!(photoUrl && photoUrl.toLowerCase().includes('.gif'));
@@ -123,20 +127,122 @@ export default function DetailModal({ memory, isOpen, onClose }: DetailModalProp
       );
     }
 
-    // Photo - render when effectiveMediaType is photo (matches MemoryCard)
+    // Photo - handle single or multiple photos
     if (effectiveMediaType === 'photo') {
-      return (
-        <>
-          <Image
-            src={photoUrl!}
-            alt={`Memory from ${contributorName}`}
-            fill
-            className="object-cover"
-            unoptimized={isGif}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
-        </>
-      );
+      // Multiple photos
+      if (hasMultiplePhotos && multiplePhotos) {
+        const photoCount = multiplePhotos.length;
+
+        // Single photo from multiplePhotos array
+        if (photoCount === 1) {
+          return (
+            <>
+              <Image
+                src={multiplePhotos[0]}
+                alt={`Memory from ${contributorName}`}
+                fill
+                className="object-cover"
+                unoptimized={multiplePhotos[0].toLowerCase().includes('.gif')}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
+            </>
+          );
+        }
+
+        // Two photos - side by side
+        if (photoCount === 2) {
+          return (
+            <div className="absolute inset-0 grid grid-cols-2 gap-1 p-2">
+              {multiplePhotos.slice(0, 2).map((url, idx) => (
+                <div key={idx} className="relative w-full h-full">
+                  <Image
+                    src={url}
+                    alt={`Memory ${idx + 1} from ${contributorName}`}
+                    fill
+                    className="object-cover rounded"
+                    unoptimized={url.toLowerCase().includes('.gif')}
+                  />
+                </div>
+              ))}
+            </div>
+          );
+        }
+
+        // Three photos - 2-column collage
+        if (photoCount === 3) {
+          return (
+            <div className="absolute inset-0 grid grid-cols-2 gap-1 p-2">
+              <div className="relative w-full h-full row-span-2">
+                <Image
+                  src={multiplePhotos[0]}
+                  alt={`Memory 1 from ${contributorName}`}
+                  fill
+                  className="object-cover rounded"
+                  unoptimized={multiplePhotos[0].toLowerCase().includes('.gif')}
+                />
+              </div>
+              <div className="relative w-full h-full">
+                <Image
+                  src={multiplePhotos[1]}
+                  alt={`Memory 2 from ${contributorName}`}
+                  fill
+                  className="object-cover rounded"
+                  unoptimized={multiplePhotos[1].toLowerCase().includes('.gif')}
+                />
+              </div>
+              <div className="relative w-full h-full">
+                <Image
+                  src={multiplePhotos[2]}
+                  alt={`Memory 3 from ${contributorName}`}
+                  fill
+                  className="object-cover rounded"
+                  unoptimized={multiplePhotos[2].toLowerCase().includes('.gif')}
+                />
+              </div>
+            </div>
+          );
+        }
+
+        // Four or more photos - 2x2 grid with optional count indicator
+        return (
+          <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-1 p-2">
+            {multiplePhotos.slice(0, 4).map((url, idx) => (
+              <div key={idx} className="relative w-full h-full">
+                <Image
+                  src={url}
+                  alt={`Memory ${idx + 1} from ${contributorName}`}
+                  fill
+                  className="object-cover rounded"
+                  unoptimized={url.toLowerCase().includes('.gif')}
+                />
+                {idx === 3 && photoCount > 4 && (
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded">
+                    <span className="text-white text-xl font-semibold">
+                      +{photoCount - 4}
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        );
+      }
+
+      // Single photo from photoUrl
+      if (hasValidPhoto) {
+        return (
+          <>
+            <Image
+              src={photoUrl!}
+              alt={`Memory from ${contributorName}`}
+              fill
+              className="object-cover"
+              unoptimized={isGif}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
+          </>
+        );
+      }
     }
 
     // Fallback for missing media
@@ -163,11 +269,9 @@ export default function DetailModal({ memory, isOpen, onClose }: DetailModalProp
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/40
                    animate-in fade-in duration-200"
       >
-        <div
-          className="relative w-full h-full max-w-2xl mx-4 bg-[#fefdfb]
-                      rounded-3xl overflow-hidden shadow-2xl
-                      animate-in zoom-in-95 duration-300"
-        >
+        <div className="relative w-full h-full max-w-2xl mx-4 bg-[#fefdfb]
+                        rounded-3xl overflow-hidden shadow-2xl
+                        animate-in zoom-in-95 duration-300">
           {/* Close button */}
           <button
             onClick={onClose}

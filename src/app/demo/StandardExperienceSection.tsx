@@ -1,10 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import GalleryView from '@/components/memory-experience/GalleryView'
+import { useEffect, useState, useRef, useMemo } from 'react'
+import MemoryGrid from '@/components/memory-experience/MemoryGrid'
+import DemoMemoryPreview from './DemoMemoryPreview'
+import type { Memory } from '@/components/memory-experience/types'
 
 export function StandardExperienceSection() {
   const [isVisible, setIsVisible] = useState(false)
+  const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null)
+  const scrollPositionRef = useRef<number>(0)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -25,7 +29,7 @@ export function StandardExperienceSection() {
   }, [])
 
   // Standard memories - text and single photo only
-  const standardMemories = [
+  const rawMemories = [
     {
       id: 'std-1',
       contributor_name: 'Sarah Chen',
@@ -68,17 +72,41 @@ export function StandardExperienceSection() {
     },
   ]
 
-  const mockMemoryPop = {
-    id: 'standard-demo',
-    recipient_name: 'Emma',
-    occasion: 'Birthday',
-    story: 'A beautiful shared memory',
-    share_code: 'standard-demo',
-    cover_style: 'warm',
-    tone: 'heartfelt',
-    is_premium: false,
-    celebration_date: new Date().toISOString(),
-    cover_photo_url: null,
+  // Transform to Memory format
+  const memories = useMemo<Memory[]>(() => {
+    return rawMemories.map((mem: any) => {
+      const hasValidPhotoUrl = mem.photo_url && mem.photo_url.trim().length > 0
+      const hasValidVideoUrl = mem.video_url && mem.video_url.trim().length > 0
+
+      let mediaType: 'photo' | 'video' | 'text' = 'text'
+      if (hasValidVideoUrl) {
+        mediaType = 'video'
+      } else if (hasValidPhotoUrl) {
+        mediaType = 'photo'
+      }
+
+      return {
+        id: mem.id,
+        contributorName: mem.contributor_name,
+        message: mem.message,
+        photoUrl: hasValidPhotoUrl ? mem.photo_url! : undefined,
+        videoUrl: hasValidVideoUrl ? mem.video_url! : undefined,
+        mediaType,
+        createdAt: new Date(mem.created_at),
+      }
+    })
+  }, [])
+
+  const handleMemoryClick = (memory: Memory) => {
+    scrollPositionRef.current = window.scrollY
+    setSelectedMemory(memory)
+  }
+
+  const handleModalClose = () => {
+    setSelectedMemory(null)
+    requestAnimationFrame(() => {
+      window.scrollTo(0, scrollPositionRef.current)
+    })
   }
 
   return (
@@ -141,12 +169,18 @@ export function StandardExperienceSection() {
             isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
           }`}
         >
-          <GalleryView
-            memoryPop={mockMemoryPop}
-            memories={standardMemories}
-            shareLink="https://memorypop.app/demo"
-          />
+          <div className="min-h-screen bg-gradient-to-br from-[#f9f6f1] via-[#fefdfb] to-[#f5f0e8] rounded-3xl p-8">
+            <div className="text-center mb-12">
+              <h3 className="text-3xl md:text-4xl font-serif text-[#3a241e] mb-2">Happy Birthday Emma!</h3>
+              <p className="text-lg text-[#856b5f]">Click any memory to preview</p>
+            </div>
+
+            <MemoryGrid memories={memories} onMemoryClick={handleMemoryClick} />
+          </div>
         </div>
+
+        {/* Demo Memory Preview Modal */}
+        <DemoMemoryPreview memory={selectedMemory} isOpen={!!selectedMemory} onClose={handleModalClose} />
       </div>
     </section>
   )
