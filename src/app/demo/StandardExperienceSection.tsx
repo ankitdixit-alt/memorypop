@@ -110,54 +110,72 @@ export function StandardExperienceSection() {
   }
 
   return (
-    <section id="standard-experience" className="py-20 px-6 bg-gradient-to-br from-gray-50 to-white">
+    <section id="standard-experience" className="py-24 px-6 bg-gradient-to-br from-gray-50 to-white">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-16">
           <h2
-            className={`text-3xl md:text-4xl font-bold text-gray-900 mb-4 transition-all duration-700 ${
+            className={`text-4xl md:text-5xl font-bold text-gray-900 mb-6 transition-all duration-700 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
           >
             A beautiful shared memory
           </h2>
           <p
-            className={`text-xl text-gray-600 max-w-3xl mx-auto mb-3 transition-all duration-700 delay-100 ${
+            className={`text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto font-medium transition-all duration-700 delay-100 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
           >
-            Standard gives you everything you need to create something meaningful
-          </p>
-          <p
-            className={`text-lg text-gray-500 italic transition-all duration-700 delay-200 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-          >
-            This is already a complete experience
+            Everything you need to create a memory they'll want to revisit
           </p>
         </div>
 
-        {/* Features */}
+        {/* Features - Customer-oriented highlights */}
         <div
-          className={`max-w-4xl mx-auto mb-12 transition-all duration-700 delay-300 ${
+          className={`max-w-6xl mx-auto mb-16 transition-all duration-700 delay-300 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 text-center">
+          <div className="grid md:grid-cols-3 gap-8">
             {[
-              { icon: '👥', label: 'Unlimited contributors' },
-              { icon: '💬', label: 'Text memories' },
-              { icon: '📸', label: 'One photo per person' },
-              { icon: '🎨', label: 'Beautiful Memory Wall' },
-              { icon: '✨', label: 'Elegant reveal' },
-              { icon: '👆', label: 'Swipe navigation' },
-              { icon: '❤️', label: 'Recipient reactions' },
-              { icon: '🔄', label: 'Replay anytime' },
-              { icon: '📄', label: 'PDF download' },
+              {
+                icon: '📸',
+                title: 'Photos that bring the moment back',
+                description: 'Every person can add up to 3 favourite photos',
+              },
+              {
+                icon: '🎥',
+                title: 'A little moment in motion',
+                description: 'Add a short 15-second video alongside the memory',
+              },
+              {
+                icon: '🎬',
+                title: 'Beautifully brought together',
+                description: 'MemoryPop turns everyone\'s contributions into a cinematic reveal with music',
+              },
+              {
+                icon: '✨',
+                title: 'Intuitive reveal',
+                description: 'Open, understand, experience, smile, browse, replay',
+              },
+              {
+                icon: '❤️',
+                title: 'Reactions and replies',
+                description: 'Let them react and respond to every memory',
+              },
+              {
+                icon: '🔄',
+                title: 'Replay anytime',
+                description: 'Revisit these moments on birthdays, anniversaries, whenever they need them',
+              },
             ].map((feature, idx) => (
-              <div key={idx} className="p-4">
-                <div className="text-3xl mb-2">{feature.icon}</div>
-                <p className="text-sm font-medium text-gray-700">{feature.label}</p>
+              <div
+                key={idx}
+                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100"
+              >
+                <div className="text-4xl mb-3">{feature.icon}</div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">{feature.title}</h3>
+                <p className="text-sm text-gray-600">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -169,7 +187,7 @@ export function StandardExperienceSection() {
             isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
           }`}
         >
-          <div className="min-h-screen bg-gradient-to-br from-[#f9f6f1] via-[#fefdfb] to-[#f5f0e8] rounded-3xl p-8">
+          <div className="bg-gradient-to-br from-[#f9f6f1] via-[#fefdfb] to-[#f5f0e8] rounded-3xl p-8 shadow-xl">
             <div className="text-center mb-12">
               <h3 className="text-3xl md:text-4xl font-serif text-[#3a241e] mb-2">Happy Birthday Emma!</h3>
               <p className="text-lg text-[#856b5f]">Click any memory to preview</p>

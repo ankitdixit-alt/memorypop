@@ -125,7 +125,7 @@ export function PremiumExperienceSection() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          {/* Premium Badge - Larger and more prominent */}
+          {/* Premium Badge with Price */}
           <div
             className={`inline-flex items-center gap-3 px-6 py-3 rounded-full text-base font-semibold
                         bg-gradient-to-r from-amber-400 via-orange-400 to-pink-400 text-white shadow-2xl mb-8
@@ -134,69 +134,55 @@ export function PremiumExperienceSection() {
             }`}
           >
             <span className="text-2xl">✨</span>
-            <span>Premium</span>
+            <span>Premium — €4.99</span>
           </div>
 
-          {/* Headline - Shorter and punchier */}
+          {/* Headline */}
           <h2
             className={`text-4xl md:text-5xl font-bold text-gray-900 mb-6 transition-all duration-700 delay-100 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
           >
-            More than memories.
-            <br />
-            <span className="bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">
-              An experience.
-            </span>
+            Make it uniquely theirs
           </h2>
 
-          {/* Subtitle - More concise */}
+          {/* Subtitle */}
           <p
             className={`text-xl md:text-2xl text-gray-700 max-w-2xl mx-auto font-medium transition-all duration-700 delay-200 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
           >
-            Everything in Standard, plus:
+            More room for every story — and more ways to make it theirs
           </p>
         </div>
 
-        {/* Features - 3 columns, simplified */}
+        {/* Features - Customer-oriented */}
         <div
           className={`max-w-6xl mx-auto mb-16 transition-all duration-700 delay-300 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
                 icon: '📸',
-                title: 'Multiple Photos',
-                description: 'Share up to 10 photos per person',
+                title: 'More moments, fewer compromises',
+                description: 'Each person can share up to 10 favourite photos',
               },
               {
                 icon: '🎥',
-                title: 'Video Messages',
-                description: 'Record heartfelt video memories',
-              },
-              {
-                icon: '🎬',
-                title: 'Cinematic Reveal',
-                description: 'Story-driven presentation flow',
+                title: 'More time to tell the story',
+                description: 'Share a video up to 90 seconds',
               },
               {
                 icon: '🎵',
-                title: 'Background Music',
-                description: 'Set the perfect emotional tone',
+                title: 'Their song. Their MemoryPop.',
+                description: 'Upload music that means something to them',
               },
               {
-                icon: '📖',
-                title: 'Paced Storytelling',
-                description: 'Each memory gets its moment',
-              },
-              {
-                icon: '💎',
-                title: 'Premium Quality',
-                description: 'Designed for unforgettable moments',
+                icon: '🎨',
+                title: 'A look that feels like them',
+                description: 'Choose from Premium frames and visual styles',
               },
             ].map((feature, idx) => (
               <div

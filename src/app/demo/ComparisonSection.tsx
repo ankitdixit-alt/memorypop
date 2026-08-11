@@ -25,20 +25,20 @@ export function ComparisonSection() {
 
   const comparisons = [
     {
-      standard: 'Read memories',
-      premium: 'Experience memories',
+      standard: 'Up to 3 photos per contributor',
+      premium: 'Up to 10 photos per contributor',
     },
     {
-      standard: 'One photo',
-      premium: 'Multiple photos + Videos',
+      standard: '15-second video per contributor',
+      premium: '90-second video per contributor',
     },
     {
-      standard: 'Simple reveal',
-      premium: 'Cinematic storytelling + Music',
+      standard: 'MemoryPop soundtrack',
+      premium: 'Upload your own music',
     },
     {
-      standard: 'Beautiful memory wall',
-      premium: 'Premium reveal experience',
+      standard: 'Signature MemoryPop look',
+      premium: 'Premium frames & personalization',
     },
   ]
 
@@ -94,7 +94,9 @@ export function ComparisonSection() {
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
-          Both are beautiful. Premium makes it unforgettable.
+          Standard gives you the MemoryPop experience.
+          <br />
+          Premium gives you more ways to make it personal.
         </p>
       </div>
     </section>
