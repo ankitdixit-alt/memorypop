@@ -562,16 +562,17 @@ function FinalScreen({
 
       {/* Continue button (to progress to reaction step) */}
       {onNext && (
-        <button
-          onClick={onNext}
-          className="rounded-full px-8 py-4 text-lg font-semibold transition-colors hover:opacity-90 active:ring-2 active:ring-white active:ring-offset-2 transition-all"
-          style={{
-            backgroundColor: theme.buttonBg,
-            color: theme.buttonText,
-          }}
-        >
-          Continue
-        </button>
+        <div className="flex flex-col items-center">
+          <p className="mb-4 text-sm text-[#856b5f]">
+            One more thing…
+          </p>
+          <button
+            onClick={onNext}
+            className="rounded-full px-8 py-4 text-lg font-semibold bg-[#ef6a57] text-white hover:bg-[#e05a47] shadow-lg active:ring-2 active:ring-white active:ring-offset-2 transition-all"
+          >
+            Continue
+          </button>
+        </div>
       )}
     </div>
   );
