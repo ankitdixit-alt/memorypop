@@ -88,7 +88,11 @@ export default function RevealExperience({
     ? memories.length + 3 // already reacted: welcome + memories + final + thank you
     : memories.length + 4; // not reacted: welcome + memories + final + reaction + thank you
 
+  // DEBUG: Log state
+  console.log('[RevealExperience] currentStep:', currentStep, 'totalSteps:', totalSteps, 'hasReacted:', hasReacted, 'memories:', memories.length);
+
   const handleNext = () => {
+    console.log('[handleNext] called from step:', currentStep, 'totalSteps-1:', totalSteps - 1);
     if (currentStep < totalSteps - 1) {
       // Only animate during memory screens
       if (currentStep >= 1 && currentStep <= memories.length) {
@@ -190,7 +194,9 @@ export default function RevealExperience({
   }, [currentStep, memories.length]);
 
   // Conditional rendering based on currentStep
+  console.log('[Render] Evaluating render branch for step:', currentStep, 'memories.length:', memories.length);
   if (currentStep === 0) {
+    console.log('[Render] → WelcomeScreen');
     return (
       <WelcomeScreen
         recipientName={recipientName}
@@ -203,6 +209,7 @@ export default function RevealExperience({
     );
   } else if (currentStep <= memories.length) {
     const memoryIndex = currentStep - 1;
+    console.log('[Render] → MemoryScreen, index:', memoryIndex, 'of', memories.length);
     return (
       <MemoryScreen
         memory={memories[memoryIndex]}
@@ -216,8 +223,11 @@ export default function RevealExperience({
       />
     );
   } else if (currentStep === memories.length + 1) {
+    console.log('[Render] → FinalScreen');
     return <FinalScreen celebrationExperience={celebrationExperience} onNext={handleNext} celebrationDate={celebrationDate} getCelebrationMessage={getCelebrationMessage} coverStyle={coverStyle} />;
   } else if (currentStep === memories.length + 2 && !hasReacted) {
+    console.log('[Render] → ReactionPrompt');
+
     // Show reaction prompt if user hasn't reacted (or still loading)
     return (
       <ReactionPrompt
@@ -245,6 +255,7 @@ export default function RevealExperience({
   }
 
   // Fallback (should not reach here)
+  console.log('[Render] → Fallback FinalScreen (unexpected!)');
   return <FinalScreen celebrationExperience={celebrationExperience} onNext={handleNext} celebrationDate={celebrationDate} getCelebrationMessage={getCelebrationMessage} coverStyle={coverStyle} />;
 }
 
@@ -421,12 +432,7 @@ function MemoryScreen({
           </span>
           <button
             onClick={onNext}
-            disabled={isLast}
-            className={`rounded-full px-6 py-3 text-sm font-semibold transition-all ${
-              isLast
-                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                : 'bg-[#ef6a57] text-white hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2'
-            }`}
+            className="rounded-full px-6 py-3 text-sm font-semibold transition-all bg-[#ef6a57] text-white hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2"
           >
             Next →
           </button>
