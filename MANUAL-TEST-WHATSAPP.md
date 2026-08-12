@@ -37,7 +37,7 @@
 
 ### Scenario 1: iPhone Safari → WhatsApp
 
-**Device**: iPhone ***\_\_***_ (iOS version: ***\_\_***_)
+**Device**: iPhone ***\_\_**** (iOS version: ****\_\_***)
 **Browser**: Safari
 **WhatsApp Status**: Installed
 
@@ -76,7 +76,7 @@
 
 ### Scenario 2: Android Chrome → WhatsApp
 
-**Device**: Android ***\_\_***_ (Version: ***\_\_***_)
+**Device**: Android ***\_\_**** (Version: ****\_\_***)
 **Browser**: Chrome
 **WhatsApp Status**: Installed
 
