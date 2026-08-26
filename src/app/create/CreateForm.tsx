@@ -5,8 +5,12 @@ import { getCoverTheme } from "@/lib/coverTheme";
 import { trackEvent } from "@/lib/analytics";
 import { trackCreateStarted } from "@/lib/analytics-ga4";
 import { type CelebrationMood } from "@/lib/celebrationMood";
+import { getOccasionConfig } from "@/lib/occasionExperience";
 import OccasionSelector from "@/components/OccasionSelector";
 import MoodSelector from "@/components/MoodSelector";
+import CuratedGifPicker from "@/components/contribute/CuratedGifPicker";
+import type { CuratedGif } from "@/lib/curatedGifs";
+import type { MediaItem, VideoMedia } from "@/components/memory-experience/types";
 
 interface CreateFormProps {
   initialOccasion: string;
@@ -18,12 +22,18 @@ export default function CreateForm({ initialOccasion }: CreateFormProps) {
   const [recipient, setRecipient] = useState("");
   const [story, setStory] = useState("");
   const [mood, setMood] = useState<CelebrationMood | null>(null); // Required, no default
-  const [photos, setPhotos] = useState<string[]>([]);
   const [isCreating, setIsCreating] = useState(false);
   const [createError, setCreateError] = useState("");
   const [selectedCover, setSelectedCover] = useState("none");
   const [celebrationDate, setCelebrationDate] = useState("");
   const [showOccasionSelector, setShowOccasionSelector] = useState(false);
+
+  // Phase 4: Creator multimedia state (matching contributor pattern)
+  const [creatorName, setCreatorName] = useState("");
+  const [photos, setPhotos] = useState<Array<{file: File; preview: string}>>([]);
+  const [selectedCuratedGif, setSelectedCuratedGif] = useState<CuratedGif | null>(null);
+  const [video, setVideo] = useState<{file: File; preview: string; duration: number} | null>(null);
+  const [uploadErrors, setUploadErrors] = useState<{photos?: string; gifs?: string; video?: string}>({});
 
   const progress = (step / 3) * 100; // 3 steps (1, 2, 3)
 
@@ -56,6 +66,19 @@ export default function CreateForm({ initialOccasion }: CreateFormProps) {
     trackCreateStarted(source, occasion);
   }, [occasion]);
 
+  // Clear mood if it becomes invalid for the new occasion
+  useEffect(() => {
+    if (!mood || !occasion) return;
+
+    const occasionConfig = getOccasionConfig(occasion);
+    const validAtmospheres = occasionConfig.atmospheres;
+
+    // If current mood is not in the list of valid atmospheres for this occasion, clear it
+    if (!validAtmospheres.includes(mood)) {
+      setMood(null);
+    }
+  }, [occasion, mood]);
+
   // Get composed celebration experience (occasion + mood)
   const celebrationExperience = useMemo(() => {
     if (occasion && recipient) {
@@ -74,18 +97,204 @@ export default function CreateForm({ initialOccasion }: CreateFormProps) {
     return getCoverTheme(selectedCover);
   }, [selectedCover]);
 
+  // Phase 4: Creator multimedia handlers (reuse contributor validation logic)
   function handlePhotoUpload(event: ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(event.target.files || []).slice(0, 3);
-    const photoUrls = files.map((file) => URL.createObjectURL(file));
-    setPhotos(photoUrls);
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+
+    // Validate count (Standard tier: max 3 photos)
+    const remainingSlots = 3 - photos.length;
+    if (files.length > remainingSlots) {
+      setUploadErrors(prev => ({
+        ...prev,
+        photos: `You can add up to 3 photos. You have ${remainingSlots} slot${remainingSlots === 1 ? '' : 's'} remaining.`
+      }));
+      return;
+    }
+
+    // Validate file types and sizes
+    for (const file of files) {
+      if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type)) {
+        setUploadErrors(prev => ({
+          ...prev,
+          photos: 'Only JPEG, PNG, and WebP photos are allowed.'
+        }));
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        setUploadErrors(prev => ({
+          ...prev,
+          photos: 'Each photo must be under 10MB.'
+        }));
+        return;
+      }
+    }
+
+    // Clear errors
+    setUploadErrors(prev => ({...prev, photos: undefined}));
+
+    // Add photos with preview URLs
+    const newPhotos = files.map(file => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+
+    setPhotos(prev => [...prev, ...newPhotos]);
+  }
+
+  function removePhoto(index: number) {
+    setPhotos(prev => {
+      const updated = [...prev];
+      URL.revokeObjectURL(updated[index].preview);
+      updated.splice(index, 1);
+      return updated;
+    });
+  }
+
+  function handleCuratedGifSelect(gif: CuratedGif) {
+    setSelectedCuratedGif(gif);
+    setUploadErrors(prev => ({...prev, gifs: undefined}));
+  }
+
+  function handleCuratedGifRemove() {
+    setSelectedCuratedGif(null);
+  }
+
+  async function handleVideoUpload(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate count (Standard tier: max 1 video)
+    if (video) {
+      setUploadErrors(prev => ({
+        ...prev,
+        video: 'You can add up to 1 video. Remove the existing video to add a different one.'
+      }));
+      return;
+    }
+
+    // Validate file type
+    if (!['video/mp4', 'video/quicktime', 'video/webm'].includes(file.type)) {
+      setUploadErrors(prev => ({
+        ...prev,
+        video: 'Only MP4, MOV, and WebM videos are allowed.'
+      }));
+      return;
+    }
+
+    // Validate file size
+    if (file.size > 50 * 1024 * 1024) {
+      setUploadErrors(prev => ({
+        ...prev,
+        video: 'Video must be under 50MB.'
+      }));
+      return;
+    }
+
+    // Client-side duration check (UX only, server will validate authoritatively)
+    const videoElement = document.createElement('video');
+    videoElement.preload = 'metadata';
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        videoElement.onloadedmetadata = () => resolve();
+        videoElement.onerror = () => reject(new Error('Could not load video'));
+        videoElement.src = URL.createObjectURL(file);
+      });
+
+      const duration = videoElement.duration;
+
+      if (!Number.isFinite(duration) || duration <= 0) {
+        setUploadErrors(prev => ({
+          ...prev,
+          video: 'Could not determine video duration. The file may be corrupted.'
+        }));
+        URL.revokeObjectURL(videoElement.src);
+        return;
+      }
+
+      if (duration > 15) {
+        setUploadErrors(prev => ({
+          ...prev,
+          video: `Video is ${duration.toFixed(1)} seconds long. Standard MemoryPops have a 15-second video limit.`
+        }));
+        URL.revokeObjectURL(videoElement.src);
+        return;
+      }
+
+      // Clear errors
+      setUploadErrors(prev => ({...prev, video: undefined}));
+
+      setVideo({
+        file,
+        preview: URL.createObjectURL(file),
+        duration,
+      });
+    } catch (error) {
+      setUploadErrors(prev => ({
+        ...prev,
+        video: 'Could not read video. Please ensure it is a valid video file.'
+      }));
+      URL.revokeObjectURL(videoElement.src);
+    }
+  }
+
+  function removeVideo() {
+    if (video) {
+      URL.revokeObjectURL(video.preview);
+    }
+    setVideo(null);
+  }
+
+  // Upload media to Supabase (reuse /api/upload endpoint from contributor flow)
+  async function uploadMediaToSupabase(
+    file: File,
+    mediaType: 'photo' | 'video',
+    shareCode: string
+  ): Promise<{
+    url: string;
+    filePath: string;
+    fileSize: number;
+    duration?: number;
+    validationProof?: string;
+  } | null> {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('shareCode', shareCode);
+      formData.append('mediaType', mediaType);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Upload failed' }));
+        console.error('Upload error:', errorData.error);
+        return null;
+      }
+
+      const data = await response.json();
+      return {
+        url: data.publicUrl,
+        filePath: data.filePath,
+        fileSize: data.fileSize,
+        duration: data.duration, // Only present for videos
+        validationProof: data.validationProof, // Only present for videos
+      };
+    } catch (error) {
+      console.error('Upload failed:', error);
+      return null;
+    }
   }
 
   async function saveMemoryPop() {
     setCreateError("");
     setIsCreating(true);
 
-    // Call server-side API instead of direct Supabase insert
     try {
+      // Step 1: Create MemoryPop (existing logic)
       const response = await fetch('/api/memorypops/create', {
         method: 'POST',
         headers: {
@@ -95,7 +304,7 @@ export default function CreateForm({ initialOccasion }: CreateFormProps) {
           recipient_name: recipient,
           occasion,
           story,
-          tone: mood, // Map mood to tone field for database
+          tone: mood,
           celebration_date: celebrationDate || null,
           cover_style: selectedCover,
         }),
@@ -109,15 +318,105 @@ export default function CreateForm({ initialOccasion }: CreateFormProps) {
         return;
       }
 
-      // Determine if user came from a landing page
+      const shareCode = result.shareCode;
+
+      // Step 2: If creator has multimedia, create first memory (Phase 4)
+      const hasMultimedia = photos.length > 0 || selectedCuratedGif || video;
+
+      if (hasMultimedia) {
+        try {
+          // Upload photos
+          const uploadedPhotos: MediaItem[] = [];
+          if (photos.length > 0) {
+            const photoUploads = await Promise.all(
+              photos.map(photo => uploadMediaToSupabase(photo.file, 'photo', shareCode))
+            );
+
+            for (const result of photoUploads) {
+              if (result) {
+                uploadedPhotos.push({
+                  url: result.url,
+                  uploaded_at: new Date().toISOString(),
+                  file_size_bytes: result.fileSize,
+                });
+              } else {
+                throw new Error('Photo upload failed');
+              }
+            }
+          }
+
+          // Add curated GIF (no upload needed - using stable CDN URLs)
+          const uploadedGifs: MediaItem[] = [];
+          if (selectedCuratedGif) {
+            uploadedGifs.push({
+              url: selectedCuratedGif.url,
+              uploaded_at: new Date().toISOString(),
+              file_size_bytes: 0, // Unknown for curated GIFs
+            });
+          }
+
+          // Upload video (with server-side validation and HMAC)
+          let uploadedVideo: VideoMedia | null = null;
+          if (video) {
+            const videoResult = await uploadMediaToSupabase(video.file, 'video', shareCode);
+            if (videoResult) {
+              // CRITICAL: Only accept server-validated duration with proof
+              if (typeof videoResult.duration !== 'number') {
+                throw new Error('Video duration validation failed. Please try again.');
+              }
+
+              if (!videoResult.validationProof) {
+                throw new Error('Video validation proof missing. Please try again.');
+              }
+
+              uploadedVideo = {
+                url: videoResult.url,
+                file_path: videoResult.filePath,
+                uploaded_at: new Date().toISOString(),
+                file_size_bytes: videoResult.fileSize,
+                duration_seconds: videoResult.duration,
+                validation_proof: videoResult.validationProof,
+              };
+            } else {
+              throw new Error('Video upload failed');
+            }
+          }
+
+          // Create first memory via /api/memories (reuse contributor endpoint)
+          const memoryResponse = await fetch('/api/memories', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              shareCode,
+              contributorName: creatorName || 'From the creator',
+              message: story,
+              photos: uploadedPhotos,
+              gifs: uploadedGifs,
+              video: uploadedVideo,
+            }),
+          });
+
+          if (!memoryResponse.ok) {
+            const errorData = await memoryResponse.json().catch(() => ({ error: 'Unknown error' }));
+            throw new Error(errorData.error || 'Failed to save creator memory');
+          }
+        } catch (multimediaError) {
+          // Multimedia upload failed, but MemoryPop was created
+          // Log error but continue to success page (MemoryPop is valid without multimedia)
+          console.error('Creator multimedia upload failed:', multimediaError);
+          setCreateError('MemoryPop created, but multimedia upload failed. You can add memories later.');
+        }
+      }
+
+      // Step 3: Track and redirect
       const referrer = document.referrer;
       const fromLandingPage = referrer.includes('birthday-memory-book') ||
         referrer.includes('retirement-memory-book') ||
         referrer.includes('farewell-memory-book');
 
-      // Track create_completed event (Mixpanel)
+      // Track create_completed event (Mixpanel) - Phase 4: include multimedia tracking
       trackEvent('create_completed', {
-        share_code: result.shareCode,
+        share_code: shareCode,
         occasion: occasion,
         recipient_name: recipient,
         celebration_date: celebrationDate || null,
@@ -125,19 +424,20 @@ export default function CreateForm({ initialOccasion }: CreateFormProps) {
         has_story: !!story,
         has_photos: photos.length > 0,
         photo_count: photos.length,
+        has_gif: !!selectedCuratedGif,
+        has_video: !!video,
+        has_creator_multimedia: hasMultimedia,
+        creator_name_provided: !!creatorName,
         selected_cover: selectedCover,
         from_landing_page: fromLandingPage,
       });
 
-      // Track create_completed event (GA4 - Phase 2C)
+      // Track create_completed event (GA4)
       const { trackCreateCompleted } = await import('@/lib/analytics-ga4');
-      trackCreateCompleted(result.shareCode, occasion, fromLandingPage);
+      trackCreateCompleted(shareCode, occasion, fromLandingPage);
 
-      // Redirect to success page with management token
-      // Session cookie already established by server
-      // Management token passed once for recovery display
-      // SECURITY: Token in URL is acceptable (client-side navigation, consumed immediately)
-      window.location.href = `/success?shareCode=${result.shareCode}&token=${result.managementToken}&recipient=${encodeURIComponent(
+      // Redirect to success page
+      window.location.href = `/success?shareCode=${shareCode}&token=${result.managementToken}&recipient=${encodeURIComponent(
         recipient
       )}&occasion=${encodeURIComponent(occasion)}`;
 
@@ -265,6 +565,7 @@ export default function CreateForm({ initialOccasion }: CreateFormProps) {
               <MoodSelector
                 selectedMood={mood}
                 onSelect={(selectedMood) => setMood(selectedMood)}
+                occasion={occasion}
               />
             </div>
 
@@ -390,32 +691,139 @@ export default function CreateForm({ initialOccasion }: CreateFormProps) {
               </div>
             )}
 
-            <div className="mt-6">
-              <label className="block font-semibold">
-                Share a few favourite memories{" "}
-                <span className="text-gray-400">(optional)</span>
-              </label>
+            {/* Phase 4: Creator Multimedia Section */}
+            <div className="mt-8 border-t border-[#F0DED2] pt-8">
+              <h2 className="text-2xl font-bold mb-2">Add Photos, GIFs, or Video (Optional)</h2>
+              <p className="text-gray-600 mb-6">
+                As the creator, you can be the first contributor! Add up to 3 photos, 1 GIF, and 1 video (≤15s).
+              </p>
 
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handlePhotoUpload}
-                className="mt-3 block w-full rounded-2xl border border-[#F0DED2] bg-white px-5 py-4 text-sm focus:border-[#FF6B57] focus:ring-2 focus:ring-[#FF6B57] focus:ring-opacity-50 outline-none"
-              />
+              {/* Creator Name */}
+              <div className="mb-6">
+                <label className="block font-semibold mb-2">Your Name</label>
+                <p className="text-sm text-gray-600 mb-3">
+                  So {recipient} knows who started this MemoryPop.
+                </p>
+                <input
+                  type="text"
+                  value={creatorName}
+                  onChange={(e) => setCreatorName(e.target.value)}
+                  placeholder="Your name (optional)"
+                  className="w-full rounded-2xl border border-[#F0DED2] px-5 py-4 text-lg outline-none focus:border-[#FF6B57] focus:ring-2 focus:ring-[#FF6B57]"
+                />
+                <p className="text-xs text-gray-500 mt-2">
+                  Optional — if left blank, we'll show "From the creator".
+                </p>
+              </div>
 
-              {photos.length > 0 && (
-                <div className="mt-4 grid grid-cols-3 gap-3">
-                  {photos.map((photo) => (
-                    <img
-                      key={photo}
-                      src={photo}
-                      alt="Selected memory"
-                      className="h-24 w-full rounded-2xl object-cover"
+              {/* Photo Upload */}
+              <div className="mb-6">
+                <label className="block font-semibold mb-2">📸 Photos (up to 3)</label>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  multiple
+                  onChange={handlePhotoUpload}
+                  disabled={photos.length >= 3}
+                  className="hidden"
+                  id="creator-photo-upload"
+                />
+                <label
+                  htmlFor="creator-photo-upload"
+                  className={`block text-center rounded-2xl border-2 border-dashed p-8 cursor-pointer transition-all ${
+                    photos.length >= 3
+                      ? 'border-gray-300 bg-gray-50 cursor-not-allowed'
+                      : 'border-[#F0DED2] hover:border-[#FF6B57] hover:bg-[#FFF1EC]'
+                  }`}
+                >
+                  <p className="text-lg font-semibold">
+                    {photos.length >= 3 ? '3/3 Photos Added' : `Add Photos (${photos.length}/3)`}
+                  </p>
+                  <p className="text-sm text-gray-600 mt-1">JPEG, PNG, or WebP • Max 10MB each</p>
+                </label>
+
+                {uploadErrors.photos && (
+                  <p className="mt-2 text-sm text-red-600">{uploadErrors.photos}</p>
+                )}
+
+                {/* Photo Previews */}
+                {photos.length > 0 && (
+                  <div className="mt-4 grid grid-cols-3 gap-3">
+                    {photos.map((photo, idx) => (
+                      <div key={idx} className="relative">
+                        <img
+                          src={photo.preview}
+                          alt={`Photo ${idx + 1}`}
+                          className="w-full h-32 object-cover rounded-lg"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removePhoto(idx)}
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* GIF Picker */}
+              <div className="mb-6">
+                <label className="block font-semibold mb-2">🎞️ Curated GIF (up to 1)</label>
+                <CuratedGifPicker
+                  occasion={occasion}
+                  selectedGifId={selectedCuratedGif?.id}
+                  onSelect={handleCuratedGifSelect}
+                  onRemove={handleCuratedGifRemove}
+                />
+                {uploadErrors.gifs && (
+                  <p className="mt-2 text-sm text-red-600">{uploadErrors.gifs}</p>
+                )}
+              </div>
+
+              {/* Video Upload */}
+              <div className="mb-6">
+                <label className="block font-semibold mb-2">🎥 Video (up to 1, ≤15 seconds)</label>
+                {!video ? (
+                  <>
+                    <input
+                      type="file"
+                      accept="video/mp4,video/quicktime,video/webm"
+                      onChange={handleVideoUpload}
+                      className="hidden"
+                      id="creator-video-upload"
                     />
-                  ))}
-                </div>
-              )}
+                    <label
+                      htmlFor="creator-video-upload"
+                      className="block text-center rounded-2xl border-2 border-dashed border-[#F0DED2] p-8 cursor-pointer hover:border-[#FF6B57] hover:bg-[#FFF1EC] transition-all"
+                    >
+                      <p className="text-lg font-semibold">Add Video</p>
+                      <p className="text-sm text-gray-600 mt-1">MP4, MOV, or WebM • Max 50MB • ≤15 seconds</p>
+                    </label>
+                  </>
+                ) : (
+                  <div className="relative">
+                    <video
+                      src={video.preview}
+                      controls
+                      className="w-full rounded-lg"
+                    />
+                    <button
+                      type="button"
+                      onClick={removeVideo}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full px-4 py-2 hover:bg-red-600"
+                    >
+                      Remove Video
+                    </button>
+                    <p className="mt-2 text-sm text-gray-600">Duration: {video.duration.toFixed(1)}s</p>
+                  </div>
+                )}
+                {uploadErrors.video && (
+                  <p className="mt-2 text-sm text-red-600">{uploadErrors.video}</p>
+                )}
+              </div>
             </div>
 
             <button
@@ -465,10 +873,10 @@ export default function CreateForm({ initialOccasion }: CreateFormProps) {
 
               {photos.length > 0 && (
                 <div className="mt-8 grid grid-cols-3 gap-3">
-                  {photos.map((photo) => (
+                  {photos.map((photo, idx) => (
                     <img
-                      key={photo}
-                      src={photo}
+                      key={idx}
+                      src={photo.preview}
                       alt="Memory"
                       className="h-28 w-full rounded-2xl object-cover shadow"
                     />

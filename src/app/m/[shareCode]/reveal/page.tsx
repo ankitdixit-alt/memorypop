@@ -77,10 +77,10 @@ export default async function RevealPage({
     notFound();
   }
 
-  // Fetch memories with photos
+  // Fetch memories with multimedia (JSONB columns + legacy fields)
   const { data: memories, error: memoriesError } = await supabaseServer
     .from("memories")
-    .select("*")
+    .select("id, contributor_name, message, created_at, photo_url, photos, gifs, video")
     .eq("memorypop_id", memoryPop.id)
     .order("created_at", { ascending: false }); // Most recent first for impact
 

@@ -21,10 +21,17 @@ interface DemoMemoryPreviewProps {
  *
  * Every memory (text, photo, video, multi-photo) opens in the SAME footprint.
  * Content adapts to the shell, not vice versa.
+ *
+ * NOTE: Demo pages use hardcoded fake data with flexible structure including
+ * videoUrl and multiplePhotos fields (never existed in production schema).
+ * This is intentional for demonstration purposes.
  */
 export default function DemoMemoryPreview({ memory, isOpen, onClose }: DemoMemoryPreviewProps) {
   const modalRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+
+  // Demo-specific fields (not in production Memory type)
+  const demoMemory = memory as Memory & { videoUrl?: string; multiplePhotos?: string[] }
 
   // Normalize data safely before branching
   const photoUrl =
@@ -33,13 +40,13 @@ export default function DemoMemoryPreview({ memory, isOpen, onClose }: DemoMemor
       : undefined
 
   const videoUrl =
-    memory && typeof memory.videoUrl === 'string' && memory.videoUrl.trim()
-      ? memory.videoUrl
+    demoMemory && typeof demoMemory.videoUrl === 'string' && demoMemory.videoUrl.trim()
+      ? demoMemory.videoUrl
       : undefined
 
   const multiplePhotos =
-    memory && Array.isArray(memory.multiplePhotos)
-      ? memory.multiplePhotos.filter(
+    demoMemory && Array.isArray(demoMemory.multiplePhotos)
+      ? demoMemory.multiplePhotos.filter(
           (url): url is string => typeof url === 'string' && url.trim().length > 0
         )
       : []

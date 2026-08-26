@@ -1,45 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { ShareButtons } from "@/components/ShareButtons";
 import { getCelebrationExperience } from "@/lib/celebrationExperience";
 import { getCoverHeroStyle } from "@/lib/coverStyles";
 import { getCoverTheme } from "@/lib/coverTheme";
 import PremiumChoiceModal from "@/components/PremiumChoiceModal";
-import PremiumRevealExperience from "@/components/premium-reveal/PremiumRevealExperience";
 import GalleryView from "@/components/memory-experience/GalleryView";
-
-interface Memory {
-  id: string;
-  contributor_name: string;
-  message: string;
-  photo_url: string | null;
-  video_url?: string | null;
-  created_at: string;
-}
-
-interface MemoryPop {
-  id: string;
-  recipient_name: string;
-  occasion: string;
-  story: string;
-  share_code: string;
-  cover_style: string | null;
-  tone: string | null;
-  is_premium: boolean;
-  celebration_date: string | null;
-  cover_photo_url: string | null;
-}
+import type { MemoryPopMemory, MemoryPop } from "@/components/memory-experience/types";
 
 interface MemoryPopClientProps {
   memoryPop: MemoryPop;
-  memories: Memory[];
+  memories: MemoryPopMemory[];
   shareLink: string;
   hasPremiumAccess: boolean;
 }
 
-type PresentationMode = 'choice' | 'reveal' | 'browse';
+type PresentationMode = 'choice' | 'browse';
 
 export default function MemoryPopClient({
   memoryPop,
@@ -48,9 +26,10 @@ export default function MemoryPopClient({
   hasPremiumAccess,
 }: MemoryPopClientProps) {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const viewParam = searchParams?.get('view');
 
-  // Contributors bypass Premium choice and go directly to browse mode
+  // Contributors bypass choice and go directly to browse mode
   const initialMode: PresentationMode =
     viewParam === 'browse' ? 'browse' :
     hasPremiumAccess ? 'choice' :
@@ -66,21 +45,16 @@ export default function MemoryPopClient({
 
   const previewTheme = getCoverTheme(memoryPop.cover_style);
 
-  // Premium choice handler
+  // Choice handler - redirect to canonical RevealExperience
   const handleChooseExperience = () => {
-    setMode('reveal');
+    router.push(`/m/${memoryPop.share_code}/reveal`);
   };
 
   const handleChooseBrowse = () => {
     setMode('browse');
   };
 
-  // Premium reveal completion handler
-  const handleRevealComplete = () => {
-    setMode('browse');
-  };
-
-  // Show premium choice modal
+  // Show choice modal
   if (mode === 'choice') {
     return (
       <PremiumChoiceModal
@@ -96,25 +70,7 @@ export default function MemoryPopClient({
     );
   }
 
-  // Show premium reveal
-  if (mode === 'reveal') {
-    return (
-      <PremiumRevealExperience
-        recipientName={memoryPop.recipient_name}
-        occasion={memoryPop.occasion}
-        memories={memories}
-        memorypopId={memoryPop.id}
-        celebrationDate={memoryPop.celebration_date}
-        coverStyle={memoryPop.cover_style}
-        shareCode={memoryPop.share_code}
-        mood={memoryPop.tone}
-        coverPhotoUrl={memoryPop.cover_photo_url}
-        onComplete={handleRevealComplete}
-      />
-    );
-  }
-
-  // Show gallery-based browsing mode (Memory Experience V1)
+  // Show gallery-based browsing mode (Memory Wall)
   return (
     <GalleryView
       memoryPop={memoryPop}

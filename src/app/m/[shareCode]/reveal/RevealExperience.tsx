@@ -5,15 +5,25 @@ import Link from "next/link";
 import { getCelebrationExperience } from "@/lib/celebrationExperience";
 import { getCoverHeroStyle } from "@/lib/coverStyles";
 import { getCoverTheme } from "@/lib/coverTheme";
+import { getSoundtrack } from "@/lib/occasionExperience";
 import ReactionPrompt from "./ReactionPrompt";
 import ReactionThankYou from "./ReactionThankYou";
+import GlobalCinematicController from "./GlobalCinematicController";
+import type { MediaItem, VideoMedia } from "@/components/memory-experience/types";
 
 interface Memory {
   id: string;
   contributor_name: string;
-  message: string;  // Fixed: Database column is 'message', not 'memory'
+  message: string;
+  // Legacy field (backwards compatibility)
   photo_url: string | null;
+  // Standard multimedia (JSONB)
+  photos?: MediaItem[];
+  gifs?: MediaItem[];
+  video?: VideoMedia | null;
 }
+
+type MediaType = 'photos' | 'gif' | 'video';
 
 interface Props {
   recipientName: string;
@@ -43,23 +53,84 @@ export default function RevealExperience({
   const [selectedReaction, setSelectedReaction] = useState<string | null>(
     existingReaction?.reaction_type || null
   );
-  const [hasSwipedOnce, setHasSwipedOnce] = useState(false);
-  const [slideDirection, setSlideDirection] = useState<'left' | 'right' | null>(null);
-  const touchStartX = useRef<number | null>(null);
-  const touchStartY = useRef<number | null>(null);
 
+  // Music playback state (Increment 1)
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isAudioReady, setIsAudioReady] = useState(false);
+
+  // FLAT ARCHITECTURE - Single global timeline
   // Step 0: Welcome
-  // Step 0.5: Mood Introduction (NEW)
-  // Steps 1 to memories.length: Individual memories
-  // Step memories.length + 1: Final celebration
-  // Step memories.length + 2: ReactionPrompt (if not reacted)
-  // Step memories.length + 3: ReactionThankYou (after reaction)
+  // Step 1: Cinematic (ALL memories in one global timeline)
+  // Step 2: Final celebration
+  // Step 3: ReactionPrompt (if not reacted)
+  // Step 4: ReactionThankYou (after reaction)
 
   const celebrationExperience = getCelebrationExperience({
     occasion,
     mood,
     recipientName
   });
+
+  // Resolve soundtrack based on occasion + atmosphere
+  const soundtrack = getSoundtrack(occasion, mood || 'simple_classic');
+
+  // Initialize and manage audio playback
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Create audio element
+    const audio = new Audio(soundtrack.track);
+    audio.loop = true;
+    audio.volume = isMuted ? 0 : 0.5; // Start at 50% volume
+    audioRef.current = audio;
+
+    // Handle audio ready state
+    const handleCanPlay = () => setIsAudioReady(true);
+    audio.addEventListener('canplay', handleCanPlay);
+
+    // Start playing when experience begins (after welcome screen)
+    if (currentStep > 0 && isAudioReady) {
+      audio.play().catch(err => {
+        // Autoplay blocked - expected on first interaction, no action needed
+        console.warn('Audio autoplay blocked:', err.message);
+      });
+    }
+
+    // Cleanup
+    return () => {
+      audio.pause();
+      audio.removeEventListener('canplay', handleCanPlay);
+      audioRef.current = null;
+    };
+  }, [soundtrack.track]);
+
+  // Control audio playback based on current step
+  useEffect(() => {
+    if (!audioRef.current || !isAudioReady) return;
+
+    if (currentStep > 0) {
+      // Experience started - play music
+      audioRef.current.play().catch(err => {
+        console.warn('Audio playback failed:', err.message);
+      });
+    } else {
+      // On welcome screen - pause music
+      audioRef.current.pause();
+    }
+  }, [currentStep, isAudioReady]);
+
+  // Mute/unmute control
+  useEffect(() => {
+    if (!audioRef.current) return;
+    audioRef.current.volume = isMuted ? 0 : 0.5;
+  }, [isMuted]);
+
+  const handleToggleMute = () => {
+    setIsMuted(!isMuted);
+  };
+
+  // Video audio now handled by GlobalCinematicController (pauses entirely)
 
   // Special messaging for celebration date
   function getCelebrationMessage(dateString?: string | null): string | null {
@@ -82,43 +153,25 @@ export default function RevealExperience({
     return null; // No special message for future dates
   }
 
-  // Calculate total steps based on whether user has reacted
-  // Phase 2: hasReacted is initialized from server prop, no loading state
+  // Calculate total steps - FLAT ARCHITECTURE
+  // Step 0: Welcome
+  // Step 1: Cinematic (all memories)
+  // Step 2: Final
+  // Step 3: Reaction (if not reacted) / Thank you (if reacted)
+  // Step 4: Thank you (after new reaction)
   const totalSteps = hasReacted
-    ? memories.length + 3 // already reacted: welcome + memories + final + thank you
-    : memories.length + 4; // not reacted: welcome + memories + final + reaction + thank you
-
-  // DEBUG: Log state
-  console.log('[RevealExperience] currentStep:', currentStep, 'totalSteps:', totalSteps, 'hasReacted:', hasReacted, 'memories:', memories.length);
+    ? 4 // already reacted: welcome + cinematic + final + thank you
+    : 5; // not reacted: welcome + cinematic + final + reaction + thank you
 
   const handleNext = () => {
-    console.log('[handleNext] called from step:', currentStep, 'totalSteps-1:', totalSteps - 1);
     if (currentStep < totalSteps - 1) {
-      // Only animate during memory screens
-      if (currentStep >= 1 && currentStep <= memories.length) {
-        setSlideDirection('left');
-        setTimeout(() => {
-          setCurrentStep((prev) => prev + 1);
-          setSlideDirection(null);
-        }, 200);
-      } else {
-        setCurrentStep((prev) => prev + 1);
-      }
+      setCurrentStep((prev) => prev + 1);
     }
   };
 
   const handlePrevious = () => {
     if (currentStep > 0) {
-      // Only animate during memory screens
-      if (currentStep >= 1 && currentStep <= memories.length) {
-        setSlideDirection('right');
-        setTimeout(() => {
-          setCurrentStep((prev) => prev - 1);
-          setSlideDirection(null);
-        }, 200);
-      } else {
-        setCurrentStep((prev) => prev - 1);
-      }
+      setCurrentStep((prev) => prev - 1);
     }
   };
 
@@ -129,74 +182,9 @@ export default function RevealExperience({
     handleNext();
   };
 
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Only enable during memory screens (steps 1 to memories.length)
-      if (currentStep >= 1 && currentStep <= memories.length) {
-        if (e.key === 'ArrowRight') {
-          e.preventDefault();
-          handleNext();
-        } else if (e.key === 'ArrowLeft') {
-          e.preventDefault();
-          handlePrevious();
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentStep, memories.length]);
-
-  // Swipe gesture detection
-  useEffect(() => {
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartX.current = e.touches[0].clientX;
-      touchStartY.current = e.touches[0].clientY;
-    };
-
-    const handleTouchEnd = (e: TouchEvent) => {
-      if (touchStartX.current === null || touchStartY.current === null) return;
-
-      const touchEndX = e.changedTouches[0].clientX;
-      const touchEndY = e.changedTouches[0].clientY;
-
-      const deltaX = touchEndX - touchStartX.current;
-      const deltaY = touchEndY - touchStartY.current;
-
-      // Only trigger if horizontal swipe is dominant (not vertical scroll)
-      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
-        // Only enable during memory screens
-        if (currentStep >= 1 && currentStep <= memories.length) {
-          if (deltaX < 0) {
-            // Swipe left → next
-            handleNext();
-            setHasSwipedOnce(true);
-          } else {
-            // Swipe right → previous
-            handlePrevious();
-            setHasSwipedOnce(true);
-          }
-        }
-      }
-
-      touchStartX.current = null;
-      touchStartY.current = null;
-    };
-
-    window.addEventListener('touchstart', handleTouchStart);
-    window.addEventListener('touchend', handleTouchEnd);
-
-    return () => {
-      window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [currentStep, memories.length]);
-
-  // Conditional rendering based on currentStep
-  console.log('[Render] Evaluating render branch for step:', currentStep, 'memories.length:', memories.length);
+  // Conditional rendering - FLAT ARCHITECTURE
   if (currentStep === 0) {
-    console.log('[Render] → WelcomeScreen');
+    // Step 0: Welcome
     return (
       <WelcomeScreen
         recipientName={recipientName}
@@ -207,36 +195,39 @@ export default function RevealExperience({
         moodIntroduction={celebrationExperience.revealIntroduction}
       />
     );
-  } else if (currentStep <= memories.length) {
-    const memoryIndex = currentStep - 1;
-    console.log('[Render] → MemoryScreen, index:', memoryIndex, 'of', memories.length);
+  } else if (currentStep === 1) {
+    // Step 1: Cinematic (ALL memories in one global timeline)
     return (
-      <MemoryScreen
-        memory={memories[memoryIndex]}
-        onNext={handleNext}
-        onPrevious={handlePrevious}
-        currentIndex={memoryIndex}
-        totalMemories={memories.length}
+      <GlobalCinematicController
+        memories={memories}
         shareCode={shareCode}
-        showOnboardingHint={memoryIndex === 0 && !hasSwipedOnce}
-        slideDirection={slideDirection}
+        onComplete={handleNext}
+        audioRef={audioRef}
+        isMusicMuted={isMuted}
+        onMuteToggle={handleToggleMute}
       />
     );
-  } else if (currentStep === memories.length + 1) {
-    console.log('[Render] → FinalScreen');
-    return <FinalScreen celebrationExperience={celebrationExperience} onNext={handleNext} celebrationDate={celebrationDate} getCelebrationMessage={getCelebrationMessage} coverStyle={coverStyle} />;
-  } else if (currentStep === memories.length + 2 && !hasReacted) {
-    console.log('[Render] → ReactionPrompt');
-
-    // Show reaction prompt if user hasn't reacted (or still loading)
+  } else if (currentStep === 2) {
+    // Step 2: Final celebration
+    return (
+      <FinalScreen
+        celebrationExperience={celebrationExperience}
+        onNext={handleNext}
+        celebrationDate={celebrationDate}
+        getCelebrationMessage={getCelebrationMessage}
+        coverStyle={coverStyle}
+      />
+    );
+  } else if (currentStep === 3 && !hasReacted) {
+    // Step 3: Reaction prompt (if not reacted)
     return (
       <ReactionPrompt
         memorypopId={memorypopId}
         onReactionSelect={handleReactionSelect}
       />
     );
-  } else if (currentStep === memories.length + 2 && hasReacted && selectedReaction) {
-    // User already reacted in previous session - show their actual reaction
+  } else if (currentStep === 3 && hasReacted && selectedReaction) {
+    // Step 3: Show existing reaction (returning user)
     return (
       <ReactionThankYou
         reactionType={selectedReaction}
@@ -244,8 +235,8 @@ export default function RevealExperience({
         isReturningUser={true}
       />
     );
-  } else if (currentStep === memories.length + 3 && selectedReaction) {
-    // Show thank you screen after reaction with ending options
+  } else if (currentStep === 4 && selectedReaction) {
+    // Step 4: Thank you after new reaction
     return (
       <ReactionThankYou
         reactionType={selectedReaction}
@@ -254,9 +245,16 @@ export default function RevealExperience({
     );
   }
 
-  // Fallback (should not reach here)
-  console.log('[Render] → Fallback FinalScreen (unexpected!)');
-  return <FinalScreen celebrationExperience={celebrationExperience} onNext={handleNext} celebrationDate={celebrationDate} getCelebrationMessage={getCelebrationMessage} coverStyle={coverStyle} />;
+  // Fallback
+  return (
+    <FinalScreen
+      celebrationExperience={celebrationExperience}
+      onNext={handleNext}
+      celebrationDate={celebrationDate}
+      getCelebrationMessage={getCelebrationMessage}
+      coverStyle={coverStyle}
+    />
+  );
 }
 
 // Welcome Screen (Step 0)
@@ -339,173 +337,6 @@ function WelcomeScreen({
   );
 }
 
-// Memory Screen (Steps 1 to n)
-function MemoryScreen({
-  memory,
-  onNext,
-  onPrevious,
-  currentIndex,
-  totalMemories,
-  shareCode,
-  showOnboardingHint,
-  slideDirection,
-}: {
-  memory: Memory;
-  onNext: () => void;
-  onPrevious: () => void;
-  currentIndex: number;
-  totalMemories: number;
-  shareCode: string;
-  showOnboardingHint: boolean;
-  slideDirection: 'left' | 'right' | null;
-}) {
-  const isFirst = currentIndex === 0;
-  const isLast = currentIndex === totalMemories - 1;
-
-  // Animation class based on slide direction
-  const getAnimationClass = () => {
-    if (slideDirection === 'left') {
-      return 'animate-slide-out-left';
-    } else if (slideDirection === 'right') {
-      return 'animate-slide-out-right';
-    }
-    return 'animate-slide-in';
-  };
-
-  return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#fff8ef] px-6">
-      {/* Browse all memories - top right corner */}
-      <div className="absolute top-6 right-6 z-10">
-        <Link
-          href={`/m/${shareCode}`}
-          className="text-sm text-[#856b5f] hover:text-[#3a241e] transition-colors"
-        >
-          Browse all memories
-        </Link>
-      </div>
-
-      {/* Memory content with animation */}
-      <div className={`w-full flex flex-col items-center ${getAnimationClass()}`}>
-        {/* Contributor photo - conditional */}
-        {memory.photo_url && (
-          <div className="mb-6 overflow-hidden rounded-lg">
-            <img
-              src={memory.photo_url}
-              alt={`Photo from ${memory.contributor_name}`}
-              className="max-h-64 w-auto object-contain"
-            />
-          </div>
-        )}
-
-        {/* Contributor name */}
-        <h2 className="mb-4 text-center text-2xl font-semibold text-[#3a241e]">
-          {memory.contributor_name}
-        </h2>
-
-        {/* Memory text */}
-        <div className="mb-12 max-h-64 max-w-2xl overflow-y-auto rounded-lg bg-white p-6 text-center text-lg leading-relaxed text-[#3a241e]">
-          {memory.message || (
-            <span className="text-[#856b5f] italic">
-              {memory.photo_url
-                ? `${memory.contributor_name} shared a photo for you.`
-                : `${memory.contributor_name} left a memory.`
-              }
-            </span>
-          )}
-        </div>
-
-        {/* Desktop navigation controls */}
-        <div className="hidden md:flex items-center gap-4 mb-8">
-          <button
-            onClick={onPrevious}
-            disabled={isFirst}
-            className={`rounded-full px-6 py-3 text-sm font-semibold transition-all ${
-              isFirst
-                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                : 'bg-[#ef6a57] text-white hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2'
-            }`}
-          >
-            ← Previous
-          </button>
-          <span className="text-sm text-[#856b5f]">
-            {currentIndex + 1} of {totalMemories}
-          </span>
-          <button
-            onClick={onNext}
-            className="rounded-full px-6 py-3 text-sm font-semibold transition-all bg-[#ef6a57] text-white hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2"
-          >
-            Next →
-          </button>
-        </div>
-
-        {/* Mobile Next button */}
-        <button
-          onClick={onNext}
-          className="md:hidden rounded-full bg-[#ef6a57] px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2 transition-all"
-        >
-          Next
-        </button>
-
-        {/* Mobile onboarding hint */}
-        {showOnboardingHint && (
-          <div className="md:hidden mt-4 text-center">
-            <p className="text-sm text-[#856b5f] animate-pulse">
-              ← Swipe to continue →
-            </p>
-          </div>
-        )}
-      </div>
-
-      <style jsx>{`
-        @keyframes slide-in {
-          from {
-            opacity: 0;
-            transform: translateX(0);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes slide-out-left {
-          from {
-            opacity: 1;
-            transform: translateX(0);
-          }
-          to {
-            opacity: 0;
-            transform: translateX(-30px);
-          }
-        }
-
-        @keyframes slide-out-right {
-          from {
-            opacity: 1;
-            transform: translateX(0);
-          }
-          to {
-            opacity: 0;
-            transform: translateX(30px);
-          }
-        }
-
-        .animate-slide-in {
-          animation: slide-in 150ms ease-out;
-        }
-
-        .animate-slide-out-left {
-          animation: slide-out-left 200ms ease-in;
-        }
-
-        .animate-slide-out-right {
-          animation: slide-out-right 200ms ease-in;
-        }
-      `}</style>
-    </div>
-  );
-}
-
 // Final Screen (Step n+1)
 function FinalScreen({
   celebrationExperience,
@@ -569,7 +400,10 @@ function FinalScreen({
       {/* Continue button (to progress to reaction step) */}
       {onNext && (
         <div className="flex flex-col items-center">
-          <p className="mb-4 text-sm text-[#856b5f]">
+          <p
+            className="mb-4 text-sm"
+            style={{ color: theme.secondaryText }}
+          >
             One more thing…
           </p>
           <button

@@ -1,21 +1,28 @@
 "use client";
 
 import { CELEBRATION_MOODS, type CelebrationMood } from "@/lib/celebrationMood";
+import { getOccasionConfig } from "@/lib/occasionExperience";
 
 interface MoodSelectorProps {
   selectedMood: CelebrationMood | null;
   onSelect: (mood: CelebrationMood) => void;
+  /** Occasion key for filtering appropriate atmospheres */
+  occasion?: string;
 }
 
-export default function MoodSelector({ selectedMood, onSelect }: MoodSelectorProps) {
-  const moods: CelebrationMood[] = [
-    "warm_heartfelt",
-    "playful_fun",
-    "thoughtful_meaningful",
-    "joyful_celebratory",
-    "nostalgic_reflective",
-    "simple_classic"
-  ];
+export default function MoodSelector({ selectedMood, onSelect, occasion }: MoodSelectorProps) {
+  // Get occasion-appropriate atmospheres (if occasion provided)
+  // Otherwise show all 6 moods
+  const moods: CelebrationMood[] = occasion
+    ? getOccasionConfig(occasion).atmospheres
+    : [
+        "warm_heartfelt",
+        "playful_fun",
+        "thoughtful_meaningful",
+        "joyful_celebratory",
+        "nostalgic_reflective",
+        "simple_classic"
+      ];
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">

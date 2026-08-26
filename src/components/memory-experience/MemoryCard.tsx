@@ -13,6 +13,17 @@ import type { MemoryCardProps } from "./types";
  * 3. Text-only card: Elegant typographic treatment with gradient background
  * 4. Video card: Thumbnail + play icon indicator
  *
+ * Standard multimedia support (JSONB):
+ * - photos[] (up to 3 photos)
+ * - gifs[] (up to 1 GIF)
+ * - video (single video)
+ *
+ * Thumbnail priority: photos[0] > gifs[0] > video thumbnail > text-only
+ * Media count badge shows total items (e.g., "5" for 3 photos + 1 GIF + 1 video)
+ *
+ * Backwards compatibility:
+ * - Legacy photoUrl, multiplePhotos, videoUrl fields
+ *
  * Interaction:
  * - Hover: subtle scale + shadow lift
  * - Click: opens detail modal
@@ -22,39 +33,45 @@ import type { MemoryCardProps } from "./types";
  * - Premium iOS 15+ design language
  */
 export default function MemoryCard({ memory, onClick }: MemoryCardProps) {
-  const { contributorName, message, photoUrl, videoUrl, mediaType, multiplePhotos } = memory;
+  const { contributorName, message, photoUrl, mediaType, photos, gifs, video } = memory;
 
-  // Determine effective media type (handle missing photos)
-  const hasValidPhoto = photoUrl && photoUrl.trim().length > 0;
-  const effectiveMediaType = (mediaType === 'photo' && !hasValidPhoto) ? 'text' : mediaType;
+  // Backwards compatibility: Normalize JSONB and legacy photo_url
+  const normalizedPhotos = photos || (photoUrl && !photoUrl.endsWith('.gif') ? [{ url: photoUrl, uploaded_at: '', file_size_bytes: 0 }] : []);
+  const normalizedGifs = gifs || (photoUrl && photoUrl.endsWith('.gif') ? [{ url: photoUrl, uploaded_at: '', file_size_bytes: 0 }] : []);
+  const normalizedVideo = video || null;
 
-  // Check if photo is a GIF (for proper animation handling)
-  const isGif = !!(photoUrl && photoUrl.toLowerCase().includes('.gif'));
+  // Calculate total media count
+  const totalMediaCount = normalizedPhotos.length + normalizedGifs.length + (normalizedVideo ? 1 : 0);
+
+  // Thumbnail priority: photos[0] > gifs[0] > video > text-only
+  const thumbnailUrl = normalizedPhotos[0]?.url || normalizedGifs[0]?.url || (normalizedVideo?.url) || null;
+  const thumbnailIsGif = !!(thumbnailUrl && thumbnailUrl.toLowerCase().includes('.gif'));
+  const showVideoPlayIcon = !normalizedPhotos.length && !normalizedGifs.length && normalizedVideo;
 
   // Use full message for preview - CSS will handle line clamping with natural fade
   const messagePreview = message || '';
 
-  // Multi-photo support
-  const hasMultiplePhotos = multiplePhotos && multiplePhotos.length > 1;
+  // Multi-photo support (for carousel display if >4 photos in legacy multiplePhotos)
+  const hasMultiplePhotos = normalizedPhotos.length > 1;
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
   // Auto-rotation for 5+ photos (batches of 4)
   useEffect(() => {
-    if (!hasMultiplePhotos || multiplePhotos!.length <= 4) return;
+    if (!hasMultiplePhotos || normalizedPhotos.length <= 4) return;
 
-    const photoBatches = Math.ceil(multiplePhotos!.length / 4);
+    const photoBatches = Math.ceil(normalizedPhotos.length / 4);
     const interval = setInterval(() => {
       setCurrentSlideIndex((prev) => (prev + 1) % photoBatches);
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [hasMultiplePhotos, multiplePhotos]);
+  }, [hasMultiplePhotos, normalizedPhotos.length]);
 
   // Render multi-photo layout
   const renderMultiPhotoLayout = () => {
     if (!hasMultiplePhotos) return null;
 
-    const allPhotos = multiplePhotos!;
+    const allPhotos = normalizedPhotos.map(p => p.url);
     const photoBatches = [];
     for (let i = 0; i < allPhotos.length; i += 4) {
       photoBatches.push(allPhotos.slice(i, i + 4));
@@ -62,7 +79,6 @@ export default function MemoryCard({ memory, onClick }: MemoryCardProps) {
 
     const currentPhotos = photoBatches[currentSlideIndex] || [];
     const photoCount = currentPhotos.length;
-    const totalPhotos = allPhotos.length;
 
     if (photoCount === 2) {
       return (
@@ -85,7 +101,7 @@ export default function MemoryCard({ memory, onClick }: MemoryCardProps) {
             <svg className="w-4 h-4 text-[#3a241e]" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
             </svg>
-            <span className="text-sm font-medium text-[#3a241e]">{totalPhotos}</span>
+            <span className="text-sm font-medium text-[#3a241e]">{totalMediaCount}</span>
           </div>
         </>
       );
@@ -123,7 +139,7 @@ export default function MemoryCard({ memory, onClick }: MemoryCardProps) {
             <svg className="w-4 h-4 text-[#3a241e]" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
             </svg>
-            <span className="text-sm font-medium text-[#3a241e]">{totalPhotos}</span>
+            <span className="text-sm font-medium text-[#3a241e]">{totalMediaCount}</span>
           </div>
         </>
       );
@@ -165,7 +181,7 @@ export default function MemoryCard({ memory, onClick }: MemoryCardProps) {
             <svg className="w-4 h-4 text-[#3a241e]" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
             </svg>
-            <span className="text-sm font-medium text-[#3a241e]">{totalPhotos}</span>
+            <span className="text-sm font-medium text-[#3a241e]">{totalMediaCount}</span>
           </div>
           {photoBatches.length > 1 && (
             <div className="absolute top-4 left-4 flex gap-1.5">
@@ -212,17 +228,44 @@ export default function MemoryCard({ memory, onClick }: MemoryCardProps) {
         </>
       ) : null}
 
-      {/* Photo variant (single photo) */}
-      {!hasMultiplePhotos && effectiveMediaType === 'photo' && (
+      {/* Photo/GIF/Video variant (single thumbnail) */}
+      {!hasMultiplePhotos && thumbnailUrl && (
         <>
           <Image
-            src={photoUrl || ''}
+            src={thumbnailUrl}
             alt={`Memory from ${contributorName}`}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
-            unoptimized={isGif}
+            unoptimized={thumbnailIsGif}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+
+          {/* Media count badge (if multiple items) */}
+          {totalMediaCount > 1 && (
+            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1">
+              <svg className="w-4 h-4 text-[#3a241e]" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+              </svg>
+              <span className="text-sm font-medium text-[#3a241e]">{totalMediaCount}</span>
+            </div>
+          )}
+
+          {/* Video play icon (if video is the only media) */}
+          {showVideoPlayIcon && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center
+                              transition-all duration-300 group-hover:bg-white group-hover:scale-110">
+                <svg
+                  className="w-8 h-8 text-[#3a241e] ml-1"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </div>
+          )}
+
           <div className="absolute bottom-0 left-0 right-0 p-6">
             <p className="text-white text-lg font-serif mb-2">{contributorName}</p>
             {messagePreview && (
@@ -236,45 +279,8 @@ export default function MemoryCard({ memory, onClick }: MemoryCardProps) {
         </>
       )}
 
-      {/* Video variant */}
-      {effectiveMediaType === 'video' && (
-        <>
-          {photoUrl ? (
-            <Image
-              src={photoUrl}
-              alt={`Video from ${contributorName}`}
-              fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
-              unoptimized={isGif}
-            />
-          ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-[#f9f6f1] to-[#f5f0e8]" />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-
-          {/* Play icon */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center
-                            transition-all duration-300 group-hover:bg-white group-hover:scale-110">
-              <svg
-                className="w-8 h-8 text-[#3a241e] ml-1"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </div>
-          </div>
-
-          <div className="absolute bottom-0 left-0 right-0 p-6">
-            <p className="text-white text-lg font-serif">{contributorName}</p>
-            <p className="text-white/80 text-sm mt-1">Video memory</p>
-          </div>
-        </>
-      )}
-
       {/* Text-only variant */}
-      {effectiveMediaType === 'text' && (
+      {!hasMultiplePhotos && !thumbnailUrl && (
         <div className="absolute inset-0 bg-gradient-to-br from-[#f9f6f1] to-[#f5f0e8]
                         flex flex-col items-center justify-center p-8 text-center">
           <p className="text-2xl md:text-3xl font-serif text-[#3a241e] mb-4">

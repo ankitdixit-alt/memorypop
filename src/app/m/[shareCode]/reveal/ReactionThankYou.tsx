@@ -37,19 +37,23 @@ export default function ReactionThankYou({ reactionType, shareCode, isReturningU
 
       {/* Ending Options */}
       <div className="flex flex-col gap-4 w-full max-w-md">
-        <Link
-          href={`/m/${shareCode}`}
-          className="rounded-full bg-[#ef6a57] px-8 py-4 text-center font-semibold text-white transition-colors hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2 transition-all"
-        >
-          Revisit Memory Wall
-        </Link>
-
+        {/* PRIMARY CTA: Replay Reveal */}
         <button
-          onClick={() => window.location.reload()}
-          className="rounded-full border border-[#ead8c9] bg-white px-8 py-4 font-semibold text-[#3a241e] transition-colors hover:bg-[#fff8ef] active:ring-2 active:ring-[#FF6B57] active:ring-offset-2 transition-all"
+          onClick={() => {
+            window.location.href = `/m/${shareCode}/reveal`;
+          }}
+          className="rounded-full bg-[#ef6a57] px-8 py-4 font-semibold text-white transition-colors hover:bg-[#e05a47] active:ring-2 active:ring-white active:ring-offset-2 transition-all w-full"
         >
           Replay Reveal
         </button>
+
+        {/* SECONDARY CTA: Visit Memory Wall */}
+        <Link
+          href={`/m/${shareCode}?view=browse`}
+          className="rounded-full border border-[#ead8c9] bg-white px-8 py-4 text-center font-semibold text-[#3a241e] transition-colors hover:bg-[#fff8ef] active:ring-2 active:ring-[#FF6B57] active:ring-offset-2 transition-all"
+        >
+          Visit Memory Wall
+        </Link>
       </div>
     </div>
   );

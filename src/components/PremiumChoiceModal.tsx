@@ -69,11 +69,6 @@ export default function PremiumChoiceModal({
       }`}
       style={getCoverHeroStyle(coverStyle)}
     >
-      {/* Premium Badge */}
-      <div className="mb-6 rounded-full bg-white/90 px-6 py-2 shadow-sm border border-[#F0DED2]">
-        <span className="text-sm font-semibold text-[#ef6a57]">✨ Premium Experience</span>
-      </div>
-
       {/* Recipient name */}
       <h1
         className="mb-4 text-center text-5xl md:text-6xl font-bold max-w-3xl"
@@ -142,7 +137,10 @@ export default function PremiumChoiceModal({
       </div>
 
       {/* Helpful hint */}
-      <p className="text-sm text-[#856b5f] text-center max-w-md">
+      <p
+        className="text-sm text-center max-w-md"
+        style={{ color: theme.secondaryText }}
+      >
         💡 You can always browse all memories after the experience
       </p>
     </div>

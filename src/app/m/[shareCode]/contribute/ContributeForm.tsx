@@ -7,6 +7,9 @@ import { ShareButtons } from "@/components/ShareButtons";
 import { trackEvent } from "@/lib/analytics";
 import { getCoverHeroStyle } from "@/lib/coverStyles";
 import { getCoverTheme } from "@/lib/coverTheme";
+import type { MediaItem, VideoMedia } from "@/components/memory-experience/types";
+import CuratedGifPicker from "@/components/contribute/CuratedGifPicker";
+import type { CuratedGif } from "@/lib/curatedGifs";
 
 interface Props {
   shareCode: string;
@@ -29,16 +32,23 @@ export default function ContributeForm({
 
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
-  const [photo, setPhoto] = useState("");
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
+
+  // Standard multimedia state (3 photos + 1 GIF + 1 video)
+  const [photos, setPhotos] = useState<Array<{file: File; preview: string; uploading: boolean}>>([]);
+  const [selectedCuratedGif, setSelectedCuratedGif] = useState<CuratedGif | null>(null);
+  const [video, setVideo] = useState<{file: File; preview: string; duration: number; uploading: boolean} | null>(null);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [contributorCount, setContributorCount] = useState<number>(0);
 
+  // Upload progress and errors per media type
+  const [uploadErrors, setUploadErrors] = useState<{photos?: string; gifs?: string; video?: string}>({});
+
   const nameInputRef = useRef<HTMLInputElement>(null);
   const messageTextareaRef = useRef<HTMLTextAreaElement>(null);
-  const photoPreviewRef = useRef<HTMLDivElement>(null);
+  const mediaPreviewRef = useRef<HTMLDivElement>(null);
   const errorMessageRef = useRef<HTMLDivElement>(null);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -57,19 +67,56 @@ export default function ContributeForm({
     return getCoverTheme(coverStyle);
   }, [coverStyle]);
 
+  // Photo upload handler (up to 3 photos, 10MB each)
   function handlePhotoUpload(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
+    const files = Array.from(event.target.files || []);
 
-    if (!file) return;
+    if (files.length === 0) return;
 
-    setPhotoFile(file);
-    setPhoto(URL.createObjectURL(file));
+    // Validate count (Standard tier: max 3 photos)
+    const remainingSlots = 3 - photos.length;
+    if (files.length > remainingSlots) {
+      setUploadErrors(prev => ({
+        ...prev,
+        photos: `You can add up to 3 photos. You have ${remainingSlots} slot${remainingSlots === 1 ? '' : 's'} remaining.`
+      }));
+      return;
+    }
 
-    // Scroll to reveal photo preview and next action (submit button)
-    // Use double-RAF to ensure DOM has updated with preview
+    // Validate file types and sizes
+    for (const file of files) {
+      if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type)) {
+        setUploadErrors(prev => ({
+          ...prev,
+          photos: 'Only JPEG, PNG, and WebP photos are allowed.'
+        }));
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        setUploadErrors(prev => ({
+          ...prev,
+          photos: 'Each photo must be under 10MB.'
+        }));
+        return;
+      }
+    }
+
+    // Clear errors
+    setUploadErrors(prev => ({...prev, photos: undefined}));
+
+    // Add photos with preview URLs
+    const newPhotos = files.map(file => ({
+      file,
+      preview: URL.createObjectURL(file),
+      uploading: false,
+    }));
+
+    setPhotos(prev => [...prev, ...newPhotos]);
+
+    // Scroll to reveal previews
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        photoPreviewRef.current?.scrollIntoView({
+        mediaPreviewRef.current?.scrollIntoView({
           behavior: 'smooth',
           block: 'center',
         });
@@ -77,12 +124,125 @@ export default function ContributeForm({
     });
   }
 
-  async function uploadPhotoToSupabase(file: File): Promise<string | null> {
+  // Curated GIF selection handler
+  function handleCuratedGifSelect(gif: CuratedGif) {
+    setSelectedCuratedGif(gif);
+    setUploadErrors(prev => ({...prev, gifs: undefined}));
+  }
+
+  function handleCuratedGifRemove() {
+    setSelectedCuratedGif(null);
+  }
+
+  // Video upload handler (up to 1 video, 50MB, 15s max)
+  async function handleVideoUpload(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    // Validate count (Standard tier: max 1 video)
+    if (video) {
+      setUploadErrors(prev => ({
+        ...prev,
+        video: 'You can add up to 1 video. Remove the existing video to add a different one.'
+      }));
+      return;
+    }
+
+    // Validate file type
+    if (!['video/mp4', 'video/quicktime', 'video/webm'].includes(file.type)) {
+      setUploadErrors(prev => ({
+        ...prev,
+        video: 'Only MP4, MOV, and WebM videos are allowed.'
+      }));
+      return;
+    }
+
+    // Validate file size
+    if (file.size > 50 * 1024 * 1024) {
+      setUploadErrors(prev => ({
+        ...prev,
+        video: 'Video must be under 50MB.'
+      }));
+      return;
+    }
+
+    // Client-side duration check (UX only, server will validate authoritatively)
+    const videoElement = document.createElement('video');
+    videoElement.preload = 'metadata';
+
     try {
-      // Upload via API route (server-side)
+      await new Promise<void>((resolve, reject) => {
+        videoElement.onloadedmetadata = () => resolve();
+        videoElement.onerror = () => reject(new Error('Could not load video'));
+        videoElement.src = URL.createObjectURL(file);
+      });
+
+      const duration = videoElement.duration;
+
+      // Handle invalid/non-finite duration gracefully
+      if (!Number.isFinite(duration) || duration <= 0) {
+        setUploadErrors(prev => ({
+          ...prev,
+          video: 'Could not determine video duration. The file may be corrupted.'
+        }));
+        URL.revokeObjectURL(videoElement.src);
+        return;
+      }
+
+      if (duration > 15) {
+        setUploadErrors(prev => ({
+          ...prev,
+          video: `Video is ${duration.toFixed(1)} seconds long. Standard MemoryPops have a 15-second video limit.`
+        }));
+        URL.revokeObjectURL(videoElement.src);
+        return;
+      }
+
+      // Clear errors
+      setUploadErrors(prev => ({...prev, video: undefined}));
+
+      setVideo({
+        file,
+        preview: URL.createObjectURL(file),
+        duration,
+        uploading: false,
+      });
+
+      // Scroll to reveal preview
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          mediaPreviewRef.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+          });
+        });
+      });
+    } catch (error) {
+      setUploadErrors(prev => ({
+        ...prev,
+        video: 'Could not read video. Please ensure it is a valid video file.'
+      }));
+      URL.revokeObjectURL(videoElement.src);
+    }
+  }
+
+  // Upload media to Supabase (photos, GIFs, video)
+  async function uploadMediaToSupabase(
+    file: File,
+    mediaType: 'photo' | 'gif' | 'video'
+  ): Promise<{
+    url: string;
+    filePath: string;
+    fileSize: number;
+    duration?: number;
+    validationProof?: string;
+  } | null> {
+    try {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('shareCode', shareCode);
+      formData.append('mediaType', mediaType);
 
       const response = await fetch('/api/upload', {
         method: 'POST',
@@ -96,11 +256,40 @@ export default function ContributeForm({
       }
 
       const data = await response.json();
-      return data.publicUrl;
+      return {
+        url: data.publicUrl,
+        filePath: data.filePath,
+        fileSize: data.fileSize,
+        duration: data.duration, // Only present for videos
+        validationProof: data.validationProof, // Only present for videos
+      };
     } catch (error) {
       console.error('Upload failed:', error);
       return null;
     }
+  }
+
+  // Remove photo by index
+  function removePhoto(index: number) {
+    setPhotos(prev => {
+      const updated = [...prev];
+      URL.revokeObjectURL(updated[index].preview); // Clean up blob URL
+      updated.splice(index, 1);
+      return updated;
+    });
+  }
+
+  // Remove GIF
+  function removeGif() {
+    setSelectedCuratedGif(null);
+  }
+
+  // Remove video
+  function removeVideo() {
+    if (video) {
+      URL.revokeObjectURL(video.preview);
+    }
+    setVideo(null);
   }
 
   async function handleSubmit() {
@@ -131,14 +320,67 @@ export default function ContributeForm({
     setIsSubmitting(true);
 
     try {
-      // Upload photo if selected
-      let photoUrl = "";
-      if (photoFile) {
-        const uploadedUrl = await uploadPhotoToSupabase(photoFile);
-        photoUrl = uploadedUrl || "";
+      // Upload all media to Supabase
+      const uploadedPhotos: MediaItem[] = [];
+      const uploadedGifs: MediaItem[] = [];
+      let uploadedVideo: VideoMedia | null = null;
+
+      // Upload photos (parallel uploads for better UX)
+      if (photos.length > 0) {
+        const photoUploads = await Promise.all(
+          photos.map(photo => uploadMediaToSupabase(photo.file, 'photo'))
+        );
+
+        for (const result of photoUploads) {
+          if (result) {
+            uploadedPhotos.push({
+              url: result.url,
+              uploaded_at: new Date().toISOString(),
+              file_size_bytes: result.fileSize,
+            });
+          } else {
+            throw new Error('Photo upload failed');
+          }
+        }
       }
 
-      // Call API to insert memory (server-side)
+      // Add curated GIF (no upload needed - using stable Giphy URLs for beta)
+      if (selectedCuratedGif) {
+        uploadedGifs.push({
+          url: selectedCuratedGif.url,
+          uploaded_at: new Date().toISOString(),
+          file_size_bytes: 0, // Unknown for curated GIFs (acceptable for beta)
+        });
+      }
+
+      // Upload video (with server-side duration validation and signed proof)
+      if (video) {
+        const videoResult = await uploadMediaToSupabase(video.file, 'video');
+        if (videoResult) {
+          // CRITICAL: Only accept server-validated duration with proof
+          // Do not fall back to client metadata
+          if (typeof videoResult.duration !== 'number') {
+            throw new Error('Video duration validation failed. Please try again.');
+          }
+
+          if (!videoResult.validationProof) {
+            throw new Error('Video validation proof missing. Please try again.');
+          }
+
+          uploadedVideo = {
+            url: videoResult.url,
+            file_path: videoResult.filePath,
+            uploaded_at: new Date().toISOString(),
+            file_size_bytes: videoResult.fileSize,
+            duration_seconds: videoResult.duration, // Authoritative server-validated duration
+            validation_proof: videoResult.validationProof, // Server-generated signed proof
+          };
+        } else {
+          throw new Error('Video upload failed');
+        }
+      }
+
+      // Call API to insert memory with JSONB multimedia (server-side)
       const response = await fetch('/api/memories', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -146,7 +388,9 @@ export default function ContributeForm({
           shareCode,
           contributorName: name,
           message,
-          photoUrl: photoUrl || undefined,
+          photos: uploadedPhotos,
+          gifs: uploadedGifs,
+          video: uploadedVideo,
         }),
       });
 
@@ -172,14 +416,17 @@ export default function ContributeForm({
 
       setContributorCount(memoryCount);
 
-      // Track contribution_submitted event
+      // Track contribution_submitted event with multimedia metadata
       trackEvent('contribution_submitted', {
         share_code: shareCode,
         memorypop_id: memorypopId,
         occasion: occasion,
         recipient_name: recipientName,
         contributor_name: name,
-        has_photo: !!photoUrl,
+        has_photos: uploadedPhotos.length > 0,
+        photo_count: uploadedPhotos.length,
+        has_gif: selectedCuratedGif !== null,
+        has_video: uploadedVideo !== null,
         message_length: message.length,
         contributor_count: memoryCount,
       });
@@ -188,7 +435,8 @@ export default function ContributeForm({
       setSubmitSuccess(true);
       setIsSubmitting(false);
     } catch (error) {
-      setSubmitError("An error occurred");
+      const errorMessage = error instanceof Error ? error.message : "An error occurred";
+      setSubmitError(errorMessage);
       setIsSubmitting(false);
 
       // Scroll to error message
@@ -437,30 +685,131 @@ export default function ContributeForm({
             </div>
           )}
 
-          <label className="mt-8 block font-semibold">
-            Bring your memory to life with a photo
-          </label>
+          {/* Standard Multimedia Section */}
+          <div ref={mediaPreviewRef} className="mt-10 pt-6 border-t-2 border-[#F0DED2]">
+            <h2 className="text-2xl font-bold text-[#2B1E18] mb-2">
+              ✨ Bring It to Life (Optional)
+            </h2>
+            <p className="text-sm text-[#6B5B52] mb-6">
+              Add photos, a GIF, or a video to make your memory even more special. All are optional, but they help {recipientName || 'them'} feel the moment.
+            </p>
 
-          <p className="mt-2 text-sm text-[#6B5B52]">
-            Photos make memories more vivid and personal. Share a favorite moment, a place you both love, or anything that captures your connection.
-          </p>
+            {/* Photos Section (up to 3) */}
+            <div className="mb-8">
+              <label className="block font-semibold text-[#2B1E18] mb-1">
+                📸 Photos (up to 3)
+              </label>
+              <p className="text-sm text-[#6B5B52] mb-3">
+                Share favorite moments, places you both love, or anything that captures your connection.
+              </p>
 
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handlePhotoUpload}
-            className="mt-3 block w-full rounded-2xl border border-[#F0DED2] bg-white px-5 py-4 text-sm"
-          />
-
-          {photo && (
-            <div ref={photoPreviewRef}>
-              <img
-                src={photo}
-                alt="Selected memory"
-                className="mt-4 h-48 w-full rounded-2xl object-cover"
+              <input
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
+                multiple
+                onChange={handlePhotoUpload}
+                disabled={photos.length >= 3}
+                className="block w-full rounded-2xl border border-[#F0DED2] bg-white px-5 py-4 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               />
+
+              {uploadErrors.photos && (
+                <div className="mt-2 rounded-lg border-2 border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+                  {uploadErrors.photos}
+                </div>
+              )}
+
+              {photos.length > 0 && (
+                <div className="mt-4 grid grid-cols-3 gap-3">
+                  {photos.map((photo, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={photo.preview}
+                        alt={`Photo ${index + 1}`}
+                        className="w-full h-32 rounded-xl object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removePhoto(index)}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold opacity-90 md:opacity-75 md:group-hover:opacity-100 transition-opacity shadow-md"
+                        aria-label="Remove photo"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {photos.length > 0 && photos.length < 3 && (
+                <p className="mt-2 text-xs text-[#6B5B52] italic">
+                  {3 - photos.length} more photo{3 - photos.length === 1 ? '' : 's'} available
+                </p>
+              )}
             </div>
-          )}
+
+            {/* GIF Section (up to 1 - Curated Library) */}
+            <div className="mb-8">
+              <CuratedGifPicker
+                selectedGifId={selectedCuratedGif?.id}
+                onSelect={handleCuratedGifSelect}
+                onRemove={handleCuratedGifRemove}
+                occasion={occasion}
+              />
+
+              {uploadErrors.gifs && (
+                <div className="mt-2 rounded-lg border-2 border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+                  {uploadErrors.gifs}
+                </div>
+              )}
+            </div>
+
+            {/* Video Section (up to 1, max 15s) */}
+            <div className="mb-6">
+              <label className="block font-semibold text-[#2B1E18] mb-1">
+                🎥 Video (up to 1, max 15 seconds)
+              </label>
+              <p className="text-sm text-[#6B5B52] mb-3">
+                Share a short video message or moment. Standard MemoryPops support videos up to 15 seconds.
+              </p>
+
+              <input
+                type="file"
+                accept="video/mp4,video/quicktime,video/webm"
+                onChange={handleVideoUpload}
+                disabled={!!video}
+                className="block w-full rounded-2xl border border-[#F0DED2] bg-white px-5 py-4 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              />
+
+              {uploadErrors.video && (
+                <div className="mt-2 rounded-lg border-2 border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+                  {uploadErrors.video}
+                </div>
+              )}
+
+              {video && (
+                <div className="mt-4">
+                  <div className="relative group">
+                    <video
+                      src={video.preview}
+                      controls
+                      className="w-full max-w-md h-48 rounded-xl object-cover bg-black"
+                    />
+                    <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs font-semibold">
+                      {video.duration.toFixed(1)}s
+                    </div>
+                    <button
+                      type="button"
+                      onClick={removeVideo}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold opacity-90 md:opacity-75 md:group-hover:opacity-100 transition-opacity shadow-md"
+                      aria-label="Remove video"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
 
           {submitError && (
             <div ref={errorMessageRef} className="mt-6 rounded-lg border-2 border-red-300 bg-red-50 p-4 text-center">
@@ -481,7 +830,10 @@ export default function ContributeForm({
             disabled={isSubmitting || !name || !message}
             className="mt-8 w-full rounded-full bg-[#FF6B57] px-8 py-4 font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed active:ring-2 active:ring-white active:ring-offset-2 transition-all"
           >
-            {isSubmitting ? "Saving..." : `❤️ ${celebrationExperience?.contributeCTA || "Add Memory"}`}
+            {isSubmitting
+              ? (photos.length > 0 || selectedCuratedGif !== null || video ? "Uploading media..." : "Saving...")
+              : `❤️ ${celebrationExperience?.contributeCTA || "Add Memory"}`
+            }
           </button>
         </div>
 

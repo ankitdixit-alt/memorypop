@@ -24,6 +24,9 @@ const nextConfig: NextConfig = {
     // Allow GIFs to animate (disable optimization for GIFs)
     unoptimized: false,
   },
+  // Exclude native dependencies from Turbopack bundling
+  // get-video-duration uses @ffprobe-installer/ffprobe which contains native binaries
+  serverExternalPackages: ['get-video-duration', '@ffprobe-installer/ffprobe'],
 };
 
 // Sentry webpack plugin options

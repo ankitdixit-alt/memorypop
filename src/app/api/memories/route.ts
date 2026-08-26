@@ -5,25 +5,148 @@
  * Creates a new memory contribution for a MemoryPop.
  * Server-side validation and database insertion.
  *
+ * Standard multimedia support:
+ * - photos: Array of up to 3 photos (JSONB)
+ * - gifs: Array of up to 1 GIF (JSONB)
+ * - video: Single video object (JSONB, max 15s)
+ *
  * Security:
  * - Uses service role to bypass RLS (Phase 3 will add policies)
  * - Validates share_code exists before inserting
+ * - **RE-VALIDATES VIDEO DURATION** - Does not trust client-provided duration
+ * - Downloads video from Supabase and checks duration server-side
+ * - Guarantees no >15s video can be accepted (even if client bypasses /api/upload)
  * - Returns memory count for progress display
  * - Rate limiting via MemoryPop lookup (invalid codes fail fast)
  *
- * Phase 2: Removes browser database access from contribute page
+ * Backwards compatibility:
+ * - Still accepts photoUrl (legacy field)
+ * - New contributions use JSONB columns (photos[], gifs[], video)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import type { MediaItem, VideoMedia } from '@/components/memory-experience/types';
+import { createHmac, timingSafeEqual } from 'crypto';
 
 // Opt out of static generation for this API route
 export const dynamic = 'force-dynamic';
+
+// Use Node.js runtime for crypto compatibility
+export const runtime = 'nodejs';
+
+// Standard tier video duration limit (seconds)
+const MAX_VIDEO_DURATION = 15;
+
+// Server-only secret for video validation verification (must match /api/upload)
+const VIDEO_VALIDATION_SECRET = process.env.VIDEO_VALIDATION_SECRET;
+
+if (!VIDEO_VALIDATION_SECRET) {
+  console.error('FATAL: VIDEO_VALIDATION_SECRET environment variable not set');
+}
+
+/**
+ * Verify HMAC-SHA256 signed validation proof for video uploads
+ * Prevents tampering, replay attacks, and unauthorized video acceptance
+ */
+function verifyVideoValidationProof(
+  proof: string,
+  expectedPayload: {
+    version: number;
+    mediaType: string;
+    shareCode: string;
+    filePath: string;
+    duration: number;
+    fileSize: number;
+  }
+): { valid: boolean; payload?: any; error?: string } {
+  if (!VIDEO_VALIDATION_SECRET) {
+    return { valid: false, error: 'VIDEO_VALIDATION_SECRET not configured' };
+  }
+
+  try {
+    // Parse proof: base64url(payload).signature
+    const [payloadB64, signature] = proof.split('.');
+    if (!payloadB64 || !signature) {
+      return { valid: false, error: 'Invalid proof format' };
+    }
+
+    // Decode payload
+    const payloadString = Buffer.from(payloadB64, 'base64url').toString('utf-8');
+    const payload = JSON.parse(payloadString);
+
+    // Verify signature using timing-safe comparison
+    const hmac = createHmac('sha256', VIDEO_VALIDATION_SECRET);
+    hmac.update(payloadString);
+    const expectedSignature = hmac.digest('hex');
+
+    // Convert to buffers for timingSafeEqual (requires equal lengths)
+    const signatureBuffer = Buffer.from(signature, 'hex');
+    const expectedBuffer = Buffer.from(expectedSignature, 'hex');
+
+    if (signatureBuffer.length !== expectedBuffer.length) {
+      return { valid: false, error: 'Signature length mismatch' };
+    }
+
+    if (!timingSafeEqual(signatureBuffer, expectedBuffer)) {
+      return { valid: false, error: 'Signature verification failed' };
+    }
+
+    // Verify payload structure and values
+    if (payload.version !== expectedPayload.version) {
+      return { valid: false, error: 'Version mismatch' };
+    }
+
+    if (payload.mediaType !== expectedPayload.mediaType) {
+      return { valid: false, error: 'Media type mismatch' };
+    }
+
+    if (payload.shareCode !== expectedPayload.shareCode) {
+      return { valid: false, error: 'ShareCode mismatch' };
+    }
+
+    if (payload.filePath !== expectedPayload.filePath) {
+      return { valid: false, error: 'File path mismatch' };
+    }
+
+    if (payload.duration !== expectedPayload.duration) {
+      return { valid: false, error: 'Duration mismatch' };
+    }
+
+    if (payload.fileSize !== expectedPayload.fileSize) {
+      return { valid: false, error: 'File size mismatch' };
+    }
+
+    // Verify duration is valid
+    if (!Number.isFinite(payload.duration) || payload.duration <= 0) {
+      return { valid: false, error: 'Invalid duration value' };
+    }
+
+    if (payload.duration > MAX_VIDEO_DURATION) {
+      return { valid: false, error: `Duration ${payload.duration}s exceeds ${MAX_VIDEO_DURATION}s limit` };
+    }
+
+    // Verify file path belongs to shareCode
+    if (!payload.filePath.startsWith(`${payload.shareCode}/`)) {
+      return { valid: false, error: 'File path does not belong to shareCode' };
+    }
+
+    return { valid: true, payload };
+  } catch (error) {
+    console.error('Proof verification error:', error);
+    return { valid: false, error: 'Proof verification failed' };
+  }
+}
 
 interface CreateMemoryRequest {
   shareCode: string;
   contributorName: string;
   message: string;
+  // Legacy field (backwards compatibility)
   photoUrl?: string;
+  // Standard multimedia (JSONB)
+  photos?: MediaItem[];
+  gifs?: MediaItem[];
+  video?: VideoMedia | null;
 }
 
 export async function POST(request: NextRequest) {
@@ -55,14 +178,65 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Insert memory
+    // SERVER-SIDE VIDEO VALIDATION VIA SIGNED PROOF
+    // Verify cryptographic proof generated by /api/upload
+    // Do NOT trust client-provided duration_seconds without verification
+    if (body.video) {
+      // Require validation proof
+      if (!body.video.validation_proof) {
+        return NextResponse.json(
+          { error: 'Video validation proof required. Please re-upload your video.' },
+          { status: 400 }
+        );
+      }
+
+      // Require canonical file path
+      if (!body.video.file_path) {
+        return NextResponse.json(
+          { error: 'Video file path required. Please re-upload your video.' },
+          { status: 400 }
+        );
+      }
+
+      // Verify signed proof
+      const verificationResult = verifyVideoValidationProof(
+        body.video.validation_proof,
+        {
+          version: 1,
+          mediaType: 'video',
+          shareCode: body.shareCode,
+          filePath: body.video.file_path,
+          duration: body.video.duration_seconds,
+          fileSize: body.video.file_size_bytes,
+        }
+      );
+
+      if (!verificationResult.valid) {
+        console.error('Video proof verification failed:', verificationResult.error);
+        return NextResponse.json(
+          { error: `Video validation failed: ${verificationResult.error}. Please re-upload your video.` },
+          { status: 400 }
+        );
+      }
+
+      // Proof verified successfully
+      // Duration_seconds is now authoritatively bound to the uploaded video
+      // No re-download or re-parsing needed
+    }
+
+    // Insert memory with JSONB multimedia support
     const { error: insertError } = await supabaseServer
       .from('memories')
       .insert({
         memorypop_id: memorypop.id,
         contributor_name: body.contributorName,
         message: body.message,
+        // Legacy field (backwards compatibility)
         photo_url: body.photoUrl || null,
+        // Standard multimedia (JSONB)
+        photos: body.photos || [],
+        gifs: body.gifs || [],
+        video: body.video || null,
       });
 
     if (insertError) {

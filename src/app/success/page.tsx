@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { ShareButtons } from "@/components/ShareButtons";
 import { CreatorAccessSection } from "@/components/CreatorAccessSection";
+import { PremiumInterestBox } from "@/components/PremiumInterestBox";
 import { getCelebrationExperience } from "@/lib/celebrationExperience";
 import { isCreatorAuthorized } from "@/lib/creatorSession";
 import type { Metadata } from "next";
@@ -101,6 +102,12 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
             />
           </div>
         </div>
+
+        {/* SECTION 2.5: PREMIUM INTEREST (DEMAND VALIDATION) */}
+        <PremiumInterestBox
+          shareCode={shareCode}
+          occasion={occasion}
+        />
 
         <div className="mt-8 w-full border-t border-[#ead8c9]"></div>
 
