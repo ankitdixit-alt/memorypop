@@ -20,9 +20,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getVideoDurationInSeconds } from 'get-video-duration';
 import { createHmac } from 'crypto';
-import { Readable } from 'stream';
 
 // Opt out of static generation for this API route
 export const dynamic = 'force-dynamic';
@@ -54,6 +52,178 @@ const ALLOWED_TYPES = {
 
 // Video duration limit for Standard tier (seconds)
 const MAX_VIDEO_DURATION = 15;
+
+/**
+ * Parse video duration from MP4/MOV/WebM container metadata
+ * Pure JavaScript implementation - works in Vercel serverless (no FFmpeg required)
+ *
+ * Supported formats:
+ * - MP4: Reads 'mvhd' atom (movie header) from ISO Base Media File Format
+ * - MOV: Same as MP4 (QuickTime uses ISOBMFF)
+ * - WebM: Reads 'Duration' element from Matroska/EBML container
+ *
+ * @param buffer - Video file buffer
+ * @param mimeType - File MIME type for format detection
+ * @returns Duration in seconds, or null if parsing fails
+ */
+function parseVideoDuration(buffer: Buffer, mimeType: string): number | null {
+  try {
+    if (mimeType === 'video/mp4' || mimeType === 'video/quicktime') {
+      return parseMP4Duration(buffer);
+    } else if (mimeType === 'video/webm') {
+      return parseWebMDuration(buffer);
+    }
+    return null;
+  } catch (error) {
+    console.error('Video duration parse error:', error);
+    return null;
+  }
+}
+
+/**
+ * Parse MP4/MOV duration from 'mvhd' atom
+ * MP4 structure: Atoms are nested recursively (moov contains mvhd)
+ * This implementation properly traverses nested atoms
+ */
+function parseMP4Duration(buffer: Buffer): number | null {
+  // Search for mvhd within moov atom
+  // Most MP4s have moov within first 100KB (search more aggressively)
+  const searchLimit = Math.min(buffer.length, 100000);
+
+  // First, find the moov atom
+  const moovOffset = findAtom(buffer, 'moov', 0, searchLimit);
+  if (moovOffset === null) {
+    return null;
+  }
+
+  // Read moov atom size to limit search within it
+  const moovSize = buffer.readUInt32BE(moovOffset);
+  const moovDataOffset = moovOffset + 8; // Skip size + type
+  const moovEndOffset = Math.min(moovOffset + moovSize, searchLimit);
+
+  // Search for mvhd within moov atom
+  const mvhdOffset = findAtom(buffer, 'mvhd', moovDataOffset, moovEndOffset);
+  if (mvhdOffset === null) {
+    return null;
+  }
+
+  // Parse mvhd atom for duration
+  const version = buffer.readUInt8(mvhdOffset + 8);
+  let timescale: number;
+  let duration: number;
+
+  if (version === 1) {
+    // Version 1: 64-bit duration
+    timescale = buffer.readUInt32BE(mvhdOffset + 28);
+    duration = Number(buffer.readBigUInt64BE(mvhdOffset + 32));
+  } else {
+    // Version 0: 32-bit duration
+    timescale = buffer.readUInt32BE(mvhdOffset + 20);
+    duration = buffer.readUInt32BE(mvhdOffset + 24);
+  }
+
+  if (timescale > 0 && duration > 0) {
+    return duration / timescale;
+  }
+
+  return null;
+}
+
+/**
+ * Find an MP4 atom by type within a buffer range
+ * Returns offset to atom start, or null if not found
+ */
+function findAtom(buffer: Buffer, atomType: string, startOffset: number, endOffset: number): number | null {
+  let offset = startOffset;
+
+  while (offset < endOffset - 8) {
+    const atomSize = buffer.readUInt32BE(offset);
+    const currentAtomType = buffer.slice(offset + 4, offset + 8).toString('ascii');
+
+    if (currentAtomType === atomType) {
+      return offset;
+    }
+
+    // Move to next atom
+    if (atomSize < 8 || atomSize > (endOffset - offset)) {
+      break;
+    }
+    offset += atomSize;
+  }
+
+  return null;
+}
+
+/**
+ * Parse WebM duration from EBML/Matroska 'Duration' element
+ * WebM uses EBML variable-length encoding
+ */
+function parseWebMDuration(buffer: Buffer): number | null {
+  // WebM Duration element ID: 0x4489
+  // Timecode scale element ID: 0x2AD7B1 (default 1000000ns = 1ms)
+
+  let offset = 0;
+  const length = Math.min(buffer.length, 10000);
+  let timecodeScale = 1000000; // Default: 1ms per tick
+  let duration: number | null = null;
+
+  while (offset < length - 4) {
+    // Read EBML element ID (variable length)
+    const firstByte = buffer.readUInt8(offset);
+
+    // Check for Duration element (0x4489)
+    if (firstByte === 0x44 && offset + 1 < length && buffer.readUInt8(offset + 1) === 0x89) {
+      offset += 2;
+      // Read element size
+      const sizeLength = getEBMLSize(buffer, offset);
+      if (!sizeLength) break;
+      offset += sizeLength.bytes;
+
+      // Read duration as float (typically 4 or 8 bytes)
+      if (sizeLength.value === 4) {
+        duration = buffer.readFloatBE(offset);
+      } else if (sizeLength.value === 8) {
+        duration = buffer.readDoubleBE(offset);
+      }
+
+      if (duration !== null) {
+        // Duration is in timecode scale units (default 1ms)
+        return (duration * timecodeScale) / 1000000000; // Convert to seconds
+      }
+    }
+
+    offset++;
+  }
+
+  return null;
+}
+
+/**
+ * Read EBML variable-length size encoding
+ */
+function getEBMLSize(buffer: Buffer, offset: number): { value: number; bytes: number } | null {
+  if (offset >= buffer.length) return null;
+
+  const firstByte = buffer.readUInt8(offset);
+  let numBytes = 1;
+  let mask = 0x80;
+
+  // Find leading 1 bit to determine length
+  while (numBytes <= 8 && !(firstByte & mask)) {
+    mask >>= 1;
+    numBytes++;
+  }
+
+  if (numBytes > 8 || offset + numBytes > buffer.length) return null;
+
+  // Read size value
+  let value = firstByte & (mask - 1);
+  for (let i = 1; i < numBytes; i++) {
+    value = (value << 8) | buffer.readUInt8(offset + i);
+  }
+
+  return { value, bytes: numBytes };
+}
 
 /**
  * Generate HMAC-SHA256 signed validation proof for video uploads
@@ -154,17 +324,24 @@ export async function POST(request: NextRequest) {
     // Server-side video duration validation (critical for infrastructure cost guardrail)
     let videoDuration: number | undefined;
     if (mediaType === 'video') {
-      try {
-        // Convert Buffer to Readable stream for get-video-duration
-        const bufferStream = Readable.from(buffer);
-        videoDuration = await getVideoDurationInSeconds(bufferStream);
-      } catch (error) {
-        console.error('Video duration read error:', error);
+      // Parse video duration using pure JavaScript (no FFmpeg/external binaries)
+      // Works reliably in Vercel serverless environment
+      const parsedDuration = parseVideoDuration(buffer, file.type);
+
+      if (parsedDuration === null) {
+        console.error('Video duration parse failed:', {
+          type: file.type,
+          size: file.size,
+          bufferLength: buffer.length,
+          firstBytes: buffer.slice(0, 32).toString('hex')
+        });
         return NextResponse.json(
-          { error: 'Could not read video metadata. Please ensure your video is in MP4, MOV, or WebM format.' },
+          { error: 'Could not read video metadata. Please ensure your video is in MP4, MOV, or WebM format and is not corrupted.' },
           { status: 400 }
         );
       }
+
+      videoDuration = parsedDuration;
 
       // Validate duration is finite and positive
       if (!Number.isFinite(videoDuration) || videoDuration <= 0) {
