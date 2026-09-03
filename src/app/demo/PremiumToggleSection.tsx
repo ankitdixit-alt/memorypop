@@ -12,7 +12,7 @@ export function PremiumToggleSection({ isPremium, onToggle }: PremiumToggleSecti
           See the same celebration, elevated
         </h2>
         <p className="text-lg text-gray-600 mb-12">
-          Toggle to see how Premium transforms the presentation
+          Toggle to see how MemoryPop Plus transforms the presentation
         </p>
 
         {/* Toggle Control */}
@@ -35,7 +35,7 @@ export function PremiumToggleSection({ isPremium, onToggle }: PremiumToggleSecti
                 : 'bg-transparent text-gray-600 hover:text-gray-900'
             }`}
           >
-            ✨ Premium
+            ✨ MemoryPop Plus
           </button>
         </div>
 

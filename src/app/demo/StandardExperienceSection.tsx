@@ -119,66 +119,15 @@ export function StandardExperienceSection() {
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
           >
-            A beautiful shared memory
+            See what they'll experience
           </h2>
           <p
             className={`text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto font-medium transition-all duration-700 delay-100 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
           >
-            Everything you need to create a memory they'll want to revisit
+            Click any memory below to preview the experience
           </p>
-        </div>
-
-        {/* Features - Customer-oriented highlights */}
-        <div
-          className={`max-w-6xl mx-auto mb-16 transition-all duration-700 delay-300 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}
-        >
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: '📸',
-                title: 'Photos that bring the moment back',
-                description: 'Every person can add up to 3 favourite photos',
-              },
-              {
-                icon: '🎥',
-                title: 'A little moment in motion',
-                description: 'Add a short 15-second video alongside the memory',
-              },
-              {
-                icon: '🎬',
-                title: 'Beautifully brought together',
-                description: 'MemoryPop turns everyone\'s contributions into a cinematic reveal with music',
-              },
-              {
-                icon: '✨',
-                title: 'Intuitive reveal',
-                description: 'Open, understand, experience, smile, browse, replay',
-              },
-              {
-                icon: '❤️',
-                title: 'Reactions and replies',
-                description: 'Let them react and respond to every memory',
-              },
-              {
-                icon: '🔄',
-                title: 'Replay anytime',
-                description: 'Revisit these moments on birthdays, anniversaries, whenever they need them',
-              },
-            ].map((feature, idx) => (
-              <div
-                key={idx}
-                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100"
-              >
-                <div className="text-4xl mb-3">{feature.icon}</div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-sm text-gray-600">{feature.description}</p>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Memory Wall Preview */}

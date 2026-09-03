@@ -111,8 +111,8 @@ export function GalleryShowcaseSection({ isPremium }: GalleryShowcaseSectionProp
           </h2>
           <p className="text-lg text-[#856b5f] max-w-2xl mx-auto mb-6">
             {isPremium
-              ? 'Premium Glass Morphism design with support for photos, videos, GIFs, and multiple photos per memory'
-              : 'Elegant memory wall with premium design (toggle Premium above to see the full experience)'}
+              ? 'MemoryPop Plus Glass Morphism design with support for photos, videos, GIFs, and multiple photos per memory'
+              : 'Elegant memory wall with premium design (toggle MemoryPop Plus above to see the full experience)'}
           </p>
 
           {/* Feature Highlights */}

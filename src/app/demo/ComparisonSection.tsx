@@ -38,7 +38,7 @@ export function ComparisonSection() {
     },
     {
       standard: 'Signature MemoryPop look',
-      premium: 'Premium frames & personalization',
+      premium: 'Premium reveal styles',
     },
   ]
 
@@ -51,7 +51,7 @@ export function ComparisonSection() {
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
-          Standard → Premium
+          Standard → MemoryPop Plus
         </h2>
 
         {/* Comparison Cards */}
@@ -74,12 +74,12 @@ export function ComparisonSection() {
                 <p className="text-lg text-gray-700 font-medium">{item.standard}</p>
               </div>
 
-              {/* Premium */}
+              {/* Plus */}
               <div className="p-6 bg-gradient-to-br from-orange-50 to-pink-50 rounded-2xl border-2 border-orange-200 shadow-md">
                 <div className="flex items-center gap-3 mb-2">
                   <span className="text-base">✨</span>
                   <div className="text-sm font-semibold text-orange-700 uppercase tracking-wider">
-                    Premium
+                    MemoryPop Plus
                   </div>
                 </div>
                 <p className="text-lg text-gray-900 font-semibold">{item.premium}</p>
@@ -96,7 +96,7 @@ export function ComparisonSection() {
         >
           Standard gives you the MemoryPop experience.
           <br />
-          Premium gives you more ways to make it personal.
+          MemoryPop Plus gives you more room for every memory.
         </p>
       </div>
     </section>

@@ -3,10 +3,10 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Pricing',
-  description: 'MemoryPop pricing: Standard (free), Premium (enhanced features), and Keepsake (physical memory book). Celebrate together, your way.',
+  description: 'MemoryPop pricing: Standard (free), MemoryPop Plus (more room for memories), and Keepsake (physical memory book). Celebrate together, your way.',
   openGraph: {
     title: 'Pricing | MemoryPop',
-    description: 'MemoryPop pricing: Standard (free), Premium (enhanced features), and Keepsake (physical memory book). Celebrate together, your way.',
+    description: 'MemoryPop pricing: Standard (free), MemoryPop Plus (more room for memories), and Keepsake (physical memory book). Celebrate together, your way.',
     url: '/pricing',
   },
 };
@@ -52,24 +52,25 @@ export default function PricingPage() {
             </div>
           </div>
 
-          {/* Premium */}
+          {/* Plus */}
           <div className="rounded-lg bg-card border border-border/60 p-8 space-y-4">
-            <h2 className="text-2xl font-semibold">Premium</h2>
+            <h2 className="text-2xl font-semibold">MemoryPop Plus</h2>
             <div className="text-3xl font-bold">Coming soon</div>
-            <p className="text-sm text-muted-foreground">Enhanced features for special celebrations.</p>
+            <p className="text-sm text-muted-foreground">More room for every memory.</p>
 
             <div className="pt-4 space-y-2">
               <p className="text-sm font-medium">Everything in Standard, plus:</p>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>✓ Premium themes and styles</li>
-                <li>✓ Video messages</li>
-                <li>✓ Advanced customization</li>
-                <li>✓ Priority support</li>
+                <li>✓ 10 photos per contributor</li>
+                <li>✓ 3 GIFs per contributor</li>
+                <li>✓ 90-sec video per contributor</li>
+                <li>✓ Custom music</li>
+                <li>✓ Premium reveal styles</li>
               </ul>
             </div>
 
             <div className="pt-4">
-              <div className="text-sm text-muted-foreground">Pricing to be announced.</div>
+              <div className="text-sm text-muted-foreground">Founding price: €4.99</div>
             </div>
           </div>
 
@@ -80,7 +81,7 @@ export default function PricingPage() {
             <p className="text-sm text-muted-foreground">Turn your digital MemoryPop into a beautiful physical book.</p>
 
             <div className="pt-4 space-y-2">
-              <p className="text-sm font-medium">Everything in Premium, plus:</p>
+              <p className="text-sm font-medium">Everything in MemoryPop Plus, plus:</p>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>✓ Professional printed memory book</li>
                 <li>✓ Premium paper and binding</li>

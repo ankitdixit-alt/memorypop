@@ -4,10 +4,13 @@ import { useEffect, useState, useRef, useMemo } from 'react'
 import MemoryGrid from '@/components/memory-experience/MemoryGrid'
 import DemoMemoryPreview from './DemoMemoryPreview'
 import type { Memory } from '@/components/memory-experience/types'
+import { trackEvent } from '@/lib/analytics'
+import { MEMORYPOP_PLUS } from '@/config/plus'
 
 export function PremiumExperienceSection() {
   const [isVisible, setIsVisible] = useState(false)
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null)
+  const [hasClickedInterest, setHasClickedInterest] = useState(false)
   const scrollPositionRef = useRef<number>(0)
 
   useEffect(() => {
@@ -120,12 +123,19 @@ export function PremiumExperienceSection() {
     })
   }
 
+  const handleInterestClick = () => {
+    trackEvent('premium_interest_clicked', {
+      source: 'demo',
+    })
+    setHasClickedInterest(true)
+  }
+
   return (
     <section id="premium-experience" className="py-24 px-6 bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          {/* Premium Badge with Price */}
+          {/* Plus Badge - Coming Soon */}
           <div
             className={`inline-flex items-center gap-3 px-6 py-3 rounded-full text-base font-semibold
                         bg-gradient-to-r from-amber-400 via-orange-400 to-pink-400 text-white shadow-2xl mb-8
@@ -134,7 +144,7 @@ export function PremiumExperienceSection() {
             }`}
           >
             <span className="text-2xl">✨</span>
-            <span>Premium — €4.99</span>
+            <span>MemoryPop Plus — Coming Soon</span>
           </div>
 
           {/* Headline */}
@@ -182,7 +192,7 @@ export function PremiumExperienceSection() {
               {
                 icon: '🎨',
                 title: 'A look that feels like them',
-                description: 'Choose from Premium frames and visual styles',
+                description: 'Choose from premium reveal styles',
               },
             ].map((feature, idx) => (
               <div
@@ -207,7 +217,7 @@ export function PremiumExperienceSection() {
           <div className="bg-gradient-to-br from-[#f9f6f1] via-[#fefdfb] to-[#f5f0e8] rounded-3xl p-8 shadow-2xl">
             <div className="text-center mb-12">
               <h3 className="text-3xl md:text-4xl font-serif text-[#3a241e] mb-2">Happy Birthday Emma!</h3>
-              <p className="text-lg text-[#856b5f]">Click any memory to preview Premium experience</p>
+              <p className="text-lg text-[#856b5f]">Click any memory to preview MemoryPop Plus experience</p>
             </div>
 
             <MemoryGrid memories={memories} onMemoryClick={handleMemoryClick} />
@@ -216,6 +226,34 @@ export function PremiumExperienceSection() {
 
         {/* Demo Memory Preview Modal */}
         <DemoMemoryPreview memory={selectedMemory} isOpen={!!selectedMemory} onClose={handleModalClose} />
+
+        {/* Plus Interest CTA */}
+        <div
+          className={`mt-16 max-w-2xl mx-auto text-center transition-all duration-700 delay-700 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+        >
+          <div className="bg-white rounded-3xl p-8 shadow-xl border-2 border-orange-200">
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">{MEMORYPOP_PLUS.name}</h3>
+            <p className="text-gray-700 mb-2">{MEMORYPOP_PLUS.tagline}</p>
+            <p className="text-sm text-gray-600 mb-4">{MEMORYPOP_PLUS.fullSummary}</p>
+            <p className="text-orange-600 font-semibold mb-6">{MEMORYPOP_PLUS.priceLabel} {MEMORYPOP_PLUS.price}</p>
+
+            {!hasClickedInterest ? (
+              <button
+                onClick={handleInterestClick}
+                className="rounded-full bg-gradient-to-r from-orange-500 to-pink-500 px-8 py-3 font-semibold text-white transition-all hover:from-orange-600 hover:to-pink-600 hover:shadow-xl"
+              >
+                {MEMORYPOP_PLUS.comingSoonCTA}
+              </button>
+            ) : (
+              <div className="text-gray-900">
+                <p className="font-semibold mb-1">{MEMORYPOP_PLUS.comingSoonConfirmation}</p>
+                <p className="text-gray-600">{MEMORYPOP_PLUS.comingSoonFollowup}</p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   )

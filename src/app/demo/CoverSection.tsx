@@ -17,7 +17,7 @@ export function CoverSection({ demo, isPremium }: CoverSectionProps) {
           {isPremium ? (
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-yellow-100 to-orange-100 text-orange-900 shadow-lg shadow-orange-200/50">
               <span className="text-base">✨</span>
-              Premium
+              MemoryPop Plus
             </span>
           ) : (
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white text-orange-700 shadow-sm">

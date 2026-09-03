@@ -6,10 +6,9 @@ import { trackEvent } from '@/lib/analytics'
 import { HeroSection } from './HeroSection'
 import { HowItWorksSection } from './HowItWorksSection'
 import { StandardExperienceSection } from './StandardExperienceSection'
-import { PremiumExperienceSection } from './PremiumExperienceSection'
-import { ComparisonSection } from './ComparisonSection'
+import { WhyPersonalSection } from './WhyPersonalSection'
+import { PlusTeaserSection } from './PlusTeaserSection'
 import { RecipientReactionSection } from './RecipientReactionSection'
-import { CreatorPerspectiveSection } from './CreatorPerspectiveSection'
 import { CtaSection } from './CtaSection'
 
 export default function DemoPage() {
@@ -77,17 +76,12 @@ export default function DemoPage() {
       <HeroSection />
       <HowItWorksSection />
       <StandardExperienceSection />
-      <PremiumExperienceSection />
-      <ComparisonSection />
+      <WhyPersonalSection />
+      <PlusTeaserSection />
       <RecipientReactionSection
         reaction={emmaBirthdayDemo.recipientReaction}
         recipientName={emmaBirthdayDemo.recipient.name}
         stats={emmaBirthdayDemo.stats}
-      />
-      <CreatorPerspectiveSection
-        steps={emmaBirthdayDemo.creatorSteps}
-        creatorName={emmaBirthdayDemo.creator.name}
-        recipientName={emmaBirthdayDemo.recipient.name}
       />
       <CtaSection occasion={emmaBirthdayDemo.occasion} />
     </main>

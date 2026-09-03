@@ -5,14 +5,14 @@ import type { Metadata } from "next";
  * Plus page metadata with canonical URL and enhanced SEO
  */
 export const metadata: Metadata = {
-  title: 'MemoryPop Plus - Unlimited Photos & Premium Features',
-  description: 'Upgrade your celebration with MemoryPop Plus. Get unlimited photos, priority support, and exclusive features. One-time payment per celebration.',
+  title: 'MemoryPop Plus - Coming Soon',
+  description: 'MemoryPop Plus: More room for every memory. 10 photos, 3 GIFs, 90-sec video per contributor, plus custom music and premium reveal styles. Founding price €4.99.',
   alternates: {
     canonical: '/plus',
   },
   openGraph: {
-    title: 'MemoryPop Plus - Unlimited Photos & Premium Features',
-    description: 'Upgrade your celebration with MemoryPop Plus. Get unlimited photos, priority support, and exclusive features.',
+    title: 'MemoryPop Plus - Coming Soon',
+    description: 'MemoryPop Plus: More room for every memory. 10 photos, 3 GIFs, 90-sec video per contributor, plus custom music and premium reveal styles.',
     type: 'website',
     url: '/plus',
     images: [
@@ -26,8 +26,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MemoryPop Plus - Unlimited Photos & Premium Features',
-    description: 'Upgrade your celebration with MemoryPop Plus. Get unlimited photos, priority support, and exclusive features.',
+    title: 'MemoryPop Plus - Coming Soon',
+    description: 'MemoryPop Plus: More room for every memory. 10 photos, 3 GIFs, 90-sec video per contributor, plus custom music and premium reveal styles.',
     images: ['/og/default.png'],
   },
 };

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { trackEvent } from '@/lib/analytics';
+import { MEMORYPOP_PLUS } from '@/config/plus';
 
 type PremiumInterestBoxProps = {
   shareCode: string;
@@ -30,39 +31,41 @@ export function PremiumInterestBox({ shareCode, occasion }: PremiumInterestBoxPr
         Everyone can make it personal
       </p>
       <p className="text-sm text-[#6B5B52] mb-4">
-        3 photos · 1 GIF · 15-sec video + a message per contributor
+        {MEMORYPOP_PLUS.standard.photos} photos · {MEMORYPOP_PLUS.standard.gifs} GIF · {MEMORYPOP_PLUS.standard.videoSeconds}-sec video + a message per contributor
       </p>
 
-      {/* Premium mention */}
+      {/* Plus mention */}
       <div className="pt-4 border-t border-[#ead8c9]">
         <p className="text-sm font-semibold text-[#2B1E18] mb-2">
-          Want more room for every memory?
+          {MEMORYPOP_PLUS.tagline}
         </p>
         <p className="text-sm text-[#6B5B52] mb-4">
-          Premium gives each person 10 photos, 3 GIFs and a 90-sec video — plus your own music and Premium styles.
+          {MEMORYPOP_PLUS.shortSummary}
+          <br />
+          Plus {MEMORYPOP_PLUS.features.music} and {MEMORYPOP_PLUS.features.styles}.
         </p>
 
         {!hasClickedInterest ? (
           // Before click: show CTA
           <div className="flex items-center gap-3">
             <span className="text-sm font-semibold text-[#ef6a57]">
-              Premium €4.99 · Coming soon
+              {MEMORYPOP_PLUS.priceLabel} {MEMORYPOP_PLUS.price} · Coming soon
             </span>
             <button
               onClick={handleInterestClick}
               className="text-sm font-semibold text-[#ef6a57] underline hover:text-[#e05a47] transition-colors"
             >
-              I&apos;m interested
+              {MEMORYPOP_PLUS.comingSoonCTA}
             </button>
           </div>
         ) : (
           // After click: show inline success state
           <div className="text-sm text-[#2B1E18]">
             <p className="font-semibold">
-              ✓ Thanks — noted 💛
+              {MEMORYPOP_PLUS.comingSoonConfirmation}
             </p>
             <p className="text-[#6B5B52] mt-1">
-              We&apos;ll let you know when Premium is ready.
+              {MEMORYPOP_PLUS.comingSoonFollowup}
             </p>
           </div>
         )}

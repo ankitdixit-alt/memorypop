@@ -324,7 +324,8 @@ const footerColumns = [
     links: [
       { label: "How it works", href: "/how-it-works" },
       { label: "Occasions", href: "/occasions" },
-      { label: "Pricing", href: "/pricing" }
+      { label: "Pricing", href: "/pricing" },
+      { label: "MemoryPop Plus · Coming soon", href: "/plus" }
     ]
   },
   {
