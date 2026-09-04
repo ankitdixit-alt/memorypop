@@ -22,7 +22,7 @@ export default function CreateFormWithParams() {
     'farewell': 'Farewell',
     'wedding': 'Wedding',
     'anniversary': 'Anniversary',
-    'new-arrival': 'New Arrival',
+    'new-arrival': 'New Baby',
     'thank-you': 'Thank You',
     'graduation': 'Graduation',
   };

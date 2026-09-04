@@ -498,6 +498,7 @@ export default function CreateForm({ initialOccasion }: CreateFormProps) {
                 "Wedding",
                 "New Baby",
                 "Graduation",
+                "Retirement",
                 "Farewell",
               ].map((item) => (
                 <button
