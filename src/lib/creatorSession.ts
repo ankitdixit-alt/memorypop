@@ -15,9 +15,9 @@
 
 import { cookies } from 'next/headers';
 import crypto from 'crypto';
+import { getRequiredServerSecret } from '@/lib/serverEnv';
 
 const SESSION_COOKIE_NAME = 'memorypop_creator_session';
-const SESSION_SECRET = process.env.SESSION_SECRET || 'development-secret-change-in-production';
 const SESSION_MAX_AGE = 7 * 24 * 60 * 60; // 7 days in seconds
 
 export interface CreatorSession {
@@ -33,8 +33,9 @@ export interface CreatorSession {
  */
 function signSession(session: CreatorSession): string {
   const payload = JSON.stringify(session);
+  const sessionSecret = getRequiredServerSecret('SESSION_SECRET');
   const signature = crypto
-    .createHmac('sha256', SESSION_SECRET)
+    .createHmac('sha256', sessionSecret)
     .update(payload)
     .digest('base64url');
 
@@ -51,10 +52,11 @@ function verifySession(signedSession: string): CreatorSession | null {
     if (!payloadEncoded || !signature) return null;
 
     const payload = Buffer.from(payloadEncoded, 'base64url').toString();
+    const sessionSecret = getRequiredServerSecret('SESSION_SECRET');
 
     // Verify signature (constant-time comparison)
     const expectedSignature = crypto
-      .createHmac('sha256', SESSION_SECRET)
+      .createHmac('sha256', sessionSecret)
       .update(payload)
       .digest('base64url');
 
