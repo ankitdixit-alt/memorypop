@@ -1,0 +1,64 @@
+{
+  "caseId": "birthday-test-b",
+  "repetition": 2,
+  "success": true,
+  "plan": {
+    "opening": "Let’s kick off Emma’s 30‑year adventure with laughter, memories, and the love that’s shaped her life.",
+    "chapters": [
+      {
+        "title": "Laugh‑Out‑Loud Beginnings",
+        "memoryIds": [
+          "mem_001",
+          "mem_008",
+          "mem_014",
+          "mem_006",
+          "mem_003"
+        ]
+      },
+      {
+        "title": "Childhood & Campus Memories",
+        "memoryIds": [
+          "mem_004",
+          "mem_011",
+          "mem_009",
+          "mem_013"
+        ]
+      },
+      {
+        "title": "Career Wins & Heartfelt Partnership",
+        "memoryIds": [
+          "mem_005",
+          "mem_010"
+        ]
+      },
+      {
+        "title": "Family Roots & Forever Love",
+        "memoryIds": [
+          "mem_007",
+          "mem_012",
+          "mem_015",
+          "mem_002"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_010",
+      "mem_009",
+      "mem_002"
+    ],
+    "finaleMemoryId": "mem_002",
+    "reasoningSummary": "Fun, humorous clips open the video, then we transition to nostalgic school and college moments, followed by career and partnership highlights, and finish with deep family love. The Mom message is the emotional finale, while partner, college roommate, and Mom are highlighted for impact.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 3336,
+      "tokensUsed": 3182,
+      "timestamp": "2026-09-16T20:20:30.228Z"
+    }
+  },
+  "latencyMs": 3338,
+  "tokensUsed": 3182,
+  "timestamp": "2026-09-16T20:20:26.890Z",
+  "inputHash": "bf3b61b8803a8067",
+  "promptHash": "b57fc8789286b082"
+}

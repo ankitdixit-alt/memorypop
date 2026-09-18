@@ -1,0 +1,13 @@
+{
+  "caseId": "birthday-test-a",
+  "repetition": 3,
+  "attemptNumber": 3,
+  "success": false,
+  "error": "Groq API error (400): {\"error\":{\"message\":\"Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.\",\"type\":\"invalid_request_error\",\"code\":\"json_validate_failed\",\"failed_generation\":\"\"}}\n",
+  "errorType": "parse",
+  "requestedModel": "openai/gpt-oss-120b",
+  "latencyMs": 5488,
+  "timestamp": "2026-09-16T20:38:29.377Z",
+  "inputHash": "b65a7a1303454651",
+  "promptHash": "89d9c35739e5ba69"
+}

@@ -1,0 +1,78 @@
+{
+  "caseId": "birthday-test-a",
+  "repetition": 2,
+  "success": true,
+  "plan": {
+    "opening": "From baby steps to lifelong love, we celebrate Emma’s 30 years of laughter, growth, and the people who shaped her journey.",
+    "chapters": [
+      {
+        "title": "First Steps & Early Bonds",
+        "memoryIds": [
+          "mem_004",
+          "mem_007",
+          "mem_015"
+        ]
+      },
+      {
+        "title": "Growing Up with Family",
+        "memoryIds": [
+          "mem_002",
+          "mem_012"
+        ]
+      },
+      {
+        "title": "School Days & Drama",
+        "memoryIds": [
+          "mem_011",
+          "mem_014"
+        ]
+      },
+      {
+        "title": "College Adventures",
+        "memoryIds": [
+          "mem_001",
+          "mem_009",
+          "mem_003"
+        ]
+      },
+      {
+        "title": "Summer Escapades",
+        "memoryIds": [
+          "mem_006",
+          "mem_008"
+        ]
+      },
+      {
+        "title": "Professional Partnerships",
+        "memoryIds": [
+          "mem_005",
+          "mem_013"
+        ]
+      },
+      {
+        "title": "Love & Future",
+        "memoryIds": [
+          "mem_010"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_002",
+      "mem_012"
+    ],
+    "finaleMemoryId": "mem_010",
+    "reasoningSummary": "Grouped memories by life stages, balancing humor and heartfelt moments while spacing similar tones. Highlighted parental love and ended with the partner’s message.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 4346,
+      "tokensUsed": 3660,
+      "timestamp": "2026-09-16T20:13:57.347Z"
+    }
+  },
+  "latencyMs": 4348,
+  "tokensUsed": 3660,
+  "timestamp": "2026-09-16T20:13:52.999Z",
+  "inputHash": "b65a7a1303454651",
+  "promptHash": "89d9c35739e5ba69"
+}

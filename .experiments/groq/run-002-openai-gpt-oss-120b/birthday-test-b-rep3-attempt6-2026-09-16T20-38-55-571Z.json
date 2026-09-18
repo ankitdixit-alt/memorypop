@@ -1,0 +1,67 @@
+{
+  "caseId": "birthday-test-b",
+  "repetition": 3,
+  "attemptNumber": 6,
+  "success": true,
+  "plan": {
+    "opening": "From fire‑alarm cakes to family hugs, let’s celebrate Emma’s 30 years of laughter, love, and unforgettable moments.",
+    "chapters": [
+      {
+        "title": "College Capers & Crazy Moments",
+        "memoryIds": [
+          "mem_001",
+          "mem_003",
+          "mem_008",
+          "mem_014"
+        ]
+      },
+      {
+        "title": "Childhood, Schoolyard & Growing Up",
+        "memoryIds": [
+          "mem_004",
+          "mem_011",
+          "mem_006",
+          "mem_009"
+        ]
+      },
+      {
+        "title": "Work, Collaboration & Love",
+        "memoryIds": [
+          "mem_005",
+          "mem_013",
+          "mem_010",
+          "mem_015"
+        ]
+      },
+      {
+        "title": "Family Foundations & Forever Love",
+        "memoryIds": [
+          "mem_007",
+          "mem_012",
+          "mem_002"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_001",
+      "mem_010",
+      "mem_012"
+    ],
+    "finaleMemoryId": "mem_002",
+    "reasoningSummary": "I opened with high‑energy college memories, then moved through childhood, career, and finally deep family love, ending on Mom’s heartfelt message. Highlights spotlight the funniest moment, the partner’s love, and Dad’s pride.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 4131,
+      "tokensUsed": 3092,
+      "timestamp": "2026-09-16T20:38:59.704Z"
+    }
+  },
+  "requestedModel": "openai/gpt-oss-120b",
+  "returnedModel": "openai/gpt-oss-120b",
+  "latencyMs": 4133,
+  "tokensUsed": 3092,
+  "timestamp": "2026-09-16T20:38:55.571Z",
+  "inputHash": "bf3b61b8803a8067",
+  "promptHash": "b57fc8789286b082"
+}

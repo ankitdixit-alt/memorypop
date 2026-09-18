@@ -1,0 +1,58 @@
+{
+  "caseId": "anniversary-test-b",
+  "attemptNumber": 2,
+  "retryNumber": 0,
+  "success": true,
+  "plan": {
+    "opening": "From playful vows to heartfelt reflections, we celebrate Alex & Jordan’s ten years of love.",
+    "chapters": [
+      {
+        "title": "Playful Beginnings",
+        "memoryIds": [
+          "mem_a01",
+          "mem_a04",
+          "mem_a05",
+          "mem_a06"
+        ]
+      },
+      {
+        "title": "Friends & Reflections",
+        "memoryIds": [
+          "mem_a02",
+          "mem_a07",
+          "mem_a08"
+        ]
+      },
+      {
+        "title": "Family Blessings",
+        "memoryIds": [
+          "mem_a03",
+          "mem_a10",
+          "mem_a09"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_a01",
+      "mem_a09",
+      "mem_a03"
+    ],
+    "finaleMemoryId": "mem_a09",
+    "reasoningSummary": "I opened with the funniest, light‑hearted messages to set a warm, teasing tone, then moved to sincere reflections from friends, and closed with family tributes culminating in the photographer’s powerful reminder of their lasting spark. The highlighted memories underscore the humor, emotional core, and family love.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 2403,
+      "tokensUsed": 2502,
+      "timestamp": "2026-09-17T08:26:08.250Z"
+    }
+  },
+  "requestedModel": "openai/gpt-oss-120b",
+  "returnedModel": "openai/gpt-oss-120b",
+  "latencyMs": 2404,
+  "tokensUsed": 2502,
+  "timestamp": "2026-09-17T08:26:05.846Z",
+  "inputHash": "9948b30f2ea610df",
+  "promptHash": "0ca74f65f0b3563c",
+  "configVersion": "json-schema-strict"
+}

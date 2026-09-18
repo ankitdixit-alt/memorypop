@@ -8,15 +8,16 @@ import { TileTransition, type TileVariant } from './TileTransition'
 import { getDecorationConfig } from '../../config/decorations'
 import s from './reveal.module.css'
 
-export default function RevealPreview() {
+export default function RevealPreview({ storyOverride, modeOverride, presetOverride }: { storyOverride?: Story; modeOverride?: Mode; presetOverride?: Preset } = {}) {
   const [occasion, setOccasion] = useState<Occasion>('birthday')
-  const [mode, setMode] = useState<Mode>('director')
-  const [preset, setPreset] = useState<Preset>('same')
+  const [mode, setMode] = useState<Mode>(modeOverride || 'director')
+  const [preset, setPreset] = useState<Preset>(presetOverride || 'same')
   const [speed, setSpeed] = useState(1)
   const [soundEnabled, setSoundEnabled] = useState(false)
-  const story = useMemo(() => getStory(occasion, preset, mode), [occasion, preset, mode])
+  const story = useMemo(() => storyOverride || getStory(occasion, preset, mode), [storyOverride, occasion, preset, mode])
+  const isComparison = !!storyOverride
   return <main className={s.app}>
-    <header className={s.header}>
+    {!isComparison && <header className={s.header}>
       <a className={s.brand} href="/ai-director-reveal" aria-label="Restart MemoryPop preview">
         <svg viewBox="0 0 24 24" fill="currentColor" className={s.sparkles} aria-hidden="true">
           <path d="M12 2l1.6 4.4L18 8l-4.4 1.6L12 14l-1.6-4.4L6 8l4.4-1.6L12 2z" />
@@ -31,21 +32,21 @@ export default function RevealPreview() {
           <option value="anniversary">Anniversary</option><option value="sympathy">Sympathy</option>
         </select>
       </label>
-    </header>
-    <div className={s.comparison}>
-      <div className={s.tabs} aria-label="Reveal style">
-        <button aria-pressed={mode === 'standard'} onClick={() => setMode('standard')}>Standard reveal</button>
-        <button aria-pressed={mode === 'director'} onClick={() => setMode('director')}>AI Director concept <span>✦</span></button>
+      <div className={s.comparison}>
+        <div className={s.tabs} aria-label="Reveal style">
+          <button aria-pressed={mode === 'standard'} onClick={() => setMode('standard')}>Standard reveal</button>
+          <button aria-pressed={mode === 'director'} onClick={() => setMode('director')}>AI Director concept <span>✦</span></button>
+        </div>
+        <label>Compare
+          <select aria-label="Comparison preset" value={preset} onChange={e => setPreset(e.target.value as Preset)}>
+            <option value="same">Same content</option><option value="tier">Full tier experience</option>
+          </select>
+        </label>
       </div>
-      <label>Compare
-        <select aria-label="Comparison preset" value={preset} onChange={e => setPreset(e.target.value as Preset)}>
-          <option value="same">Same content</option><option value="tier">Full tier experience</option>
-        </select>
-      </label>
-    </div>
-    <p className={s.comparisonNote}>{preset === 'same'
-      ? 'Identical memories and media in both modes. Compare the storytelling.'
-      : 'Same fictional story. Standard: up to 3 photos, 1 GIF, 15s video. Premium concept: up to 10 photos, 3 GIFs, 90s video per contribution.'}</p>
+      <p className={s.comparisonNote}>{preset === 'same'
+        ? 'Identical memories and media in both modes. Compare the storytelling.'
+        : 'Same fictional story. Standard: up to 3 photos, 1 GIF, 15s video. Premium concept: up to 10 photos, 3 GIFs, 90s video per contribution.'}</p>
+    </header>}
     <Player key={occasion + ':' + mode + ':' + preset} story={story} mode={mode} preset={preset} speed={speed} onSpeed={setSpeed} soundEnabled={soundEnabled} onSound={setSoundEnabled}/>
   </main>
 }
@@ -396,7 +397,7 @@ function Player({story, mode, preset, speed, onSpeed, soundEnabled, onSound}: {s
         <a href="/ai-director-preview">Open existing experiment evidence view ↗</a>
       </div>
     </details>
-    <audio ref={audioRef} src={mediaUrl('ambient.wav')} loop preload="none" aria-hidden="true"/>
+    <audio ref={audioRef} src={mediaUrl('ambient.wav')} loop preload="auto" aria-hidden="true" onError={() => setSoundError(true)}/>
 
     <dialog ref={dialogRef} className={s.dialog} onCancel={closeModal} onClose={closeModal}>
       <div className={s.dialogHeader}><h2>{inspected ? inspected.name : 'Your memory wall'}</h2><button onClick={closeModal} aria-label="Close memory browser">Close ×</button></div>

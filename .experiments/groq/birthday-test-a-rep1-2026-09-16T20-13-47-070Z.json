@@ -1,0 +1,11 @@
+{
+  "caseId": "birthday-test-a",
+  "repetition": 1,
+  "success": false,
+  "error": "Validation failed: Plan is missing finale memory ID",
+  "errorType": "unknown",
+  "latencyMs": 4925,
+  "timestamp": "2026-09-16T20:13:47.070Z",
+  "inputHash": "b65a7a1303454651",
+  "promptHash": "89d9c35739e5ba69"
+}

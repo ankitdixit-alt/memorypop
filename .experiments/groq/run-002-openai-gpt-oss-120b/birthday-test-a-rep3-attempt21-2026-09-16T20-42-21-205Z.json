@@ -1,0 +1,77 @@
+{
+  "caseId": "birthday-test-a",
+  "repetition": 3,
+  "attemptNumber": 21,
+  "success": true,
+  "plan": {
+    "opening": "Thirty years of love, laughter, and shared moments—let's travel the beautiful story of Emma's life.",
+    "chapters": [
+      {
+        "title": "Family Foundations",
+        "memoryIds": [
+          "mem_007",
+          "mem_002",
+          "mem_015"
+        ]
+      },
+      {
+        "title": "Playful Beginnings",
+        "memoryIds": [
+          "mem_004",
+          "mem_001",
+          "mem_008"
+        ]
+      },
+      {
+        "title": "Adventures & Laughter",
+        "memoryIds": [
+          "mem_003",
+          "mem_006",
+          "mem_014"
+        ]
+      },
+      {
+        "title": "School Days & Dreams",
+        "memoryIds": [
+          "mem_011",
+          "mem_009"
+        ]
+      },
+      {
+        "title": "Professional Partnerships",
+        "memoryIds": [
+          "mem_005",
+          "mem_013"
+        ]
+      },
+      {
+        "title": "Heart & Home",
+        "memoryIds": [
+          "mem_010",
+          "mem_012"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_002",
+      "mem_010",
+      "mem_015"
+    ],
+    "finaleMemoryId": "mem_012",
+    "reasoningSummary": "Grouped memories by relationship and theme to create a rising emotional arc, using humor early and interspersing lighter moments before deeper family and love messages. Selected Mom's note as a highlight and Dad's heartfelt message as the powerful finale.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 4516,
+      "tokensUsed": 3647,
+      "timestamp": "2026-09-16T20:42:25.726Z"
+    }
+  },
+  "requestedModel": "openai/gpt-oss-120b",
+  "returnedModel": "openai/gpt-oss-120b",
+  "latencyMs": 4521,
+  "tokensUsed": 3647,
+  "timestamp": "2026-09-16T20:42:21.205Z",
+  "inputHash": "b65a7a1303454651",
+  "promptHash": "89d9c35739e5ba69"
+}

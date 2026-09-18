@@ -1,0 +1,74 @@
+{
+  "caseId": "birthday-test-b",
+  "repetition": 3,
+  "success": true,
+  "plan": {
+    "opening": "From wild college mishaps to the warm embrace of family, let’s celebrate Emma’s 30 years of laughter, love, and unforgettable moments.",
+    "chapters": [
+      {
+        "title": "Celebration Kickoff",
+        "memoryIds": [
+          "mem_001",
+          "mem_003",
+          "mem_006",
+          "mem_008",
+          "mem_014"
+        ]
+      },
+      {
+        "title": "Childhood Royals & Family Roots",
+        "memoryIds": [
+          "mem_004",
+          "mem_007",
+          "mem_015"
+        ]
+      },
+      {
+        "title": "School, Drama & Late‑Night Dreams",
+        "memoryIds": [
+          "mem_011",
+          "mem_009",
+          "mem_013"
+        ]
+      },
+      {
+        "title": "Career Highlights",
+        "memoryIds": [
+          "mem_005"
+        ]
+      },
+      {
+        "title": "Love & Partnership",
+        "memoryIds": [
+          "mem_010"
+        ]
+      },
+      {
+        "title": "Family Blessings",
+        "memoryIds": [
+          "mem_002",
+          "mem_012"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_002",
+      "mem_010",
+      "mem_012"
+    ],
+    "finaleMemoryId": "mem_002",
+    "reasoningSummary": "Chapters move from fun, early memories to deeper friendships, then career, love, and end with heartfelt family messages. Highlights spotlight Mom, Dad, and Tom for emotional impact; Mom's note serves as the finale for maximum family love.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 4267,
+      "tokensUsed": 3531,
+      "timestamp": "2026-09-16T20:20:49.500Z"
+    }
+  },
+  "latencyMs": 4268,
+  "tokensUsed": 3531,
+  "timestamp": "2026-09-16T20:20:45.232Z",
+  "inputHash": "bf3b61b8803a8067",
+  "promptHash": "b57fc8789286b082"
+}

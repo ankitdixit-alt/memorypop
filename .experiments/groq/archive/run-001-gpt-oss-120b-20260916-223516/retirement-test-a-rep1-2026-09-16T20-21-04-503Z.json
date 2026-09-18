@@ -1,0 +1,61 @@
+{
+  "caseId": "retirement-test-a",
+  "repetition": 1,
+  "success": true,
+  "plan": {
+    "opening": "Celebrating 35 years of Michael’s steady guidance, laughter, and lasting impact.",
+    "chapters": [
+      {
+        "title": "Foundations of Vision and Resilience",
+        "memoryIds": [
+          "mem_f04",
+          "mem_f09",
+          "mem_f02"
+        ]
+      },
+      {
+        "title": "Mentorship That Shaped Careers",
+        "memoryIds": [
+          "mem_f01",
+          "mem_f06",
+          "mem_f10",
+          "mem_f08"
+        ]
+      },
+      {
+        "title": "Moments of Laughter and Friendship",
+        "memoryIds": [
+          "mem_f03",
+          "mem_f05",
+          "mem_f07",
+          "mem_f11"
+        ]
+      },
+      {
+        "title": "A Collective Tribute",
+        "memoryIds": [
+          "mem_f12"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_f04",
+      "mem_f01",
+      "mem_f10"
+    ],
+    "finaleMemoryId": "mem_f12",
+    "reasoningSummary": "I opened with the CEO’s formal tribute to set gravitas, then mixed resilience and humor. The middle chapters focus on personal mentorship, followed by light‑hearted memories, ending with the team’s collective message as the powerful finale. Highlights spotlight the CEO endorsement and two deep mentorship notes.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 3184,
+      "tokensUsed": 2826,
+      "timestamp": "2026-09-16T20:21:07.690Z"
+    }
+  },
+  "latencyMs": 3187,
+  "tokensUsed": 2826,
+  "timestamp": "2026-09-16T20:21:04.503Z",
+  "inputHash": "518452279ff4b0a5",
+  "promptHash": "c8a418b03531cd96"
+}

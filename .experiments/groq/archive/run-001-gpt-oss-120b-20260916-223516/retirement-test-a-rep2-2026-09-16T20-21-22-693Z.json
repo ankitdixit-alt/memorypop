@@ -1,0 +1,11 @@
+{
+  "caseId": "retirement-test-a",
+  "repetition": 2,
+  "success": false,
+  "error": "Reveal plan validation failed:\nMissing memory ID: mem_f12\nPlan is missing finale memory ID",
+  "errorType": "validation",
+  "latencyMs": 4670,
+  "timestamp": "2026-09-16T20:21:22.693Z",
+  "inputHash": "518452279ff4b0a5",
+  "promptHash": "c8a418b03531cd96"
+}

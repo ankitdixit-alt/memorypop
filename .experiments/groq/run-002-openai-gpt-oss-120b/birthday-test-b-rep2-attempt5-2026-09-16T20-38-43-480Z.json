@@ -1,0 +1,14 @@
+{
+  "caseId": "birthday-test-b",
+  "repetition": 2,
+  "attemptNumber": 5,
+  "success": false,
+  "error": "Groq API error (429): {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2kk1vh6emga6r1gxxc6gnn8` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 6320, Requested 2975. Please try again in 9.712499999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n",
+  "errorType": "rate_limit_minute",
+  "retryAfterSeconds": 10,
+  "requestedModel": "openai/gpt-oss-120b",
+  "latencyMs": 86,
+  "timestamp": "2026-09-16T20:38:43.480Z",
+  "inputHash": "bf3b61b8803a8067",
+  "promptHash": "b57fc8789286b082"
+}

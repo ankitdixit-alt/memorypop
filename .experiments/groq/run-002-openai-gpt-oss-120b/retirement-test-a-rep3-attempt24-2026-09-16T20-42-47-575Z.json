@@ -1,0 +1,14 @@
+{
+  "caseId": "retirement-test-a",
+  "repetition": 3,
+  "attemptNumber": 24,
+  "success": false,
+  "error": "Groq API error (429): {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2kk1vh6emga6r1gxxc6gnn8` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 5316, Requested 3406. Please try again in 5.415s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n",
+  "errorType": "rate_limit_minute",
+  "retryAfterSeconds": 6,
+  "requestedModel": "openai/gpt-oss-120b",
+  "latencyMs": 85,
+  "timestamp": "2026-09-16T20:42:47.575Z",
+  "inputHash": "518452279ff4b0a5",
+  "promptHash": "c8a418b03531cd96"
+}

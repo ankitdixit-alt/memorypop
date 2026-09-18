@@ -1,0 +1,671 @@
+{
+  "startedAt": "2026-09-16T20:13:47.070Z",
+  "totalAttempts": 14,
+  "successCount": 9,
+  "failureCount": 5,
+  "quotaExhausted": true,
+  "results": [
+    {
+      "caseId": "birthday-test-a",
+      "repetition": 1,
+      "success": false,
+      "error": "Validation failed: Plan is missing finale memory ID",
+      "errorType": "unknown",
+      "latencyMs": 4925,
+      "timestamp": "2026-09-16T20:13:47.070Z",
+      "inputHash": "b65a7a1303454651",
+      "promptHash": "89d9c35739e5ba69"
+    },
+    {
+      "caseId": "birthday-test-a",
+      "repetition": 2,
+      "success": true,
+      "plan": {
+        "opening": "From baby steps to lifelong love, we celebrate Emma’s 30 years of laughter, growth, and the people who shaped her journey.",
+        "chapters": [
+          {
+            "title": "First Steps & Early Bonds",
+            "memoryIds": [
+              "mem_004",
+              "mem_007",
+              "mem_015"
+            ]
+          },
+          {
+            "title": "Growing Up with Family",
+            "memoryIds": [
+              "mem_002",
+              "mem_012"
+            ]
+          },
+          {
+            "title": "School Days & Drama",
+            "memoryIds": [
+              "mem_011",
+              "mem_014"
+            ]
+          },
+          {
+            "title": "College Adventures",
+            "memoryIds": [
+              "mem_001",
+              "mem_009",
+              "mem_003"
+            ]
+          },
+          {
+            "title": "Summer Escapades",
+            "memoryIds": [
+              "mem_006",
+              "mem_008"
+            ]
+          },
+          {
+            "title": "Professional Partnerships",
+            "memoryIds": [
+              "mem_005",
+              "mem_013"
+            ]
+          },
+          {
+            "title": "Love & Future",
+            "memoryIds": [
+              "mem_010"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_002",
+          "mem_012"
+        ],
+        "finaleMemoryId": "mem_010",
+        "reasoningSummary": "Grouped memories by life stages, balancing humor and heartfelt moments while spacing similar tones. Highlighted parental love and ended with the partner’s message.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 4346,
+          "tokensUsed": 3660,
+          "timestamp": "2026-09-16T20:13:57.347Z"
+        }
+      },
+      "latencyMs": 4348,
+      "tokensUsed": 3660,
+      "timestamp": "2026-09-16T20:13:52.999Z",
+      "inputHash": "b65a7a1303454651",
+      "promptHash": "89d9c35739e5ba69"
+    },
+    {
+      "caseId": "birthday-test-a",
+      "repetition": 3,
+      "success": false,
+      "error": "Groq API error (429): {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2kk1vh6emga6r1gxxc6gnn8` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 5930, Requested 3753. Please try again in 12.6225s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n",
+      "errorType": "unknown",
+      "latencyMs": 42,
+      "timestamp": "2026-09-16T20:13:58.350Z",
+      "inputHash": "b65a7a1303454651",
+      "promptHash": "89d9c35739e5ba69"
+    },
+    {
+      "caseId": "birthday-test-b",
+      "repetition": 1,
+      "success": true,
+      "plan": {
+        "opening": "Let’s kick off Emma’s 30th with the same wild energy that’s defined our three decades together!",
+        "chapters": [
+          {
+            "title": "Kickoff: Laughter & Wild Adventures",
+            "memoryIds": [
+              "mem_001",
+              "mem_003",
+              "mem_006",
+              "mem_008",
+              "mem_014"
+            ]
+          },
+          {
+            "title": "Friendship Through the Years",
+            "memoryIds": [
+              "mem_004",
+              "mem_011",
+              "mem_009"
+            ]
+          },
+          {
+            "title": "Career Milestones & Creative Chaos",
+            "memoryIds": [
+              "mem_005",
+              "mem_013"
+            ]
+          },
+          {
+            "title": "Family Roots & Sibling Bonds",
+            "memoryIds": [
+              "mem_007",
+              "mem_012",
+              "mem_015"
+            ]
+          },
+          {
+            "title": "Love & Life Together",
+            "memoryIds": [
+              "mem_010"
+            ]
+          },
+          {
+            "title": "Finale: Mom’s Heartfelt Tribute",
+            "memoryIds": [
+              "mem_002"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_010",
+          "mem_015"
+        ],
+        "finaleMemoryId": "mem_002",
+        "reasoningSummary": "Chapters move from high‑energy fun to deeper friendship, career growth, family foundations, and romance, ending on Mom’s touching message. Highlights spotlight Emma’s partner and brother, while the finale gives the strongest emotional closure.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 4186,
+          "tokensUsed": 3611,
+          "timestamp": "2026-09-16T20:14:03.583Z"
+        }
+      },
+      "latencyMs": 4188,
+      "tokensUsed": 3611,
+      "timestamp": "2026-09-16T20:13:59.395Z",
+      "inputHash": "bf3b61b8803a8067",
+      "promptHash": "b57fc8789286b082"
+    },
+    {
+      "caseId": "birthday-test-a",
+      "repetition": 1,
+      "success": false,
+      "error": "Groq API error (400): {\"error\":{\"message\":\"Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.\",\"type\":\"invalid_request_error\",\"code\":\"json_validate_failed\",\"failed_generation\":\"\"}}\n",
+      "errorType": "parse",
+      "latencyMs": 4915,
+      "timestamp": "2026-09-16T20:19:47.630Z",
+      "inputHash": "b65a7a1303454651",
+      "promptHash": "89d9c35739e5ba69"
+    },
+    {
+      "caseId": "birthday-test-a",
+      "repetition": 3,
+      "success": true,
+      "plan": {
+        "opening": "From baby steps to lifelong adventures, we celebrate Emma’s 30 years of love, laughter, and unforgettable friendships.",
+        "chapters": [
+          {
+            "title": "Family Foundations",
+            "memoryIds": [
+              "mem_007",
+              "mem_012",
+              "mem_015"
+            ]
+          },
+          {
+            "title": "Childhood Dreams & School Days",
+            "memoryIds": [
+              "mem_004",
+              "mem_011"
+            ]
+          },
+          {
+            "title": "College Capers & Road‑Trip Tales",
+            "memoryIds": [
+              "mem_001",
+              "mem_009",
+              "mem_003",
+              "mem_008"
+            ]
+          },
+          {
+            "title": "Creative Collaborations",
+            "memoryIds": [
+              "mem_005",
+              "mem_013"
+            ]
+          },
+          {
+            "title": "Friendship Fun & Lighthearted Moments",
+            "memoryIds": [
+              "mem_006",
+              "mem_014"
+            ]
+          },
+          {
+            "title": "Love & Life Together",
+            "memoryIds": [
+              "mem_010"
+            ]
+          },
+          {
+            "title": "A Mother’s Heartfelt Tribute",
+            "memoryIds": [
+              "mem_002"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_010",
+          "mem_003",
+          "mem_001"
+        ],
+        "finaleMemoryId": "mem_002",
+        "reasoningSummary": "Grouped memories by life stages, balancing humor and sentiment, building toward a loving finale. Highlighted partner, road‑trip, and college cake memories for extra emphasis.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 4333,
+          "tokensUsed": 3612,
+          "timestamp": "2026-09-16T20:20:11.886Z"
+        }
+      },
+      "latencyMs": 4337,
+      "tokensUsed": 3612,
+      "timestamp": "2026-09-16T20:20:07.550Z",
+      "inputHash": "b65a7a1303454651",
+      "promptHash": "89d9c35739e5ba69"
+    },
+    {
+      "caseId": "birthday-test-b",
+      "repetition": 2,
+      "success": true,
+      "plan": {
+        "opening": "Let’s kick off Emma’s 30‑year adventure with laughter, memories, and the love that’s shaped her life.",
+        "chapters": [
+          {
+            "title": "Laugh‑Out‑Loud Beginnings",
+            "memoryIds": [
+              "mem_001",
+              "mem_008",
+              "mem_014",
+              "mem_006",
+              "mem_003"
+            ]
+          },
+          {
+            "title": "Childhood & Campus Memories",
+            "memoryIds": [
+              "mem_004",
+              "mem_011",
+              "mem_009",
+              "mem_013"
+            ]
+          },
+          {
+            "title": "Career Wins & Heartfelt Partnership",
+            "memoryIds": [
+              "mem_005",
+              "mem_010"
+            ]
+          },
+          {
+            "title": "Family Roots & Forever Love",
+            "memoryIds": [
+              "mem_007",
+              "mem_012",
+              "mem_015",
+              "mem_002"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_010",
+          "mem_009",
+          "mem_002"
+        ],
+        "finaleMemoryId": "mem_002",
+        "reasoningSummary": "Fun, humorous clips open the video, then we transition to nostalgic school and college moments, followed by career and partnership highlights, and finish with deep family love. The Mom message is the emotional finale, while partner, college roommate, and Mom are highlighted for impact.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 3336,
+          "tokensUsed": 3182,
+          "timestamp": "2026-09-16T20:20:30.228Z"
+        }
+      },
+      "latencyMs": 3338,
+      "tokensUsed": 3182,
+      "timestamp": "2026-09-16T20:20:26.890Z",
+      "inputHash": "bf3b61b8803a8067",
+      "promptHash": "b57fc8789286b082"
+    },
+    {
+      "caseId": "birthday-test-b",
+      "repetition": 3,
+      "success": true,
+      "plan": {
+        "opening": "From wild college mishaps to the warm embrace of family, let’s celebrate Emma’s 30 years of laughter, love, and unforgettable moments.",
+        "chapters": [
+          {
+            "title": "Celebration Kickoff",
+            "memoryIds": [
+              "mem_001",
+              "mem_003",
+              "mem_006",
+              "mem_008",
+              "mem_014"
+            ]
+          },
+          {
+            "title": "Childhood Royals & Family Roots",
+            "memoryIds": [
+              "mem_004",
+              "mem_007",
+              "mem_015"
+            ]
+          },
+          {
+            "title": "School, Drama & Late‑Night Dreams",
+            "memoryIds": [
+              "mem_011",
+              "mem_009",
+              "mem_013"
+            ]
+          },
+          {
+            "title": "Career Highlights",
+            "memoryIds": [
+              "mem_005"
+            ]
+          },
+          {
+            "title": "Love & Partnership",
+            "memoryIds": [
+              "mem_010"
+            ]
+          },
+          {
+            "title": "Family Blessings",
+            "memoryIds": [
+              "mem_002",
+              "mem_012"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_002",
+          "mem_010",
+          "mem_012"
+        ],
+        "finaleMemoryId": "mem_002",
+        "reasoningSummary": "Chapters move from fun, early memories to deeper friendships, then career, love, and end with heartfelt family messages. Highlights spotlight Mom, Dad, and Tom for emotional impact; Mom's note serves as the finale for maximum family love.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 4267,
+          "tokensUsed": 3531,
+          "timestamp": "2026-09-16T20:20:49.500Z"
+        }
+      },
+      "latencyMs": 4268,
+      "tokensUsed": 3531,
+      "timestamp": "2026-09-16T20:20:45.232Z",
+      "inputHash": "bf3b61b8803a8067",
+      "promptHash": "b57fc8789286b082"
+    },
+    {
+      "caseId": "retirement-test-a",
+      "repetition": 1,
+      "success": true,
+      "plan": {
+        "opening": "Celebrating 35 years of Michael’s steady guidance, laughter, and lasting impact.",
+        "chapters": [
+          {
+            "title": "Foundations of Vision and Resilience",
+            "memoryIds": [
+              "mem_f04",
+              "mem_f09",
+              "mem_f02"
+            ]
+          },
+          {
+            "title": "Mentorship That Shaped Careers",
+            "memoryIds": [
+              "mem_f01",
+              "mem_f06",
+              "mem_f10",
+              "mem_f08"
+            ]
+          },
+          {
+            "title": "Moments of Laughter and Friendship",
+            "memoryIds": [
+              "mem_f03",
+              "mem_f05",
+              "mem_f07",
+              "mem_f11"
+            ]
+          },
+          {
+            "title": "A Collective Tribute",
+            "memoryIds": [
+              "mem_f12"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_f04",
+          "mem_f01",
+          "mem_f10"
+        ],
+        "finaleMemoryId": "mem_f12",
+        "reasoningSummary": "I opened with the CEO’s formal tribute to set gravitas, then mixed resilience and humor. The middle chapters focus on personal mentorship, followed by light‑hearted memories, ending with the team’s collective message as the powerful finale. Highlights spotlight the CEO endorsement and two deep mentorship notes.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 3184,
+          "tokensUsed": 2826,
+          "timestamp": "2026-09-16T20:21:07.690Z"
+        }
+      },
+      "latencyMs": 3187,
+      "tokensUsed": 2826,
+      "timestamp": "2026-09-16T20:21:04.503Z",
+      "inputHash": "518452279ff4b0a5",
+      "promptHash": "c8a418b03531cd96"
+    },
+    {
+      "caseId": "retirement-test-a",
+      "repetition": 2,
+      "success": false,
+      "error": "Reveal plan validation failed:\nMissing memory ID: mem_f12\nPlan is missing finale memory ID",
+      "errorType": "validation",
+      "latencyMs": 4670,
+      "timestamp": "2026-09-16T20:21:22.693Z",
+      "inputHash": "518452279ff4b0a5",
+      "promptHash": "c8a418b03531cd96"
+    },
+    {
+      "caseId": "retirement-test-a",
+      "repetition": 3,
+      "success": true,
+      "plan": {
+        "opening": "Celebrating a remarkable 35-year journey of leadership, mentorship, and unforgettable moments.",
+        "chapters": [
+          {
+            "title": "Our Collective Thanks",
+            "memoryIds": [
+              "mem_f12",
+              "mem_f11",
+              "mem_f03"
+            ]
+          },
+          {
+            "title": "Mentorship Moments",
+            "memoryIds": [
+              "mem_f01",
+              "mem_f08",
+              "mem_f06",
+              "mem_f10"
+            ]
+          },
+          {
+            "title": "Adventures & Laughter",
+            "memoryIds": [
+              "mem_f02",
+              "mem_f09",
+              "mem_f05",
+              "mem_f07"
+            ]
+          },
+          {
+            "title": "Final Tribute",
+            "memoryIds": [
+              "mem_f04"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_f01",
+          "mem_f09"
+        ],
+        "finaleMemoryId": "mem_f04",
+        "reasoningSummary": "Grouped memories by theme to create an emotional arc, balancing heartfelt mentorship with humor, and ending with the CEO's powerful tribute as the finale.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 3144,
+          "tokensUsed": 2764,
+          "timestamp": "2026-09-16T20:21:45.514Z"
+        }
+      },
+      "latencyMs": 3145,
+      "tokensUsed": 2764,
+      "timestamp": "2026-09-16T20:21:42.369Z",
+      "inputHash": "518452279ff4b0a5",
+      "promptHash": "c8a418b03531cd96"
+    },
+    {
+      "caseId": "retirement-test-b",
+      "repetition": 1,
+      "success": true,
+      "plan": {
+        "opening": "Today we honor Michael Zhang’s 35 years of dedication, celebrating the leadership, laughter, and lasting impact he’s shared with us.",
+        "chapters": [
+          {
+            "title": "Foundations of Leadership",
+            "memoryIds": [
+              "mem_f04",
+              "mem_f06",
+              "mem_f08"
+            ]
+          },
+          {
+            "title": "Stories and Laughter",
+            "memoryIds": [
+              "mem_f02",
+              "mem_f03",
+              "mem_f05",
+              "mem_f07",
+              "mem_f11",
+              "mem_f09"
+            ]
+          },
+          {
+            "title": "Mentorship and Impact",
+            "memoryIds": [
+              "mem_f10",
+              "mem_f12"
+            ]
+          },
+          {
+            "title": "A Personal Tribute",
+            "memoryIds": [
+              "mem_f01"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_f04",
+          "mem_f01",
+          "mem_f12"
+        ],
+        "finaleMemoryId": "mem_f01",
+        "reasoningSummary": "Professional acknowledgments open the video, followed by humor to lighten pacing, then heartfelt mentorship messages, culminating in Jennifer's deeply personal tribute as the finale. Highlights spotlight the CEO, the finale, and the team tribute.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 2258,
+          "tokensUsed": 2421,
+          "timestamp": "2026-09-16T20:22:02.779Z"
+        }
+      },
+      "latencyMs": 2260,
+      "tokensUsed": 2421,
+      "timestamp": "2026-09-16T20:22:00.519Z",
+      "inputHash": "fa0713432e4492b5",
+      "promptHash": "e302fbb91c2dcfe6"
+    },
+    {
+      "caseId": "retirement-test-b",
+      "repetition": 2,
+      "success": true,
+      "plan": {
+        "opening": "Today we celebrate Michael Zhang’s 35 years of dedication, mentorship, and the lasting legacy he leaves behind.",
+        "chapters": [
+          {
+            "title": "Leadership & Impact",
+            "memoryIds": [
+              "mem_f04",
+              "mem_f06",
+              "mem_f08",
+              "mem_f10"
+            ]
+          },
+          {
+            "title": "Stories & Smiles",
+            "memoryIds": [
+              "mem_f02",
+              "mem_f03",
+              "mem_f05",
+              "mem_f07",
+              "mem_f09",
+              "mem_f11"
+            ]
+          },
+          {
+            "title": "Heartfelt Farewell",
+            "memoryIds": [
+              "mem_f01",
+              "mem_f12"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_f04",
+          "mem_f01",
+          "mem_f12"
+        ],
+        "finaleMemoryId": "mem_f12",
+        "reasoningSummary": "Started with formal acknowledgments to set a respectful tone, followed by lighter, humorous memories for pacing, and closed with personal, heartfelt tributes. Highlighted the CEO message, Jennifer's transformative note, and the team’s collective farewell, ending with the team message as the powerful finale.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 3041,
+          "tokensUsed": 2734,
+          "timestamp": "2026-09-16T20:22:20.828Z"
+        }
+      },
+      "latencyMs": 3044,
+      "tokensUsed": 2734,
+      "timestamp": "2026-09-16T20:22:17.784Z",
+      "inputHash": "fa0713432e4492b5",
+      "promptHash": "e302fbb91c2dcfe6"
+    },
+    {
+      "caseId": "retirement-test-b",
+      "repetition": 3,
+      "success": false,
+      "error": "Groq API error (429): {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2kk1vh6emga6r1gxxc6gnn8` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 4823, Requested 3541. Please try again in 2.73s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n",
+      "errorType": "quota",
+      "latencyMs": 84,
+      "timestamp": "2026-09-16T20:22:35.834Z",
+      "inputHash": "fa0713432e4492b5",
+      "promptHash": "e302fbb91c2dcfe6"
+    }
+  ],
+  "completedAt": "2026-09-16T20:22:35.920Z"
+}

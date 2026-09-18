@@ -1,0 +1,79 @@
+{
+  "caseId": "birthday-test-a",
+  "repetition": 3,
+  "success": true,
+  "plan": {
+    "opening": "From baby steps to lifelong adventures, we celebrate Emma’s 30 years of love, laughter, and unforgettable friendships.",
+    "chapters": [
+      {
+        "title": "Family Foundations",
+        "memoryIds": [
+          "mem_007",
+          "mem_012",
+          "mem_015"
+        ]
+      },
+      {
+        "title": "Childhood Dreams & School Days",
+        "memoryIds": [
+          "mem_004",
+          "mem_011"
+        ]
+      },
+      {
+        "title": "College Capers & Road‑Trip Tales",
+        "memoryIds": [
+          "mem_001",
+          "mem_009",
+          "mem_003",
+          "mem_008"
+        ]
+      },
+      {
+        "title": "Creative Collaborations",
+        "memoryIds": [
+          "mem_005",
+          "mem_013"
+        ]
+      },
+      {
+        "title": "Friendship Fun & Lighthearted Moments",
+        "memoryIds": [
+          "mem_006",
+          "mem_014"
+        ]
+      },
+      {
+        "title": "Love & Life Together",
+        "memoryIds": [
+          "mem_010"
+        ]
+      },
+      {
+        "title": "A Mother’s Heartfelt Tribute",
+        "memoryIds": [
+          "mem_002"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_010",
+      "mem_003",
+      "mem_001"
+    ],
+    "finaleMemoryId": "mem_002",
+    "reasoningSummary": "Grouped memories by life stages, balancing humor and sentiment, building toward a loving finale. Highlighted partner, road‑trip, and college cake memories for extra emphasis.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 4333,
+      "tokensUsed": 3612,
+      "timestamp": "2026-09-16T20:20:11.886Z"
+    }
+  },
+  "latencyMs": 4337,
+  "tokensUsed": 3612,
+  "timestamp": "2026-09-16T20:20:07.550Z",
+  "inputHash": "b65a7a1303454651",
+  "promptHash": "89d9c35739e5ba69"
+}

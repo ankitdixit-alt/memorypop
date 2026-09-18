@@ -9,7 +9,17 @@
     "lint": "eslint",
     "test": "jest",
     "test:watch": "jest --watch",
-    "screenshot:mockups": "node scripts/screenshot-mockups.js"
+    "screenshot:mockups": "node scripts/screenshot-mockups.js",
+    "groq-experiment": "tsx scripts/groq-experiment.ts",
+    "groq-experiment-v2": "tsx scripts/groq-experiment-v2.ts",
+    "groq-experiment-v3": "tsx scripts/groq-experiment-v3.ts",
+    "groq-pilot": "tsx scripts/groq-pilot.ts",
+    "groq-pilot-review": "tsx scripts/groq-pilot-review.ts",
+    "groq-compare": "tsx scripts/groq-compare.ts",
+    "groq-compare-v2": "tsx scripts/groq-compare-v2.ts",
+    "groq-validate": "tsx scripts/validate-groq-results.ts",
+    "groq-test-mocked": "tsx scripts/test-groq-experiment-mocked.ts",
+    "test-comparison": "tsx scripts/test-comparison-loading.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

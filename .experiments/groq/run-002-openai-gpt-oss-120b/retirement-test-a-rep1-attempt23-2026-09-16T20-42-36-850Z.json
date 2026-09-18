@@ -1,0 +1,64 @@
+{
+  "caseId": "retirement-test-a",
+  "repetition": 1,
+  "attemptNumber": 23,
+  "success": true,
+  "plan": {
+    "opening": "Today we honor Michael’s 35 years of dedication, mentorship, and the countless moments that shaped us all.",
+    "chapters": [
+      {
+        "title": "Vision & Impact",
+        "memoryIds": [
+          "mem_f04",
+          "mem_f06",
+          "mem_f08"
+        ]
+      },
+      {
+        "title": "Mentors & Mentees",
+        "memoryIds": [
+          "mem_f01",
+          "mem_f10",
+          "mem_f03"
+        ]
+      },
+      {
+        "title": "Laughter & Adventures",
+        "memoryIds": [
+          "mem_f02",
+          "mem_f05",
+          "mem_f07",
+          "mem_f11"
+        ]
+      },
+      {
+        "title": "Enduring Legacy",
+        "memoryIds": [
+          "mem_f09",
+          "mem_f12"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_f04",
+      "mem_f01",
+      "mem_f12"
+    ],
+    "finaleMemoryId": "mem_f12",
+    "reasoningSummary": "I grouped messages by theme—leadership impact, mentorship, humor, and legacy—to create an emotional rise and gentle pacing. The CEO tribute, a personal mentee note, and the team collage are highlighted, with the collective team message as the powerful finale.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 2721,
+      "tokensUsed": 2428,
+      "timestamp": "2026-09-16T20:42:39.572Z"
+    }
+  },
+  "requestedModel": "openai/gpt-oss-120b",
+  "returnedModel": "openai/gpt-oss-120b",
+  "latencyMs": 2722,
+  "tokensUsed": 2428,
+  "timestamp": "2026-09-16T20:42:36.850Z",
+  "inputHash": "518452279ff4b0a5",
+  "promptHash": "c8a418b03531cd96"
+}

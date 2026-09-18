@@ -1,0 +1,64 @@
+{
+  "caseId": "retirement-test-b",
+  "repetition": 3,
+  "attemptNumber": 12,
+  "success": true,
+  "plan": {
+    "opening": "Celebrating Michael’s 35 years of vision, mentorship, and unforgettable moments.",
+    "chapters": [
+      {
+        "title": "Foundations of Excellence",
+        "memoryIds": [
+          "mem_f04",
+          "mem_f06",
+          "mem_f08"
+        ]
+      },
+      {
+        "title": "Mentorship & Impact",
+        "memoryIds": [
+          "mem_f01",
+          "mem_f10",
+          "mem_f03"
+        ]
+      },
+      {
+        "title": "Stories & Laughter",
+        "memoryIds": [
+          "mem_f02",
+          "mem_f05",
+          "mem_f07",
+          "mem_f11",
+          "mem_f09"
+        ]
+      },
+      {
+        "title": "Final Tribute",
+        "memoryIds": [
+          "mem_f12"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_f04",
+      "mem_f10",
+      "mem_f12"
+    ],
+    "finaleMemoryId": "mem_f12",
+    "reasoningSummary": "The sequence starts with formal acknowledgments, moves through mentorship depth, then lighter shared anecdotes, and ends with a collective, heartfelt tribute. Highlights spotlight the CEO’s endorsement, a long‑term mentor’s note, and the team’s unified farewell.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 2570,
+      "tokensUsed": 2569,
+      "timestamp": "2026-09-16T20:39:57.590Z"
+    }
+  },
+  "requestedModel": "openai/gpt-oss-120b",
+  "returnedModel": "openai/gpt-oss-120b",
+  "latencyMs": 2573,
+  "tokensUsed": 2569,
+  "timestamp": "2026-09-16T20:39:55.017Z",
+  "inputHash": "fa0713432e4492b5",
+  "promptHash": "e302fbb91c2dcfe6"
+}

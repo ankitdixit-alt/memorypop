@@ -1,0 +1,64 @@
+{
+  "caseId": "retirement-test-b",
+  "repetition": 1,
+  "attemptNumber": 10,
+  "success": true,
+  "plan": {
+    "opening": "Celebrating Michael Zhang's 35 years of dedication, mentorship, and lasting impact on us all.",
+    "chapters": [
+      {
+        "title": "A Legacy Recognized",
+        "memoryIds": [
+          "mem_f04",
+          "mem_f06",
+          "mem_f08"
+        ]
+      },
+      {
+        "title": "Shared Adventures & Laughter",
+        "memoryIds": [
+          "mem_f02",
+          "mem_f05",
+          "mem_f07",
+          "mem_f11",
+          "mem_f03"
+        ]
+      },
+      {
+        "title": "Heartfelt Reflections",
+        "memoryIds": [
+          "mem_f01",
+          "mem_f10",
+          "mem_f09"
+        ]
+      },
+      {
+        "title": "A Collective Tribute",
+        "memoryIds": [
+          "mem_f12"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_f04",
+      "mem_f01",
+      "mem_f12"
+    ],
+    "finaleMemoryId": "mem_f12",
+    "reasoningSummary": "I opened with formal acknowledgments from leadership and senior peers, then interwove lighter, humorous memories to keep pacing, followed by deeply personal tributes before ending with the team’s collective message as the powerful finale. Highlights spotlight the CEO’s note, Jennifer’s heartfelt mentorship, and the final group tribute.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 2699,
+      "tokensUsed": 2665,
+      "timestamp": "2026-09-16T20:39:35.904Z"
+    }
+  },
+  "requestedModel": "openai/gpt-oss-120b",
+  "returnedModel": "openai/gpt-oss-120b",
+  "latencyMs": 2701,
+  "tokensUsed": 2665,
+  "timestamp": "2026-09-16T20:39:33.203Z",
+  "inputHash": "fa0713432e4492b5",
+  "promptHash": "e302fbb91c2dcfe6"
+}

@@ -1,0 +1,61 @@
+{
+  "caseId": "retirement-test-b",
+  "repetition": 1,
+  "success": true,
+  "plan": {
+    "opening": "Today we honor Michael Zhang’s 35 years of dedication, celebrating the leadership, laughter, and lasting impact he’s shared with us.",
+    "chapters": [
+      {
+        "title": "Foundations of Leadership",
+        "memoryIds": [
+          "mem_f04",
+          "mem_f06",
+          "mem_f08"
+        ]
+      },
+      {
+        "title": "Stories and Laughter",
+        "memoryIds": [
+          "mem_f02",
+          "mem_f03",
+          "mem_f05",
+          "mem_f07",
+          "mem_f11",
+          "mem_f09"
+        ]
+      },
+      {
+        "title": "Mentorship and Impact",
+        "memoryIds": [
+          "mem_f10",
+          "mem_f12"
+        ]
+      },
+      {
+        "title": "A Personal Tribute",
+        "memoryIds": [
+          "mem_f01"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_f04",
+      "mem_f01",
+      "mem_f12"
+    ],
+    "finaleMemoryId": "mem_f01",
+    "reasoningSummary": "Professional acknowledgments open the video, followed by humor to lighten pacing, then heartfelt mentorship messages, culminating in Jennifer's deeply personal tribute as the finale. Highlights spotlight the CEO, the finale, and the team tribute.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 2258,
+      "tokensUsed": 2421,
+      "timestamp": "2026-09-16T20:22:02.779Z"
+    }
+  },
+  "latencyMs": 2260,
+  "tokensUsed": 2421,
+  "timestamp": "2026-09-16T20:22:00.519Z",
+  "inputHash": "fa0713432e4492b5",
+  "promptHash": "e302fbb91c2dcfe6"
+}

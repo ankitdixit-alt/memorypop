@@ -1,0 +1,72 @@
+{
+  "caseId": "birthday-test-a",
+  "repetition": 1,
+  "attemptNumber": 16,
+  "success": true,
+  "plan": {
+    "opening": "From baby steps to shared dreams, we celebrate Emma’s 30 years of love, laughter, and lifelong friendships.",
+    "chapters": [
+      {
+        "title": "Family Foundations",
+        "memoryIds": [
+          "mem_002",
+          "mem_012",
+          "mem_007",
+          "mem_015"
+        ]
+      },
+      {
+        "title": "Childhood, School & Early Adventures",
+        "memoryIds": [
+          "mem_004",
+          "mem_011",
+          "mem_009"
+        ]
+      },
+      {
+        "title": "Road Trips, Mishaps & Laughter",
+        "memoryIds": [
+          "mem_001",
+          "mem_003",
+          "mem_006",
+          "mem_014",
+          "mem_008"
+        ]
+      },
+      {
+        "title": "Workplace Wins & Creative Bonds",
+        "memoryIds": [
+          "mem_005",
+          "mem_013"
+        ]
+      },
+      {
+        "title": "A Love That Leads the Way",
+        "memoryIds": [
+          "mem_010"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_002",
+      "mem_012",
+      "mem_010"
+    ],
+    "finaleMemoryId": "mem_010",
+    "reasoningSummary": "Grouped memories by theme to build from family roots, through school and wild adventures, to work and finally love. Highlighted Mom, Dad, and partner messages for emotional impact, ending with Tom’s heartfelt tribute.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 4026,
+      "tokensUsed": 3489,
+      "timestamp": "2026-09-16T20:41:07.807Z"
+    }
+  },
+  "requestedModel": "openai/gpt-oss-120b",
+  "returnedModel": "openai/gpt-oss-120b",
+  "latencyMs": 4032,
+  "tokensUsed": 3489,
+  "timestamp": "2026-09-16T20:41:03.775Z",
+  "inputHash": "b65a7a1303454651",
+  "promptHash": "89d9c35739e5ba69"
+}

@@ -1,0 +1,13 @@
+{
+  "caseId": "retirement-test-a",
+  "repetition": 1,
+  "attemptNumber": 19,
+  "success": false,
+  "error": "Reveal plan validation failed:\nMissing memory ID: mem_f04",
+  "errorType": "validation",
+  "requestedModel": "openai/gpt-oss-120b",
+  "latencyMs": 2918,
+  "timestamp": "2026-09-16T20:41:27.027Z",
+  "inputHash": "518452279ff4b0a5",
+  "promptHash": "c8a418b03531cd96"
+}

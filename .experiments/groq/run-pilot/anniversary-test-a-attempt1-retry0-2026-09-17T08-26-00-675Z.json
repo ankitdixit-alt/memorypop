@@ -1,0 +1,63 @@
+{
+  "caseId": "anniversary-test-a",
+  "attemptNumber": 1,
+  "retryNumber": 0,
+  "success": true,
+  "plan": {
+    "opening": "Celebrating a decade of love, laughter, and the countless moments that made Alex and Jordan’s journey unforgettable.",
+    "chapters": [
+      {
+        "title": "First Glimpses of Forever",
+        "memoryIds": [
+          "mem_a04",
+          "mem_a08",
+          "mem_a01"
+        ]
+      },
+      {
+        "title": "Family Foundations & Warmth",
+        "memoryIds": [
+          "mem_a03",
+          "mem_a10",
+          "mem_a05"
+        ]
+      },
+      {
+        "title": "Everyday Laughter and Shared Joy",
+        "memoryIds": [
+          "mem_a06",
+          "mem_a02",
+          "mem_a07"
+        ]
+      },
+      {
+        "title": "The Spark That Still Shines",
+        "memoryIds": [
+          "mem_a09"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_a09",
+      "mem_a03",
+      "mem_a01"
+    ],
+    "finaleMemoryId": "mem_a09",
+    "reasoningSummary": "I grouped early, playful memories together, then highlighted family support, followed by everyday humor, culminating with the photographer’s reflective tribute as the emotional climax. The highlighted IDs underscore the most resonant, heartfelt, and iconic moments.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 3162,
+      "tokensUsed": 2925,
+      "timestamp": "2026-09-17T08:26:03.842Z"
+    }
+  },
+  "requestedModel": "openai/gpt-oss-120b",
+  "returnedModel": "openai/gpt-oss-120b",
+  "latencyMs": 3167,
+  "tokensUsed": 2925,
+  "timestamp": "2026-09-17T08:26:00.675Z",
+  "inputHash": "dd36674f620cdb3f",
+  "promptHash": "b667d7f862ba2d4d",
+  "configVersion": "json-schema-strict"
+}

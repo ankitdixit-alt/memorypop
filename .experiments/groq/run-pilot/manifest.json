@@ -1,0 +1,225 @@
+{
+  "runId": "pilot-1789633560675",
+  "configVersion": "json-schema-strict",
+  "modelId": "openai/gpt-oss-120b",
+  "startedAt": "2026-09-17T08:26:00.675Z",
+  "totalAttempts": 5,
+  "apiCallsMade": 3,
+  "successfulPlans": 3,
+  "failedAttempts": 2,
+  "budgetRemaining": 3,
+  "results": [
+    {
+      "caseId": "anniversary-test-a",
+      "attemptNumber": 1,
+      "retryNumber": 0,
+      "success": true,
+      "plan": {
+        "opening": "Celebrating a decade of love, laughter, and the countless moments that made Alex and Jordan’s journey unforgettable.",
+        "chapters": [
+          {
+            "title": "First Glimpses of Forever",
+            "memoryIds": [
+              "mem_a04",
+              "mem_a08",
+              "mem_a01"
+            ]
+          },
+          {
+            "title": "Family Foundations & Warmth",
+            "memoryIds": [
+              "mem_a03",
+              "mem_a10",
+              "mem_a05"
+            ]
+          },
+          {
+            "title": "Everyday Laughter and Shared Joy",
+            "memoryIds": [
+              "mem_a06",
+              "mem_a02",
+              "mem_a07"
+            ]
+          },
+          {
+            "title": "The Spark That Still Shines",
+            "memoryIds": [
+              "mem_a09"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_a09",
+          "mem_a03",
+          "mem_a01"
+        ],
+        "finaleMemoryId": "mem_a09",
+        "reasoningSummary": "I grouped early, playful memories together, then highlighted family support, followed by everyday humor, culminating with the photographer’s reflective tribute as the emotional climax. The highlighted IDs underscore the most resonant, heartfelt, and iconic moments.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 3162,
+          "tokensUsed": 2925,
+          "timestamp": "2026-09-17T08:26:03.842Z"
+        }
+      },
+      "requestedModel": "openai/gpt-oss-120b",
+      "returnedModel": "openai/gpt-oss-120b",
+      "latencyMs": 3167,
+      "tokensUsed": 2925,
+      "timestamp": "2026-09-17T08:26:00.675Z",
+      "inputHash": "dd36674f620cdb3f",
+      "promptHash": "b667d7f862ba2d4d",
+      "configVersion": "json-schema-strict"
+    },
+    {
+      "caseId": "anniversary-test-b",
+      "attemptNumber": 2,
+      "retryNumber": 0,
+      "success": true,
+      "plan": {
+        "opening": "From playful vows to heartfelt reflections, we celebrate Alex & Jordan’s ten years of love.",
+        "chapters": [
+          {
+            "title": "Playful Beginnings",
+            "memoryIds": [
+              "mem_a01",
+              "mem_a04",
+              "mem_a05",
+              "mem_a06"
+            ]
+          },
+          {
+            "title": "Friends & Reflections",
+            "memoryIds": [
+              "mem_a02",
+              "mem_a07",
+              "mem_a08"
+            ]
+          },
+          {
+            "title": "Family Blessings",
+            "memoryIds": [
+              "mem_a03",
+              "mem_a10",
+              "mem_a09"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_a01",
+          "mem_a09",
+          "mem_a03"
+        ],
+        "finaleMemoryId": "mem_a09",
+        "reasoningSummary": "I opened with the funniest, light‑hearted messages to set a warm, teasing tone, then moved to sincere reflections from friends, and closed with family tributes culminating in the photographer’s powerful reminder of their lasting spark. The highlighted memories underscore the humor, emotional core, and family love.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 2403,
+          "tokensUsed": 2502,
+          "timestamp": "2026-09-17T08:26:08.250Z"
+        }
+      },
+      "requestedModel": "openai/gpt-oss-120b",
+      "returnedModel": "openai/gpt-oss-120b",
+      "latencyMs": 2404,
+      "tokensUsed": 2502,
+      "timestamp": "2026-09-17T08:26:05.846Z",
+      "inputHash": "9948b30f2ea610df",
+      "promptHash": "0ca74f65f0b3563c",
+      "configVersion": "json-schema-strict"
+    },
+    {
+      "caseId": "sympathy-test-a",
+      "attemptNumber": 3,
+      "retryNumber": 0,
+      "success": true,
+      "plan": {
+        "opening": "We gather to honor Elena’s radiant spirit, the love she sowed in every corner of our lives.",
+        "chapters": [
+          {
+            "title": "Community Light",
+            "memoryIds": [
+              "mem_s01",
+              "mem_s06",
+              "mem_s02"
+            ]
+          },
+          {
+            "title": "Professional & Service Legacy",
+            "memoryIds": [
+              "mem_s03",
+              "mem_s05"
+            ]
+          },
+          {
+            "title": "Family & Faith Support",
+            "memoryIds": [
+              "mem_s07",
+              "mem_s08"
+            ]
+          },
+          {
+            "title": "Cherished Childhood Memories",
+            "memoryIds": [
+              "mem_s04"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_s04",
+          "mem_s07",
+          "mem_s08"
+        ],
+        "finaleMemoryId": "mem_s04",
+        "reasoningSummary": "Grouped memories by relational context to create a gentle rise from community impact to professional legacy, then family/faith support, ending with the most intimate childhood recollection as the finale. Highlighted the deepest personal and spiritual messages for emphasis.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 2237,
+          "tokensUsed": 2324,
+          "timestamp": "2026-09-17T08:26:12.492Z"
+        }
+      },
+      "requestedModel": "openai/gpt-oss-120b",
+      "returnedModel": "openai/gpt-oss-120b",
+      "latencyMs": 2239,
+      "tokensUsed": 2324,
+      "timestamp": "2026-09-17T08:26:10.253Z",
+      "inputHash": "03b471df9e95d0dc",
+      "promptHash": "5907ceea435860d8",
+      "configVersion": "json-schema-strict"
+    },
+    {
+      "caseId": "sympathy-test-b",
+      "attemptNumber": 4,
+      "retryNumber": 0,
+      "success": false,
+      "error": "Groq API error (429): {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2kk1vh6emga6r1gxxc6gnn8` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 5426, Requested 3497. Please try again in 6.9225s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n",
+      "errorType": "rate_limit_minute",
+      "retryAfterSeconds": 7,
+      "requestedModel": "openai/gpt-oss-120b",
+      "latencyMs": 49,
+      "timestamp": "2026-09-17T08:26:14.495Z",
+      "inputHash": "31d9e3605b020700",
+      "promptHash": "e5597d21dfb7dfc4",
+      "configVersion": "json-schema-strict"
+    },
+    {
+      "caseId": "sympathy-test-b",
+      "attemptNumber": 5,
+      "retryNumber": 1,
+      "success": false,
+      "error": "Groq API error (500): {\"error\":{\"message\":\"Internal Server Error\",\"type\":\"internal_server_error\"}}\n",
+      "errorType": "api_error",
+      "requestedModel": "openai/gpt-oss-120b",
+      "latencyMs": 17696,
+      "timestamp": "2026-09-17T08:26:23.548Z",
+      "inputHash": "31d9e3605b020700",
+      "promptHash": "e5597d21dfb7dfc4",
+      "configVersion": "json-schema-strict"
+    }
+  ],
+  "completedAt": "2026-09-17T08:26:43.249Z"
+}

@@ -1,0 +1,13 @@
+{
+  "caseId": "birthday-test-b",
+  "repetition": 2,
+  "attemptNumber": 22,
+  "success": false,
+  "error": "Reveal plan validation failed:\nMissing memory ID: mem_002",
+  "errorType": "validation",
+  "requestedModel": "openai/gpt-oss-120b",
+  "latencyMs": 3116,
+  "timestamp": "2026-09-16T20:42:33.731Z",
+  "inputHash": "bf3b61b8803a8067",
+  "promptHash": "b57fc8789286b082"
+}

@@ -1,0 +1,61 @@
+{
+  "caseId": "sympathy-test-a",
+  "attemptNumber": 3,
+  "retryNumber": 0,
+  "success": true,
+  "plan": {
+    "opening": "We gather to honor Elena’s radiant spirit, the love she sowed in every corner of our lives.",
+    "chapters": [
+      {
+        "title": "Community Light",
+        "memoryIds": [
+          "mem_s01",
+          "mem_s06",
+          "mem_s02"
+        ]
+      },
+      {
+        "title": "Professional & Service Legacy",
+        "memoryIds": [
+          "mem_s03",
+          "mem_s05"
+        ]
+      },
+      {
+        "title": "Family & Faith Support",
+        "memoryIds": [
+          "mem_s07",
+          "mem_s08"
+        ]
+      },
+      {
+        "title": "Cherished Childhood Memories",
+        "memoryIds": [
+          "mem_s04"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_s04",
+      "mem_s07",
+      "mem_s08"
+    ],
+    "finaleMemoryId": "mem_s04",
+    "reasoningSummary": "Grouped memories by relational context to create a gentle rise from community impact to professional legacy, then family/faith support, ending with the most intimate childhood recollection as the finale. Highlighted the deepest personal and spiritual messages for emphasis.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 2237,
+      "tokensUsed": 2324,
+      "timestamp": "2026-09-17T08:26:12.492Z"
+    }
+  },
+  "requestedModel": "openai/gpt-oss-120b",
+  "returnedModel": "openai/gpt-oss-120b",
+  "latencyMs": 2239,
+  "tokensUsed": 2324,
+  "timestamp": "2026-09-17T08:26:10.253Z",
+  "inputHash": "03b471df9e95d0dc",
+  "promptHash": "5907ceea435860d8",
+  "configVersion": "json-schema-strict"
+}

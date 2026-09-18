@@ -1,0 +1,73 @@
+{
+  "caseId": "birthday-test-b",
+  "repetition": 1,
+  "success": true,
+  "plan": {
+    "opening": "Let’s kick off Emma’s 30th with the same wild energy that’s defined our three decades together!",
+    "chapters": [
+      {
+        "title": "Kickoff: Laughter & Wild Adventures",
+        "memoryIds": [
+          "mem_001",
+          "mem_003",
+          "mem_006",
+          "mem_008",
+          "mem_014"
+        ]
+      },
+      {
+        "title": "Friendship Through the Years",
+        "memoryIds": [
+          "mem_004",
+          "mem_011",
+          "mem_009"
+        ]
+      },
+      {
+        "title": "Career Milestones & Creative Chaos",
+        "memoryIds": [
+          "mem_005",
+          "mem_013"
+        ]
+      },
+      {
+        "title": "Family Roots & Sibling Bonds",
+        "memoryIds": [
+          "mem_007",
+          "mem_012",
+          "mem_015"
+        ]
+      },
+      {
+        "title": "Love & Life Together",
+        "memoryIds": [
+          "mem_010"
+        ]
+      },
+      {
+        "title": "Finale: Mom’s Heartfelt Tribute",
+        "memoryIds": [
+          "mem_002"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_010",
+      "mem_015"
+    ],
+    "finaleMemoryId": "mem_002",
+    "reasoningSummary": "Chapters move from high‑energy fun to deeper friendship, career growth, family foundations, and romance, ending on Mom’s touching message. Highlights spotlight Emma’s partner and brother, while the finale gives the strongest emotional closure.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 4186,
+      "tokensUsed": 3611,
+      "timestamp": "2026-09-16T20:14:03.583Z"
+    }
+  },
+  "latencyMs": 4188,
+  "tokensUsed": 3611,
+  "timestamp": "2026-09-16T20:13:59.395Z",
+  "inputHash": "bf3b61b8803a8067",
+  "promptHash": "b57fc8789286b082"
+}

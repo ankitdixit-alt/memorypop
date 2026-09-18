@@ -112,8 +112,10 @@ describe('AI Director Timeline', () => {
   it('should not have separate contributor or message scenes', () => {
     const timeline = buildAIDirectorTimeline(mockMemories, mockPlan)
 
-    const contributorScenes = timeline.filter(s => s.type === 'contributor')
-    const messageScenes = timeline.filter(s => s.type === 'message')
+    // Valid scene types are: 'opening', 'chapter_transition', 'memory_presentation'
+    // 'contributor' and 'message' are not valid scene types in the current implementation
+    const contributorScenes = timeline.filter(s => (s.type as string) === 'contributor')
+    const messageScenes = timeline.filter(s => (s.type as string) === 'message')
 
     expect(contributorScenes.length).toBe(0)
     expect(messageScenes.length).toBe(0)

@@ -1,0 +1,69 @@
+{
+  "caseId": "retirement-test-a",
+  "repetition": 2,
+  "attemptNumber": 8,
+  "success": true,
+  "plan": {
+    "opening": "Celebrating Michael’s 35 years of dedication, mentorship, and lasting impact.",
+    "chapters": [
+      {
+        "title": "Guiding Vision",
+        "memoryIds": [
+          "mem_f04",
+          "mem_f06",
+          "mem_f08"
+        ]
+      },
+      {
+        "title": "Mentorship Moments",
+        "memoryIds": [
+          "mem_f01",
+          "mem_f10",
+          "mem_f03"
+        ]
+      },
+      {
+        "title": "Shared Adventures",
+        "memoryIds": [
+          "mem_f02",
+          "mem_f05",
+          "mem_f07"
+        ]
+      },
+      {
+        "title": "Resilience & Legacy",
+        "memoryIds": [
+          "mem_f09",
+          "mem_f11"
+        ]
+      },
+      {
+        "title": "Team Celebration",
+        "memoryIds": [
+          "mem_f12"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_f04",
+      "mem_f01",
+      "mem_f09"
+    ],
+    "finaleMemoryId": "mem_f12",
+    "reasoningSummary": "Chapters group memories by theme—vision, mentorship, camaraderie, resilience—creating an emotional rise and gentle pacing. Highlights spotlight the CEO tribute, a personal mentorship story, and a crisis‑survival note, while the team message serves as the powerful finale.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 2339,
+      "tokensUsed": 2461,
+      "timestamp": "2026-09-16T20:39:17.124Z"
+    }
+  },
+  "requestedModel": "openai/gpt-oss-120b",
+  "returnedModel": "openai/gpt-oss-120b",
+  "latencyMs": 2340,
+  "tokensUsed": 2461,
+  "timestamp": "2026-09-16T20:39:14.784Z",
+  "inputHash": "518452279ff4b0a5",
+  "promptHash": "c8a418b03531cd96"
+}

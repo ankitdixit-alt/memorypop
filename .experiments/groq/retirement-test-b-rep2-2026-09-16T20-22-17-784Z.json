@@ -1,0 +1,56 @@
+{
+  "caseId": "retirement-test-b",
+  "repetition": 2,
+  "success": true,
+  "plan": {
+    "opening": "Today we celebrate Michael Zhang’s 35 years of dedication, mentorship, and the lasting legacy he leaves behind.",
+    "chapters": [
+      {
+        "title": "Leadership & Impact",
+        "memoryIds": [
+          "mem_f04",
+          "mem_f06",
+          "mem_f08",
+          "mem_f10"
+        ]
+      },
+      {
+        "title": "Stories & Smiles",
+        "memoryIds": [
+          "mem_f02",
+          "mem_f03",
+          "mem_f05",
+          "mem_f07",
+          "mem_f09",
+          "mem_f11"
+        ]
+      },
+      {
+        "title": "Heartfelt Farewell",
+        "memoryIds": [
+          "mem_f01",
+          "mem_f12"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_f04",
+      "mem_f01",
+      "mem_f12"
+    ],
+    "finaleMemoryId": "mem_f12",
+    "reasoningSummary": "Started with formal acknowledgments to set a respectful tone, followed by lighter, humorous memories for pacing, and closed with personal, heartfelt tributes. Highlighted the CEO message, Jennifer's transformative note, and the team’s collective farewell, ending with the team message as the powerful finale.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 3041,
+      "tokensUsed": 2734,
+      "timestamp": "2026-09-16T20:22:20.828Z"
+    }
+  },
+  "latencyMs": 3044,
+  "tokensUsed": 2734,
+  "timestamp": "2026-09-16T20:22:17.784Z",
+  "inputHash": "fa0713432e4492b5",
+  "promptHash": "e302fbb91c2dcfe6"
+}

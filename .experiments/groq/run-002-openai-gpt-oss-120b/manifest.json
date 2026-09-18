@@ -1,0 +1,843 @@
+{
+  "runId": "run-002-1789591095724",
+  "modelId": "openai/gpt-oss-120b",
+  "startedAt": "2026-09-16T20:38:15.724Z",
+  "totalAttempts": 24,
+  "apiCallsMade": 9,
+  "successfulPlans": 9,
+  "failedAttempts": 15,
+  "budgetRemaining": 0,
+  "results": [
+    {
+      "caseId": "birthday-test-a",
+      "repetition": 1,
+      "attemptNumber": 1,
+      "success": false,
+      "error": "Groq API error (400): {\"error\":{\"message\":\"Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.\",\"type\":\"invalid_request_error\",\"code\":\"json_validate_failed\",\"failed_generation\":\"\"}}\n",
+      "errorType": "parse",
+      "requestedModel": "openai/gpt-oss-120b",
+      "latencyMs": 5626,
+      "timestamp": "2026-09-16T20:38:15.724Z",
+      "inputHash": "b65a7a1303454651",
+      "promptHash": "89d9c35739e5ba69"
+    },
+    {
+      "caseId": "birthday-test-a",
+      "repetition": 2,
+      "attemptNumber": 2,
+      "success": true,
+      "plan": {
+        "opening": "From backyard princesses to lifelong love, we trace Emma’s 30 years of laughter, love, and unforgettable moments.",
+        "chapters": [
+          {
+            "title": "Family Foundations",
+            "memoryIds": [
+              "mem_007",
+              "mem_015",
+              "mem_012"
+            ]
+          },
+          {
+            "title": "Childhood Adventures",
+            "memoryIds": [
+              "mem_004",
+              "mem_001",
+              "mem_006"
+            ]
+          },
+          {
+            "title": "School Days & Dreams",
+            "memoryIds": [
+              "mem_011",
+              "mem_009",
+              "mem_014"
+            ]
+          },
+          {
+            "title": "Work & Play",
+            "memoryIds": [
+              "mem_005",
+              "mem_013",
+              "mem_008"
+            ]
+          },
+          {
+            "title": "Road Trips & Revelry",
+            "memoryIds": [
+              "mem_003"
+            ]
+          },
+          {
+            "title": "Love & Partnership",
+            "memoryIds": [
+              "mem_010"
+            ]
+          },
+          {
+            "title": "Finale – A Mother’s Love",
+            "memoryIds": [
+              "mem_002"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_002",
+          "mem_012",
+          "mem_010"
+        ],
+        "finaleMemoryId": "mem_002",
+        "reasoningSummary": "Grouped memories by life stage and theme, balancing humor and heartfelt tones while building to a moving mother‑daughter finale. Highlighted Mom, Dad, and partner messages for extra impact.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 3017,
+          "tokensUsed": 2955,
+          "timestamp": "2026-09-16T20:38:24.374Z"
+        }
+      },
+      "requestedModel": "openai/gpt-oss-120b",
+      "returnedModel": "openai/gpt-oss-120b",
+      "latencyMs": 3021,
+      "tokensUsed": 2955,
+      "timestamp": "2026-09-16T20:38:21.353Z",
+      "inputHash": "b65a7a1303454651",
+      "promptHash": "89d9c35739e5ba69"
+    },
+    {
+      "caseId": "birthday-test-a",
+      "repetition": 3,
+      "attemptNumber": 3,
+      "success": false,
+      "error": "Groq API error (400): {\"error\":{\"message\":\"Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.\",\"type\":\"invalid_request_error\",\"code\":\"json_validate_failed\",\"failed_generation\":\"\"}}\n",
+      "errorType": "parse",
+      "requestedModel": "openai/gpt-oss-120b",
+      "latencyMs": 5488,
+      "timestamp": "2026-09-16T20:38:29.377Z",
+      "inputHash": "b65a7a1303454651",
+      "promptHash": "89d9c35739e5ba69"
+    },
+    {
+      "caseId": "birthday-test-b",
+      "repetition": 1,
+      "attemptNumber": 4,
+      "success": true,
+      "plan": {
+        "opening": "From fire‑alarm cake fails to heartfelt family hugs, let’s celebrate Emma's 30 years of laughter, love, and lasting friendships.",
+        "chapters": [
+          {
+            "title": "Wild College Adventures",
+            "memoryIds": [
+              "mem_001",
+              "mem_003",
+              "mem_008",
+              "mem_014"
+            ]
+          },
+          {
+            "title": "Childhood & School Memories",
+            "memoryIds": [
+              "mem_004",
+              "mem_011",
+              "mem_009"
+            ]
+          },
+          {
+            "title": "Career & Growth",
+            "memoryIds": [
+              "mem_005",
+              "mem_013",
+              "mem_006",
+              "mem_015"
+            ]
+          },
+          {
+            "title": "Love & Family",
+            "memoryIds": [
+              "mem_010",
+              "mem_007",
+              "mem_012",
+              "mem_002"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_002",
+          "mem_012",
+          "mem_010"
+        ],
+        "finaleMemoryId": "mem_002",
+        "reasoningSummary": "Chapters move from fun, youthful antics to deeper school and work memories, then to love and finally family, matching the requested emotional arc. Highlights spotlight Emma's parents and partner, with Mom's message as the powerful finale.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 3595,
+          "tokensUsed": 3064,
+          "timestamp": "2026-09-16T20:38:38.468Z"
+        }
+      },
+      "requestedModel": "openai/gpt-oss-120b",
+      "returnedModel": "openai/gpt-oss-120b",
+      "latencyMs": 3600,
+      "tokensUsed": 3064,
+      "timestamp": "2026-09-16T20:38:34.868Z",
+      "inputHash": "bf3b61b8803a8067",
+      "promptHash": "b57fc8789286b082"
+    },
+    {
+      "caseId": "birthday-test-b",
+      "repetition": 2,
+      "attemptNumber": 5,
+      "success": false,
+      "error": "Groq API error (429): {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2kk1vh6emga6r1gxxc6gnn8` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 6320, Requested 2975. Please try again in 9.712499999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n",
+      "errorType": "rate_limit_minute",
+      "retryAfterSeconds": 10,
+      "requestedModel": "openai/gpt-oss-120b",
+      "latencyMs": 86,
+      "timestamp": "2026-09-16T20:38:43.480Z",
+      "inputHash": "bf3b61b8803a8067",
+      "promptHash": "b57fc8789286b082"
+    },
+    {
+      "caseId": "birthday-test-b",
+      "repetition": 3,
+      "attemptNumber": 6,
+      "success": true,
+      "plan": {
+        "opening": "From fire‑alarm cakes to family hugs, let’s celebrate Emma’s 30 years of laughter, love, and unforgettable moments.",
+        "chapters": [
+          {
+            "title": "College Capers & Crazy Moments",
+            "memoryIds": [
+              "mem_001",
+              "mem_003",
+              "mem_008",
+              "mem_014"
+            ]
+          },
+          {
+            "title": "Childhood, Schoolyard & Growing Up",
+            "memoryIds": [
+              "mem_004",
+              "mem_011",
+              "mem_006",
+              "mem_009"
+            ]
+          },
+          {
+            "title": "Work, Collaboration & Love",
+            "memoryIds": [
+              "mem_005",
+              "mem_013",
+              "mem_010",
+              "mem_015"
+            ]
+          },
+          {
+            "title": "Family Foundations & Forever Love",
+            "memoryIds": [
+              "mem_007",
+              "mem_012",
+              "mem_002"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_001",
+          "mem_010",
+          "mem_012"
+        ],
+        "finaleMemoryId": "mem_002",
+        "reasoningSummary": "I opened with high‑energy college memories, then moved through childhood, career, and finally deep family love, ending on Mom’s heartfelt message. Highlights spotlight the funniest moment, the partner’s love, and Dad’s pride.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 4131,
+          "tokensUsed": 3092,
+          "timestamp": "2026-09-16T20:38:59.704Z"
+        }
+      },
+      "requestedModel": "openai/gpt-oss-120b",
+      "returnedModel": "openai/gpt-oss-120b",
+      "latencyMs": 4133,
+      "tokensUsed": 3092,
+      "timestamp": "2026-09-16T20:38:55.571Z",
+      "inputHash": "bf3b61b8803a8067",
+      "promptHash": "b57fc8789286b082"
+    },
+    {
+      "caseId": "retirement-test-a",
+      "repetition": 1,
+      "attemptNumber": 7,
+      "success": false,
+      "error": "Groq API error (429): {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2kk1vh6emga6r1gxxc6gnn8` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 6328, Requested 2714. Please try again in 7.815s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n",
+      "errorType": "rate_limit_minute",
+      "retryAfterSeconds": 8,
+      "requestedModel": "openai/gpt-oss-120b",
+      "latencyMs": 73,
+      "timestamp": "2026-09-16T20:39:04.708Z",
+      "inputHash": "518452279ff4b0a5",
+      "promptHash": "c8a418b03531cd96"
+    },
+    {
+      "caseId": "retirement-test-a",
+      "repetition": 2,
+      "attemptNumber": 8,
+      "success": true,
+      "plan": {
+        "opening": "Celebrating Michael’s 35 years of dedication, mentorship, and lasting impact.",
+        "chapters": [
+          {
+            "title": "Guiding Vision",
+            "memoryIds": [
+              "mem_f04",
+              "mem_f06",
+              "mem_f08"
+            ]
+          },
+          {
+            "title": "Mentorship Moments",
+            "memoryIds": [
+              "mem_f01",
+              "mem_f10",
+              "mem_f03"
+            ]
+          },
+          {
+            "title": "Shared Adventures",
+            "memoryIds": [
+              "mem_f02",
+              "mem_f05",
+              "mem_f07"
+            ]
+          },
+          {
+            "title": "Resilience & Legacy",
+            "memoryIds": [
+              "mem_f09",
+              "mem_f11"
+            ]
+          },
+          {
+            "title": "Team Celebration",
+            "memoryIds": [
+              "mem_f12"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_f04",
+          "mem_f01",
+          "mem_f09"
+        ],
+        "finaleMemoryId": "mem_f12",
+        "reasoningSummary": "Chapters group memories by theme—vision, mentorship, camaraderie, resilience—creating an emotional rise and gentle pacing. Highlights spotlight the CEO tribute, a personal mentorship story, and a crisis‑survival note, while the team message serves as the powerful finale.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 2339,
+          "tokensUsed": 2461,
+          "timestamp": "2026-09-16T20:39:17.124Z"
+        }
+      },
+      "requestedModel": "openai/gpt-oss-120b",
+      "returnedModel": "openai/gpt-oss-120b",
+      "latencyMs": 2340,
+      "tokensUsed": 2461,
+      "timestamp": "2026-09-16T20:39:14.784Z",
+      "inputHash": "518452279ff4b0a5",
+      "promptHash": "c8a418b03531cd96"
+    },
+    {
+      "caseId": "retirement-test-a",
+      "repetition": 3,
+      "attemptNumber": 9,
+      "success": false,
+      "error": "Groq API error (429): {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2kk1vh6emga6r1gxxc6gnn8` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 6467, Requested 2714. Please try again in 8.8575s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n",
+      "errorType": "rate_limit_minute",
+      "retryAfterSeconds": 9,
+      "requestedModel": "openai/gpt-oss-120b",
+      "latencyMs": 74,
+      "timestamp": "2026-09-16T20:39:22.126Z",
+      "inputHash": "518452279ff4b0a5",
+      "promptHash": "c8a418b03531cd96"
+    },
+    {
+      "caseId": "retirement-test-b",
+      "repetition": 1,
+      "attemptNumber": 10,
+      "success": true,
+      "plan": {
+        "opening": "Celebrating Michael Zhang's 35 years of dedication, mentorship, and lasting impact on us all.",
+        "chapters": [
+          {
+            "title": "A Legacy Recognized",
+            "memoryIds": [
+              "mem_f04",
+              "mem_f06",
+              "mem_f08"
+            ]
+          },
+          {
+            "title": "Shared Adventures & Laughter",
+            "memoryIds": [
+              "mem_f02",
+              "mem_f05",
+              "mem_f07",
+              "mem_f11",
+              "mem_f03"
+            ]
+          },
+          {
+            "title": "Heartfelt Reflections",
+            "memoryIds": [
+              "mem_f01",
+              "mem_f10",
+              "mem_f09"
+            ]
+          },
+          {
+            "title": "A Collective Tribute",
+            "memoryIds": [
+              "mem_f12"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_f04",
+          "mem_f01",
+          "mem_f12"
+        ],
+        "finaleMemoryId": "mem_f12",
+        "reasoningSummary": "I opened with formal acknowledgments from leadership and senior peers, then interwove lighter, humorous memories to keep pacing, followed by deeply personal tributes before ending with the team’s collective message as the powerful finale. Highlights spotlight the CEO’s note, Jennifer’s heartfelt mentorship, and the final group tribute.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 2699,
+          "tokensUsed": 2665,
+          "timestamp": "2026-09-16T20:39:35.904Z"
+        }
+      },
+      "requestedModel": "openai/gpt-oss-120b",
+      "returnedModel": "openai/gpt-oss-120b",
+      "latencyMs": 2701,
+      "tokensUsed": 2665,
+      "timestamp": "2026-09-16T20:39:33.203Z",
+      "inputHash": "fa0713432e4492b5",
+      "promptHash": "e302fbb91c2dcfe6"
+    },
+    {
+      "caseId": "retirement-test-b",
+      "repetition": 2,
+      "attemptNumber": 11,
+      "success": false,
+      "error": "Groq API error (429): {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2kk1vh6emga6r1gxxc6gnn8` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 6624, Requested 2860. Please try again in 11.129999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n",
+      "errorType": "rate_limit_minute",
+      "retryAfterSeconds": 12,
+      "requestedModel": "openai/gpt-oss-120b",
+      "latencyMs": 99,
+      "timestamp": "2026-09-16T20:39:40.914Z",
+      "inputHash": "fa0713432e4492b5",
+      "promptHash": "e302fbb91c2dcfe6"
+    },
+    {
+      "caseId": "retirement-test-b",
+      "repetition": 3,
+      "attemptNumber": 12,
+      "success": true,
+      "plan": {
+        "opening": "Celebrating Michael’s 35 years of vision, mentorship, and unforgettable moments.",
+        "chapters": [
+          {
+            "title": "Foundations of Excellence",
+            "memoryIds": [
+              "mem_f04",
+              "mem_f06",
+              "mem_f08"
+            ]
+          },
+          {
+            "title": "Mentorship & Impact",
+            "memoryIds": [
+              "mem_f01",
+              "mem_f10",
+              "mem_f03"
+            ]
+          },
+          {
+            "title": "Stories & Laughter",
+            "memoryIds": [
+              "mem_f02",
+              "mem_f05",
+              "mem_f07",
+              "mem_f11",
+              "mem_f09"
+            ]
+          },
+          {
+            "title": "Final Tribute",
+            "memoryIds": [
+              "mem_f12"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_f04",
+          "mem_f10",
+          "mem_f12"
+        ],
+        "finaleMemoryId": "mem_f12",
+        "reasoningSummary": "The sequence starts with formal acknowledgments, moves through mentorship depth, then lighter shared anecdotes, and ends with a collective, heartfelt tribute. Highlights spotlight the CEO’s endorsement, a long‑term mentor’s note, and the team’s unified farewell.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 2570,
+          "tokensUsed": 2569,
+          "timestamp": "2026-09-16T20:39:57.590Z"
+        }
+      },
+      "requestedModel": "openai/gpt-oss-120b",
+      "returnedModel": "openai/gpt-oss-120b",
+      "latencyMs": 2573,
+      "tokensUsed": 2569,
+      "timestamp": "2026-09-16T20:39:55.017Z",
+      "inputHash": "fa0713432e4492b5",
+      "promptHash": "e302fbb91c2dcfe6"
+    },
+    {
+      "caseId": "anniversary-test-a",
+      "repetition": 1,
+      "attemptNumber": 13,
+      "success": false,
+      "error": "Reveal plan validation failed:\nMissing memory ID: mem_a09",
+      "errorType": "validation",
+      "requestedModel": "openai/gpt-oss-120b",
+      "latencyMs": 3425,
+      "timestamp": "2026-09-16T20:40:02.595Z",
+      "inputHash": "dd36674f620cdb3f",
+      "promptHash": "b667d7f862ba2d4d"
+    },
+    {
+      "caseId": "anniversary-test-a",
+      "repetition": 2,
+      "attemptNumber": 14,
+      "success": false,
+      "error": "Groq API error (429): {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2kk1vh6emga6r1gxxc6gnn8` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 7996, Requested 1564. Please try again in 11.7s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n",
+      "errorType": "rate_limit_minute",
+      "retryAfterSeconds": 12,
+      "requestedModel": "openai/gpt-oss-120b",
+      "latencyMs": 36,
+      "timestamp": "2026-09-16T20:40:06.022Z",
+      "inputHash": "dd36674f620cdb3f",
+      "promptHash": "b667d7f862ba2d4d"
+    },
+    {
+      "caseId": "anniversary-test-a",
+      "repetition": 3,
+      "attemptNumber": 15,
+      "success": false,
+      "error": "Groq API error (429): {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2kk1vh6emga6r1gxxc6gnn8` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 6118, Requested 2594. Please try again in 5.34s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n",
+      "errorType": "rate_limit_minute",
+      "retryAfterSeconds": 6,
+      "requestedModel": "openai/gpt-oss-120b",
+      "latencyMs": 75,
+      "timestamp": "2026-09-16T20:40:20.065Z",
+      "inputHash": "dd36674f620cdb3f",
+      "promptHash": "b667d7f862ba2d4d"
+    },
+    {
+      "caseId": "birthday-test-a",
+      "repetition": 1,
+      "attemptNumber": 16,
+      "success": true,
+      "plan": {
+        "opening": "From baby steps to shared dreams, we celebrate Emma’s 30 years of love, laughter, and lifelong friendships.",
+        "chapters": [
+          {
+            "title": "Family Foundations",
+            "memoryIds": [
+              "mem_002",
+              "mem_012",
+              "mem_007",
+              "mem_015"
+            ]
+          },
+          {
+            "title": "Childhood, School & Early Adventures",
+            "memoryIds": [
+              "mem_004",
+              "mem_011",
+              "mem_009"
+            ]
+          },
+          {
+            "title": "Road Trips, Mishaps & Laughter",
+            "memoryIds": [
+              "mem_001",
+              "mem_003",
+              "mem_006",
+              "mem_014",
+              "mem_008"
+            ]
+          },
+          {
+            "title": "Workplace Wins & Creative Bonds",
+            "memoryIds": [
+              "mem_005",
+              "mem_013"
+            ]
+          },
+          {
+            "title": "A Love That Leads the Way",
+            "memoryIds": [
+              "mem_010"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_002",
+          "mem_012",
+          "mem_010"
+        ],
+        "finaleMemoryId": "mem_010",
+        "reasoningSummary": "Grouped memories by theme to build from family roots, through school and wild adventures, to work and finally love. Highlighted Mom, Dad, and partner messages for emotional impact, ending with Tom’s heartfelt tribute.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 4026,
+          "tokensUsed": 3489,
+          "timestamp": "2026-09-16T20:41:07.807Z"
+        }
+      },
+      "requestedModel": "openai/gpt-oss-120b",
+      "returnedModel": "openai/gpt-oss-120b",
+      "latencyMs": 4032,
+      "tokensUsed": 3489,
+      "timestamp": "2026-09-16T20:41:03.775Z",
+      "inputHash": "b65a7a1303454651",
+      "promptHash": "89d9c35739e5ba69"
+    },
+    {
+      "caseId": "birthday-test-a",
+      "repetition": 3,
+      "attemptNumber": 17,
+      "success": false,
+      "error": "Reveal plan validation failed:\nMissing memory ID: mem_002",
+      "errorType": "validation",
+      "requestedModel": "openai/gpt-oss-120b",
+      "latencyMs": 5146,
+      "timestamp": "2026-09-16T20:41:12.812Z",
+      "inputHash": "b65a7a1303454651",
+      "promptHash": "89d9c35739e5ba69"
+    },
+    {
+      "caseId": "birthday-test-b",
+      "repetition": 2,
+      "attemptNumber": 18,
+      "success": false,
+      "error": "Groq API error (429): {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2kk1vh6emga6r1gxxc6gnn8` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 5339, Requested 3509. Please try again in 6.359999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n",
+      "errorType": "rate_limit_minute",
+      "retryAfterSeconds": 7,
+      "requestedModel": "openai/gpt-oss-120b",
+      "latencyMs": 62,
+      "timestamp": "2026-09-16T20:41:17.961Z",
+      "inputHash": "bf3b61b8803a8067",
+      "promptHash": "b57fc8789286b082"
+    },
+    {
+      "caseId": "retirement-test-a",
+      "repetition": 1,
+      "attemptNumber": 19,
+      "success": false,
+      "error": "Reveal plan validation failed:\nMissing memory ID: mem_f04",
+      "errorType": "validation",
+      "requestedModel": "openai/gpt-oss-120b",
+      "latencyMs": 2918,
+      "timestamp": "2026-09-16T20:41:27.027Z",
+      "inputHash": "518452279ff4b0a5",
+      "promptHash": "c8a418b03531cd96"
+    },
+    {
+      "caseId": "retirement-test-a",
+      "repetition": 3,
+      "attemptNumber": 20,
+      "success": false,
+      "error": "Groq API error (429): {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2kk1vh6emga6r1gxxc6gnn8` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 6481, Requested 3248. Please try again in 12.9675s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n",
+      "errorType": "rate_limit_minute",
+      "retryAfterSeconds": 13,
+      "requestedModel": "openai/gpt-oss-120b",
+      "latencyMs": 36,
+      "timestamp": "2026-09-16T20:41:29.947Z",
+      "inputHash": "518452279ff4b0a5",
+      "promptHash": "c8a418b03531cd96"
+    },
+    {
+      "caseId": "birthday-test-a",
+      "repetition": 3,
+      "attemptNumber": 21,
+      "success": true,
+      "plan": {
+        "opening": "Thirty years of love, laughter, and shared moments—let's travel the beautiful story of Emma's life.",
+        "chapters": [
+          {
+            "title": "Family Foundations",
+            "memoryIds": [
+              "mem_007",
+              "mem_002",
+              "mem_015"
+            ]
+          },
+          {
+            "title": "Playful Beginnings",
+            "memoryIds": [
+              "mem_004",
+              "mem_001",
+              "mem_008"
+            ]
+          },
+          {
+            "title": "Adventures & Laughter",
+            "memoryIds": [
+              "mem_003",
+              "mem_006",
+              "mem_014"
+            ]
+          },
+          {
+            "title": "School Days & Dreams",
+            "memoryIds": [
+              "mem_011",
+              "mem_009"
+            ]
+          },
+          {
+            "title": "Professional Partnerships",
+            "memoryIds": [
+              "mem_005",
+              "mem_013"
+            ]
+          },
+          {
+            "title": "Heart & Home",
+            "memoryIds": [
+              "mem_010",
+              "mem_012"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_002",
+          "mem_010",
+          "mem_015"
+        ],
+        "finaleMemoryId": "mem_012",
+        "reasoningSummary": "Grouped memories by relationship and theme to create a rising emotional arc, using humor early and interspersing lighter moments before deeper family and love messages. Selected Mom's note as a highlight and Dad's heartfelt message as the powerful finale.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 4516,
+          "tokensUsed": 3647,
+          "timestamp": "2026-09-16T20:42:25.726Z"
+        }
+      },
+      "requestedModel": "openai/gpt-oss-120b",
+      "returnedModel": "openai/gpt-oss-120b",
+      "latencyMs": 4521,
+      "tokensUsed": 3647,
+      "timestamp": "2026-09-16T20:42:21.205Z",
+      "inputHash": "b65a7a1303454651",
+      "promptHash": "89d9c35739e5ba69"
+    },
+    {
+      "caseId": "birthday-test-b",
+      "repetition": 2,
+      "attemptNumber": 22,
+      "success": false,
+      "error": "Reveal plan validation failed:\nMissing memory ID: mem_002",
+      "errorType": "validation",
+      "requestedModel": "openai/gpt-oss-120b",
+      "latencyMs": 3116,
+      "timestamp": "2026-09-16T20:42:33.731Z",
+      "inputHash": "bf3b61b8803a8067",
+      "promptHash": "b57fc8789286b082"
+    },
+    {
+      "caseId": "retirement-test-a",
+      "repetition": 1,
+      "attemptNumber": 23,
+      "success": true,
+      "plan": {
+        "opening": "Today we honor Michael’s 35 years of dedication, mentorship, and the countless moments that shaped us all.",
+        "chapters": [
+          {
+            "title": "Vision & Impact",
+            "memoryIds": [
+              "mem_f04",
+              "mem_f06",
+              "mem_f08"
+            ]
+          },
+          {
+            "title": "Mentors & Mentees",
+            "memoryIds": [
+              "mem_f01",
+              "mem_f10",
+              "mem_f03"
+            ]
+          },
+          {
+            "title": "Laughter & Adventures",
+            "memoryIds": [
+              "mem_f02",
+              "mem_f05",
+              "mem_f07",
+              "mem_f11"
+            ]
+          },
+          {
+            "title": "Enduring Legacy",
+            "memoryIds": [
+              "mem_f09",
+              "mem_f12"
+            ]
+          }
+        ],
+        "highlightMemoryIds": [
+          "mem_f04",
+          "mem_f01",
+          "mem_f12"
+        ],
+        "finaleMemoryId": "mem_f12",
+        "reasoningSummary": "I grouped messages by theme—leadership impact, mentorship, humor, and legacy—to create an emotional rise and gentle pacing. The CEO tribute, a personal mentee note, and the team collage are highlighted, with the collective team message as the powerful finale.",
+        "_metadata": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "latencyMs": 2721,
+          "tokensUsed": 2428,
+          "timestamp": "2026-09-16T20:42:39.572Z"
+        }
+      },
+      "requestedModel": "openai/gpt-oss-120b",
+      "returnedModel": "openai/gpt-oss-120b",
+      "latencyMs": 2722,
+      "tokensUsed": 2428,
+      "timestamp": "2026-09-16T20:42:36.850Z",
+      "inputHash": "518452279ff4b0a5",
+      "promptHash": "c8a418b03531cd96"
+    },
+    {
+      "caseId": "retirement-test-a",
+      "repetition": 3,
+      "attemptNumber": 24,
+      "success": false,
+      "error": "Groq API error (429): {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2kk1vh6emga6r1gxxc6gnn8` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 5316, Requested 3406. Please try again in 5.415s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n",
+      "errorType": "rate_limit_minute",
+      "retryAfterSeconds": 6,
+      "requestedModel": "openai/gpt-oss-120b",
+      "latencyMs": 85,
+      "timestamp": "2026-09-16T20:42:47.575Z",
+      "inputHash": "518452279ff4b0a5",
+      "promptHash": "c8a418b03531cd96"
+    }
+  ],
+  "completedAt": "2026-09-16T20:42:55.664Z"
+}

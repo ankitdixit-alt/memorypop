@@ -1,0 +1,14 @@
+{
+  "caseId": "sympathy-test-b",
+  "attemptNumber": 5,
+  "retryNumber": 1,
+  "success": false,
+  "error": "Groq API error (500): {\"error\":{\"message\":\"Internal Server Error\",\"type\":\"internal_server_error\"}}\n",
+  "errorType": "api_error",
+  "requestedModel": "openai/gpt-oss-120b",
+  "latencyMs": 17696,
+  "timestamp": "2026-09-17T08:26:23.548Z",
+  "inputHash": "31d9e3605b020700",
+  "promptHash": "e5597d21dfb7dfc4",
+  "configVersion": "json-schema-strict"
+}

@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Groq Pilot Review</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .header {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .notice {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 4px;
+    }
+    .result-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #e5e5e5;
+    }
+    .result-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+    .result-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.875rem;
+      color: #666;
+    }
+    .context-section {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+    }
+    .opening {
+      font-size: 1.125rem;
+      font-style: italic;
+      color: #444;
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: #f0f7ff;
+      border-left: 4px solid #2196f3;
+      border-radius: 4px;
+    }
+    .chapter {
+      margin-bottom: 2rem;
+    }
+    .chapter-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e5e5e5;
+    }
+    .memory {
+      background: #fafafa;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      border-radius: 4px;
+      border-left: 3px solid #ddd;
+    }
+    .memory.highlight {
+      border-left-color: #ff9800;
+      background: #fff8e1;
+    }
+    .memory.finale {
+      border-left-color: #4caf50;
+      background: #e8f5e9;
+      font-weight: 500;
+    }
+    .memory-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .contributor-name {
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.125rem 0.5rem;
+      border-radius: 3px;
+      font-weight: 500;
+    }
+    .badge-highlight {
+      background: #ff9800;
+      color: white;
+    }
+    .badge-finale {
+      background: #4caf50;
+      color: white;
+    }
+    .memory-message {
+      color: #333;
+      line-height: 1.6;
+    }
+    .rating-form {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 4px;
+      margin-top: 2rem;
+    }
+    .rating-group {
+      margin-bottom: 1.5rem;
+    }
+    .rating-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+    .rating-options {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.875rem;
+    }
+    .save-button {
+      background: #2196f3;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    .save-status {
+      display: inline-block;
+      margin-left: 1rem;
+      color: #4caf50;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Groq Pilot Review</h1>
+      <p>JSON Schema Structured Outputs (Strict Mode)</p>
+      <div class="notice">
+        <strong>✓ Configuration Change</strong>
+        <p>This pilot uses JSON Schema structured outputs with strict mode. Results are tracked separately from earlier JSON-mode runs.</p>
+      </div>
+      <div class="notice">
+        <strong>⚠️ Gemini Comparison Unavailable</strong>
+        <p>Original Gemini responses were never captured. Ratings evaluate Groq storytelling quality independently.</p>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-header">
+        <div class="result-title">anniversary-test-a (Attempt 1)</div>
+        <div class="result-meta">
+          <span>3167ms</span>
+          <span>2925 tokens</span>
+          <span>json-schema-strict</span>
+        </div>
+      </div>
+
+      <div class="context-section">
+        <p><strong>Recipient:</strong> Alex & Jordan</p>
+        <p><strong>Occasion:</strong> anniversary</p>
+        <p><strong>Tone:</strong> warm_heartfelt</p>
+        <p><strong>Memories:</strong> 10</p>
+      </div>
+
+      <div class="opening">"Celebrating a decade of love, laughter, and the countless moments that made Alex and Jordan’s journey unforgettable."</div>
+
+      <div class="chapter">
+        <div class="chapter-title">Chapter 1: First Glimpses of Forever</div>
+
+        <div class="memory ">
+          <div class="memory-header">
+            <span class="contributor-name">College Friend Emma</span>
+            <div>
+              
+              
+            </div>
+          </div>
+          <div class="memory-message">"Remember when you were "just friends"? We all knew. Happy 10th anniversary to the couple who took forever to realize what everyone else already saw!"</div>
+        </div>
+
+        <div class="memory ">
+          <div class="memory-header">
+            <span class="contributor-name">High School Friend Chris</span>
+            <div>
+              
+              
+            </div>
+          </div>
+          <div class="memory-message">"Jordan, I've known you since we were 15. Seeing you this happy, this settled, this loved - it's everything I hoped for you. Alex is lucky to have you, and vice versa. Happy 10th!"</div>
+        </div>
+
+        <div class="memory highlight">
+          <div class="memory-header">
+            <span class="contributor-name">Best Man Marcus</span>
+            <div>
+              <span class="badge badge-highlight">HIGHLIGHT</span>
+              
+            </div>
+          </div>
+          <div class="memory-message">"Happy 10th anniversary! I still remember your vows - "I promise to always let you pick the restaurant." Alex, you've kept that promise admirably. Here's to 10 more years of pretending to like each other's music!"</div>
+        </div>
+</div>
+      <div class="chapter">
+        <div class="chapter-title">Chapter 2: Family Foundations & Warmth</div>
+
+        <div class="memory highlight">
+          <div class="memory-header">
+            <span class="contributor-name">Alex's Parents</span>
+            <div>
+              <span class="badge badge-highlight">HIGHLIGHT</span>
+              
+            </div>
+          </div>
+          <div class="memory-message">"To our dear Alex and Jordan - watching your love grow over these 10 years has been one of our greatest joys. You've created a home filled with warmth, laughter, and kindness. We're so proud of you both."</div>
+        </div>
+
+        <div class="memory ">
+          <div class="memory-header">
+            <span class="contributor-name">Jordan's Parents</span>
+            <div>
+              
+              
+            </div>
+          </div>
+          <div class="memory-message">"Dear Alex and Jordan, what a joy it has been watching you build a life together. Your love is patient, your partnership is strong, and your home is filled with warmth. We're blessed to call you both family. Happy 10th anniversary."</div>
+        </div>
+
+        <div class="memory ">
+          <div class="memory-header">
+            <span class="contributor-name">Jordan's Sister Maya</span>
+            <div>
+              
+              
+            </div>
+          </div>
+          <div class="memory-message">"Alex, thank you for loving my sibling so completely. Jordan, thank you for finding someone who laughs at your terrible puns. You two are perfect together. Happy anniversary!"</div>
+        </div>
+</div>
+      <div class="chapter">
+        <div class="chapter-title">Chapter 3: Everyday Laughter and Shared Joy</div>
+
+        <div class="memory ">
+          <div class="memory-header">
+            <span class="contributor-name">Neighbor Carlos</span>
+            <div>
+              
+              
+            </div>
+          </div>
+          <div class="memory-message">"Happy 10 years! Thanks for letting me borrow your ladder that one time and for being the best neighbors anyone could ask for. Your relationship goals are real."</div>
+        </div>
+
+        <div class="memory ">
+          <div class="memory-header">
+            <span class="contributor-name">Maid of Honor Sophie</span>
+            <div>
+              
+              
+            </div>
+          </div>
+          <div class="memory-message">"Ten years ago, I watched two of my favorite people promise forever to each other. You've built something beautiful - a partnership full of laughter, support, and genuine love. Congratulations!"</div>
+        </div>
+
+        <div class="memory ">
+          <div class="memory-header">
+            <span class="contributor-name">Work Colleague Priya</span>
+            <div>
+              
+              
+            </div>
+          </div>
+          <div class="memory-message">"Alex, you light up whenever you talk about Jordan. It's beautiful to see a partnership that still feels like that after 10 years. Congratulations to you both!"</div>
+        </div>
+</div>
+      <div class="chapter">
+        <div class="chapter-title">Chapter 4: The Spark That Still Shines</div>
+
+        <div class="memory finale">
+          <div class="memory-header">
+            <span class="contributor-name">Wedding Photographer David</span>
+            <div>
+              <span class="badge badge-highlight">HIGHLIGHT</span>
+              <span class="badge badge-finale">FINALE</span>
+            </div>
+          </div>
+          <div class="memory-message">"I photographed your wedding 10 years ago. The way you looked at each other that day? That same spark is still there. Congratulations on a beautiful decade together!"</div>
+        </div>
+</div>
+      <div class="rating-form">
+        <h3>Manual Rating</h3>
+        <form id="rating-pilot-anniversary-test-a-attempt1">
+          <div class="rating-group">
+            <label>1. Emotional Progression</label>
+            <div class="rating-options">
+              <div><input type="radio" name="emotional" value="1"> 1</div>
+              <div><input type="radio" name="emotional" value="2"> 2</div>
+              <div><input type="radio" name="emotional" value="3"> 3</div>
+              <div><input type="radio" name="emotional" value="4"> 4</div>
+              <div><input type="radio" name="emotional" value="5"> 5</div>
+            </div>
+          </div>
+          <div class="rating-group">
+            <label>2. Chapter Coherence</label>
+            <div class="rating-options">
+              <div><input type="radio" name="coherence" value="1"> 1</div>
+              <div><input type="radio" name="coherence" value="2"> 2</div>
+              <div><input type="radio" name="coherence" value="3"> 3</div>
+              <div><input type="radio" name="coherence" value="4"> 4</div>
+              <div><input type="radio" name="coherence" value="5"> 5</div>
+            </div>
+          </div>
+          <div class="rating-group">
+            <label>3. Finale Quality</label>
+            <div class="rating-options">
+              <div><input type="radio" name="finale" value="1"> 1</div>
+              <div><input type="radio" name="finale" value="2"> 2</div>
+              <div><input type="radio" name="finale" value="3"> 3</div>
+              <div><input type="radio" name="finale" value="4"> 4</div>
+              <div><input type="radio" name="finale" value="5"> 5</div>
+            </div>
+          </div>
+          <div class="rating-group">
+            <label>4. Overall Quality</label>
+            <div class="rating-options">
+              <div><input type="radio" name="overall" value="1"> 1</div>
+              <div><input type="radio" name="overall" value="2"> 2</div>
+              <div><input type="radio" name="overall" value="3"> 3</div>
+              <div><input type="radio" name="overall" value="4"> 4</div>
+              <div><input type="radio" name="overall" value="5"> 5</div>
+            </div>
+          </div>
+          <div class="rating-group">
+            <label>Notes</label>
+            <textarea name="notes" placeholder="Specific observations..."></textarea>
+          </div>
+          <button type="button" class="save-button" onclick="saveRating('rating-pilot-anniversary-test-a-attempt1')">Save Rating</button>
+          <span class="save-status" id="rating-pilot-anniversary-test-a-attempt1-status"></span>
+        </form>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-header">
+        <div class="result-title">anniversary-test-b (Attempt 2)</div>
+        <div class="result-meta">
+          <span>2404ms</span>
+          <span>2502 tokens</span>
+          <span>json-schema-strict</span>
+        </div>
+      </div>
+
+      <div class="context-section">
+        <p><strong>Recipient:</strong> Alex & Jordan</p>
+        <p><strong>Occasion:</strong> anniversary</p>
+        <p><strong>Tone:</strong> warm_heartfelt</p>
+        <p><strong>Memories:</strong> 10</p>
+      </div>
+
+      <div class="opening">"From playful vows to heartfelt reflections, we celebrate Alex & Jordan’s ten years of love."</div>
+
+      <div class="chapter">
+        <div class="chapter-title">Chapter 1: Playful Beginnings</div>
+
+        <div class="memory highlight">
+          <div class="memory-header">
+            <span class="contributor-name">Best Man Marcus</span>
+            <div>
+              <span class="badge badge-highlight">HIGHLIGHT</span>
+              
+            </div>
+          </div>
+          <div class="memory-message">"Happy 10th anniversary! I still remember your vows - "I promise to always let you pick the restaurant." Alex, you've kept that promise admirably. Here's to 10 more years of pretending to like each other's music!"</div>
+        </div>
+
+        <div class="memory ">
+          <div class="memory-header">
+            <span class="contributor-name">College Friend Emma</span>
+            <div>
+              
+              
+            </div>
+          </div>
+          <div class="memory-message">"Remember when you were "just friends"? We all knew. Happy 10th anniversary to the couple who took forever to realize what everyone else already saw!"</div>
+        </div>
+
+        <div class="memory ">
+          <div class="memory-header">
+            <span class="contributor-name">Jordan's Sister Maya</span>
+            <div>
+              
+              
+            </div>
+          </div>
+          <div class="memory-message">"Alex, thank you for loving my sibling so completely. Jordan, thank you for finding someone who laughs at your terrible puns. You two are perfect together. Happy anniversary!"</div>
+        </div>
+
+        <div class="memory ">
+          <div class="memory-header">
+            <span class="contributor-name">Neighbor Carlos</span>
+            <div>
+              
+              
+            </div>
+          </div>
+          <div class="memory-message">"Happy 10 years! Thanks for letting me borrow your ladder that one time and for being the best neighbors anyone could ask for. Your relationship goals are real."</div>
+        </div>
+</div>
+      <div class="chapter">
+        <div class="chapter-title">Chapter 2: Friends & Reflections</div>
+
+        <div class="memory ">
+          <div class="memory-header">
+            <span class="contributor-name">Maid of Honor Sophie</span>
+            <div>
+              
+              
+            </div>
+          </div>
+          <div class="memory-message">"Ten years ago, I watched two of my favorite people promise forever to each other. You've built something beautiful - a partnership full of laughter, support, and genuine love. Congratulations!"</div>
+        </div>
+
+        <div class="memory ">
+          <div class="memory-header">
+            <span class="contributor-name">Work Colleague Priya</span>
+            <div>
+              
+              
+            </div>
+          </div>
+          <div class="memory-message">"Alex, you light up whenever you talk about Jordan. It's beautiful to see a partnership that still feels like that after 10 years. Congratulations to you both!"</div>
+        </div>
+
+        <div class="memory ">
+          <div class="memory-header">
+            <span class="contributor-name">High School Friend Chris</span>
+            <div>
+              
+              
+            </div>
+          </div>
+          <div class="memory-message">"Jordan, I've known you since we were 15. Seeing you this happy, this settled, this loved - it's everything I hoped for you. Alex is lucky to have you, and vice versa. Happy 10th!"</div>
+        </div>
+</div>
+      <div class="chapter">
+        <div class="chapter-title">Chapter 3: Family Blessings</div>
+
+        <div class="memory highlight">
+          <div class="memory-header">
+            <span class="contributor-name">Alex's Parents</span>
+            <div>
+              <span class="badge badge-highlight">HIGHLIGHT</span>
+              
+            </div>
+          </div>
+          <div class="memory-message">"To our dear Alex and Jordan - watching your love grow over these 10 years has been one of our greatest joys. You've created a home filled with warmth, laughter, and kindness. We're so proud of you both."</div>
+        </div>
+
+        <div class="memory ">
+          <div class="memory-header">
+            <span class="contributor-name">Jordan's Parents</span>
+            <div>
+              
+              
+            </div>
+          </div>
+          <div class="memory-message">"Dear Alex and Jordan, what a joy it has been watching you build a life together. Your love is patient, your partnership is strong, and your home is filled with warmth. We're blessed to call you both family. Happy 10th anniversary."</div>
+        </div>
+
+        <div class="memory finale">
+          <div class="memory-header">
+            <span class="contributor-name">Wedding Photographer David</span>
+            <div>
+              <span class="badge badge-highlight">HIGHLIGHT</span>
+              <span class="badge badge-finale">FINALE</span>
+            </div>
+          </div>
+          <div class="memory-message">"I photographed your wedding 10 years ago. The way you looked at each other that day? That same spark is still there. Congratulations on a beautiful decade together!"</div>
+        </div>
+</div>
+      <div class="rating-form">
+        <h3>Manual Rating</h3>
+        <form id="rating-pilot-anniversary-test-b-attempt2">
+          <div class="rating-group">
+            <label>1. Emotional Progression</label>
+            <div class="rating-options">
+              <div><input type="radio" name="emotional" value="1"> 1</div>
+              <div><input type="radio" name="emotional" value="2"> 2</div>
+              <div><input type="radio" name="emotional" value="3"> 3</div>
+              <div><input type="radio" name="emotional" value="4"> 4</div>
+              <div><input type="radio" name="emotional" value="5"> 5</div>
+            </div>
+          </div>
+          <div class="rating-group">
+            <label>2. Chapter Coherence</label>
+            <div class="rating-options">
+              <div><input type="radio" name="coherence" value="1"> 1</div>
+              <div><input type="radio" name="coherence" value="2"> 2</div>
+              <div><input type="radio" name="coherence" value="3"> 3</div>
+              <div><input type="radio" name="coherence" value="4"> 4</div>
+              <div><input type="radio" name="coherence" value="5"> 5</div>
+            </div>
+          </div>
+          <div class="rating-group">
+            <label>3. Finale Quality</label>
+            <div class="rating-options">
+              <div><input type="radio" name="finale" value="1"> 1</div>
+              <div><input type="radio" name="finale" value="2"> 2</div>
+              <div><input type="radio" name="finale" value="3"> 3</div>
+              <div><input type="radio" name="finale" value="4"> 4</div>
+              <div><input type="radio" name="finale" value="5"> 5</div>
+            </div>
+          </div>
+          <div class="rating-group">
+            <label>4. Overall Quality</label>
+            <div class="rating-options">
+              <div><input type="radio" name="overall" value="1"> 1</div>
+              <div><input type="radio" name="overall" value="2"> 2</div>
+              <div><input type="radio" name="overall" value="3"> 3</div>
+              <div><input type="radio" name="overall" value="4"> 4</div>
+              <div><input type="radio" name="overall" value="5"> 5</div>
+            </div>
+          </div>
+          <div class="rating-group">
+            <label>Notes</label>
+            <textarea name="notes" placeholder="Specific observations..."></textarea>
+          </div>
+          <button type="button" class="save-button" onclick="saveRating('rating-pilot-anniversary-test-b-attempt2')">Save Rating</button>
+          <span class="save-status" id="rating-pilot-anniversary-test-b-attempt2-status"></span>
+        </form>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-header">
+        <div class="result-title">sympathy-test-a (Attempt 3)</div>
+        <div class="result-meta">
+          <span>2239ms</span>
+          <span>2324 tokens</span>
+          <span>json-schema-strict</span>
+        </div>
+      </div>
+
+      <div class="context-section">
+        <p><strong>Recipient:</strong> The Martinez Family</p>
+        <p><strong>Occasion:</strong> sympathy</p>
+        <p><strong>Tone:</strong> thoughtful_meaningful</p>
+        <p><strong>Memories:</strong> 8</p>
+      </div>
+
+      <div class="opening">"We gather to honor Elena’s radiant spirit, the love she sowed in every corner of our lives."</div>
+
+      <div class="chapter">
+        <div class="chapter-title">Chapter 1: Community Light</div>
+
+        <div class="memory ">
+          <div class="memory-header">
+            <span class="contributor-name">Longtime Friend Sarah</span>
+            <div>
+              
+              
+            </div>
+          </div>
+          <div class="memory-message">"Elena's kindness touched everyone she met. I'll always remember her infectious laugh and the way she made everyone feel welcome. She was a light in our community. My heart is with you all."</div>
+        </div>
+
+        <div class="memory ">
+          <div class="memory-header">
+            <span class="contributor-name">Book Club Members</span>
+            <div>
+              
+              
+            </div>
+          </div>
+          <div class="memory-message">"Elena brought joy to our monthly gatherings. Her insights, her laughter, her thoughtful perspective - we treasured every moment. To the Martinez family: we are here for you, today and always."</div>
+        </div>
+
+        <div class="memory ">
+          <div class="memory-header">
+            <span class="contributor-name">Neighbor James</span>
+            <div>
+              
+              
+            </div>
+          </div>
+          <div class="memory-message">"Our neighborhood won't be the same without Elena. Her garden was beautiful, but her spirit was even more so. Sending love and strength to the entire family during this time."</div>
+        </div>
+</div>
+      <div class="chapter">
+        <div class="chapter-title">Chapter 2: Professional & Service Legacy</div>
+
+        <div class="memory ">
+          <div class="memory-header">
+            <span class="contributor-name">Colleague Maria</span>
+            <div>
+              
+              
+            </div>
+          </div>
+          <div class="memory-message">"Elena was not just a coworker but a mentor and friend. She taught me so much about grace, perseverance, and living with purpose. The impact she made will continue through all of us she inspired."</div>
+        </div>
+
+        <div class="memory ">
+          <div class="memory-header">
+            <span class="contributor-name">Community Leader Robert</span>
+            <div>
+              
+              
+            </div>
+          </div>
+          <div class="memory-message">"Elena's volunteer work at the community center changed lives. Her compassion and dedication inspired us all to do better, be better. She leaves behind a legacy of love and service."</div>
+        </div>
+</div>
+      <div class="chapter">
+        <div class="chapter-title">Chapter 3: Family & Faith Support</div>
+
+        <div class="memory highlight">
+          <div class="memory-header">
+            <span class="contributor-name">Family Friend David</span>
+            <div>
+              <span class="badge badge-highlight">HIGHLIGHT</span>
+              
+            </div>
+          </div>
+          <div class="memory-message">"I've known the Martinez family for 20 years. Elena was the heart of your family, and her love surrounds you still. Please know that you are not alone in this grief. We're here, holding you in our thoughts."</div>
+        </div>
+
+        <div class="memory highlight">
+          <div class="memory-header">
+            <span class="contributor-name">Pastor Michael</span>
+            <div>
+              <span class="badge badge-highlight">HIGHLIGHT</span>
+              
+            </div>
+          </div>
+          <div class="memory-message">"Elena's faith was quiet but profound, her kindness boundless. She lived her values every day, touching lives in ways she never knew. To the Martinez family: may you find comfort in these memories and in the knowledge that her love remains with you always."</div>
+        </div>
+</div>
+      <div class="chapter">
+        <div class="chapter-title">Chapter 4: Cherished Childhood Memories</div>
+
+        <div class="memory finale">
+          <div class="memory-header">
+            <span class="contributor-name">Childhood Friend Lisa</span>
+            <div>
+              <span class="badge badge-highlight">HIGHLIGHT</span>
+              <span class="badge badge-finale">FINALE</span>
+            </div>
+          </div>
+          <div class="memory-message">"We grew up together, shared our dreams, and supported each other through everything life brought. Elena was my sister in every way that mattered. I will carry her memory in my heart always."</div>
+        </div>
+</div>
+      <div class="rating-form">
+        <h3>Manual Rating</h3>
+        <form id="rating-pilot-sympathy-test-a-attempt3">
+          <div class="rating-group">
+            <label>1. Emotional Progression</label>
+            <div class="rating-options">
+              <div><input type="radio" name="emotional" value="1"> 1</div>
+              <div><input type="radio" name="emotional" value="2"> 2</div>
+              <div><input type="radio" name="emotional" value="3"> 3</div>
+              <div><input type="radio" name="emotional" value="4"> 4</div>
+              <div><input type="radio" name="emotional" value="5"> 5</div>
+            </div>
+          </div>
+          <div class="rating-group">
+            <label>2. Chapter Coherence</label>
+            <div class="rating-options">
+              <div><input type="radio" name="coherence" value="1"> 1</div>
+              <div><input type="radio" name="coherence" value="2"> 2</div>
+              <div><input type="radio" name="coherence" value="3"> 3</div>
+              <div><input type="radio" name="coherence" value="4"> 4</div>
+              <div><input type="radio" name="coherence" value="5"> 5</div>
+            </div>
+          </div>
+          <div class="rating-group">
+            <label>3. Finale Quality</label>
+            <div class="rating-options">
+              <div><input type="radio" name="finale" value="1"> 1</div>
+              <div><input type="radio" name="finale" value="2"> 2</div>
+              <div><input type="radio" name="finale" value="3"> 3</div>
+              <div><input type="radio" name="finale" value="4"> 4</div>
+              <div><input type="radio" name="finale" value="5"> 5</div>
+            </div>
+          </div>
+          <div class="rating-group">
+            <label>4. Overall Quality</label>
+            <div class="rating-options">
+              <div><input type="radio" name="overall" value="1"> 1</div>
+              <div><input type="radio" name="overall" value="2"> 2</div>
+              <div><input type="radio" name="overall" value="3"> 3</div>
+              <div><input type="radio" name="overall" value="4"> 4</div>
+              <div><input type="radio" name="overall" value="5"> 5</div>
+            </div>
+          </div>
+          <div class="rating-group">
+            <label>Notes</label>
+            <textarea name="notes" placeholder="Specific observations..."></textarea>
+          </div>
+          <button type="button" class="save-button" onclick="saveRating('rating-pilot-sympathy-test-a-attempt3')">Save Rating</button>
+          <span class="save-status" id="rating-pilot-sympathy-test-a-attempt3-status"></span>
+        </form>
+      </div>
+    </div>
+
+  </div>
+  <script>
+    function saveRating(formId) {
+      const form = document.getElementById(formId);
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData);
+      const key = 'groq-pilot-' + formId;
+      localStorage.setItem(key, JSON.stringify({
+        ...data,
+        timestamp: new Date().toISOString()
+      }));
+      const status = document.getElementById(formId + '-status');
+      status.textContent = '✓ Saved';
+      setTimeout(() => { status.textContent = ''; }, 2000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('form[id^="rating-"]').forEach(form => {
+        const key = 'groq-pilot-' + form.id;
+        const saved = localStorage.getItem(key);
+        if (saved) {
+          const data = JSON.parse(saved);
+          Object.entries(data).forEach(([name, value]) => {
+            if (name === 'timestamp') return;
+            const input = form.querySelector(`[name="${name}"]`);
+            if (input) {
+              if (input.type === 'radio') {
+                form.querySelector(`[name="${name}"][value="${value}"]`)?.checked = true;
+              } else {
+                input.value = value;
+              }
+            }
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -4,6 +4,9 @@ import { syntheticMemories } from '../../../scripts/fixtures/premiumRevealFixtur
 import { syntheticFarewellMemories } from '../../../scripts/fixtures/farewellFixture'
 import { syntheticAnniversaryMemories } from '../../../scripts/fixtures/anniversaryFixture'
 import { syntheticSympathyMemories } from '../../../scripts/fixtures/sympathyFixture'
+import { generateDeterministicRevealPlan } from '../../lib/ai/deterministicPlanner'
+import { adaptRevealPlanToStory } from '../../lib/ai/planAdapter'
+import type { MemoryMetadata } from '../../lib/ai/types'
 
 export type Occasion = 'birthday' | 'retirement' | 'anniversary' | 'sympathy'
 export type Mode = 'standard' | 'director'
@@ -64,8 +67,14 @@ const definitions = {
 }
 
 export function getStory(occasion: Occasion, preset: Preset, mode: Mode): Story {
+  // Use deterministic planner for director mode
+  if (mode === 'director') {
+    return getStoryWithPlanner(occasion, preset)
+  }
+
+  // Use hardcoded fixture-based story for standard mode (original implementation)
   const d = definitions[occasion]
-  const limits = preset === 'tier' && mode === 'director' ? MEMORYPOP_PLUS.plus : MEMORYPOP_PLUS.standard
+  const limits = MEMORYPOP_PLUS.standard
   const memories = d.source.map((m, index): Contribution => {
     // Birthday hero exercises every Premium limit; other contributions retain varied sizes.
     const hero = occasion === 'birthday' && m.id === 'mem_001'
@@ -94,11 +103,105 @@ export function getStory(occasion: Occasion, preset: Preset, mode: Mode): Story 
   return { recipient: d.recipient, title: d.title, occasion, chapters: d.chapters, finale: d.finale, highlights: d.highlights, memories }
 }
 
+/**
+ * Generate story using deterministic planner
+ *
+ * Production-capable: works with arbitrary contributions, no hardcoded IDs
+ */
+function getStoryWithPlanner(occasion: Occasion, preset: Preset): Story {
+  const d = definitions[occasion]
+  const limits = preset === 'tier' ? MEMORYPOP_PLUS.plus : MEMORYPOP_PLUS.standard
+
+  // Convert fixture data to MemoryMetadata format
+  const memoryMetadata: MemoryMetadata[] = d.source.map(m => ({
+    id: m.id,
+    contributorName: m.contributorName,
+    message: m.message,
+    photoCount: m.photoCount,
+    gifCount: m.gifCount,
+    videoDuration: m.videoDuration,
+    createdAt: m.createdAt
+  }))
+
+  // Generate reveal plan using deterministic planner
+  const plan = generateDeterministicRevealPlan({
+    memoryPopId: 'preview-' + occasion,
+    recipientName: d.recipient,
+    occasion: occasion,
+    tone: 'warm',
+    story: 'Synthetic preview for ' + occasion,
+    memories: memoryMetadata
+  })
+
+  // Build media URL generator
+  const imageNumbers = occasion === 'sympathy' ? [1,2,3,4,5,7,8,9,10] : [1,2,3,4,5,6,7,8,9,10]
+  let photoIndexCounter = 0
+  let gifIndexCounter = 0
+
+  const mediaUrlGenerator = (memory: MemoryMetadata, assetType: 'photo' | 'gif' | 'video', index: number): string => {
+    if (assetType === 'photo') {
+      const memoryIndex = memoryMetadata.findIndex(m => m.id === memory.id)
+      const number = imageNumbers[(memoryIndex + index) % imageNumbers.length]
+      return mediaUrl('photo-' + String(number).padStart(2, '0') + (number <= 4 ? '.png' : '.svg'))
+    }
+    if (assetType === 'gif') {
+      return mediaUrl('celebrate-' + (index + 1) + '.gif')
+    }
+    if (assetType === 'video') {
+      const duration = memory.videoDuration || 90
+      return mediaUrl('sample-' + duration + '.mp4')
+    }
+    return ''
+  }
+
+  const gifPosterGenerator = (gifUrl: string): string => {
+    const match = gifUrl.match(/celebrate-(\d+)\.gif/)
+    if (match) {
+      return mediaUrl('celebrate-' + match[1] + '.png')
+    }
+    return ''
+  }
+
+  // Apply tier limits to memories (for "tier" preset)
+  const limitedMemories = memoryMetadata.map((m, index) => {
+    // Birthday hero exercises every Premium limit; other contributions retain varied sizes
+    const hero = occasion === 'birthday' && m.id === 'mem_001'
+    return {
+      ...m,
+      photoCount: Math.min(hero && preset === 'tier' ? 10 : m.photoCount, limits.photos),
+      gifCount: Math.min(hero && preset === 'tier' ? 3 : m.gifCount, limits.gifs),
+      videoDuration: hero && preset === 'tier' ? limits.videoSeconds :
+                     m.videoDuration ? Math.min(m.videoDuration, limits.videoSeconds) : 0
+    }
+  })
+
+  // Adapt plan to Story format
+  const story = adaptRevealPlanToStory({
+    plan,
+    memories: limitedMemories,
+    occasion,
+    recipientName: d.recipient,
+    mediaUrlGenerator,
+    gifPosterGenerator
+  })
+
+  return story
+}
+
 export function readingMs(message: string) {
   const words = message.trim().split(/\s+/).filter(Boolean).length
-  // Longer messages get more time: 300ms/word for short, 250ms/word for long
-  const timePerWord = words > 50 ? 250 : 300
-  return Math.max(3500, words * timePerWord + 1000)
+  // Smooth progression: 2s base + 240ms/word for comfortable reading with emotional processing
+  // Examples: 10w=4.4s, 25w=8s, 50w=14s, 100w=26s
+  return Math.max(3000, 2000 + words * 240)
+}
+
+/** Calculate viewing time for a photo group */
+function photoViewingMs(photoCount: number): number {
+  if (photoCount === 0) return 0
+  if (photoCount === 1) return 4000  // 4s target for single photo
+  if (photoCount === 2) return 5000  // 5s for photo pair
+  // 3+ photos: 5s base + 350ms per additional photo, cap at 6.5s
+  return Math.min(5000 + (photoCount - 2) * 350, 6500)
 }
 
 // Hero first, then pairs/triptychs. Each photo is scheduled once and remains inspectable.
@@ -226,15 +329,32 @@ export function buildBeats(story: Story, mode: Mode): Beat[] {
           transition: selectTransition({ mode, occasion: story.occasion, isFirstInChapter, isChapter: false, isFinale: finale, isHighlight: highlight, hasVideo: video, hasMultiplePhotos: false, groupIndex: 0, ordinal }),
         })
         const introducesMessage = groupIndex === 0 && !video
-        const base = introducesMessage
-          ? mode === 'director' ? readingMs(memory.message) : Math.max(3000, memory.message.split(/\s+/).length * 200)
-          : assets[0]?.kind === 'gif' ? 2400 : assets.length > 1 ? 2800 : 1800 // Faster media-only scenes
+
+        // Calculate duration based on content type and context
+        let durationMs: number
+        if (video) {
+          // Video controls its own duration
+          durationMs = 0
+        } else if (introducesMessage) {
+          // First beat with message: MAX(reading time, photo viewing time) + settling
+          const readTime = mode === 'director' ? readingMs(memory.message) : Math.max(3000, memory.message.split(/\s+/).length * 200)
+          const viewTime = photoViewingMs(assets.length)
+          const settling = 900  // Modest pause for scene absorption
+          durationMs = Math.max(readTime, viewTime) + settling + (finale ? 1000 : 0)
+        } else if (assets[0]?.kind === 'gif') {
+          // GIF gets its own timing
+          durationMs = 2400
+        } else {
+          // Subsequent photo groups: just viewing time, no message reading
+          durationMs = photoViewingMs(assets.length)
+        }
+
         beats.push({
           id: id + ':group:' + groupIndex, kind: 'memory', memory, ordinal,
           chapter: mode === 'director' ? chapter : undefined, chapterIndex: mode === 'director' ? chapterIndex : undefined,
           assets, introducesMessage, finale, highlight,
           presentation: video ? 'video' : !assets.length ? 'letter' : assets.length > 1 ? 'collection' : 'paired',
-          durationMs: video ? 0 : mode === 'director' ? base + (finale && introducesMessage ? 1000 : 0) : introducesMessage ? base : assets[0]?.kind === 'gif' ? 2400 : 1800, // Match base calculation
+          durationMs,
           transition: selectTransition({ mode, occasion: story.occasion, isFirstInChapter, isChapter: false, isFinale: finale, isHighlight: highlight, hasVideo: video, hasMultiplePhotos: assets.length > 1, groupIndex, ordinal }),
         })
       })

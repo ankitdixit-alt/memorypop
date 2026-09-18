@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Groq AI Director Experiment - Comparison</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+      color: #1a1a1a;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    header {
+      background: white;
+      padding: 24px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    .meta { color: #666; font-size: 14px; }
+    .summary {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .summary-card {
+      padding: 16px;
+      background: #f9f9f9;
+      border-radius: 6px;
+    }
+    .summary-card h3 { margin: 0 0 8px; font-size: 14px; color: #666; }
+    .summary-card .value { font-size: 32px; font-weight: 600; }
+    .comparison {
+      background: white;
+      padding: 24px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .comparison-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    .comparison-title {
+      flex: 1;
+    }
+    .comparison-title h2 { margin: 0 0 4px; font-size: 20px; }
+    .comparison-title .subtitle { color: #666; font-size: 14px; }
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .plan-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 16px;
+      background: #fafafa;
+    }
+    .plan-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .plan-label {
+      font-weight: 600;
+      color: #333;
+    }
+    .plan-meta {
+      font-size: 12px;
+      color: #999;
+    }
+    .opening {
+      font-style: italic;
+      color: #555;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: white;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .chapter {
+      margin-bottom: 12px;
+      padding: 12px;
+      background: white;
+      border-radius: 4px;
+    }
+    .chapter-title {
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #1a1a1a;
+    }
+    .chapter-memories {
+      font-size: 13px;
+      color: #666;
+    }
+    .finale {
+      background: #fff3cd;
+      padding: 12px;
+      border-radius: 4px;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+    .finale strong { color: #856404; }
+    .rating-section {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 2px solid #e0e0e0;
+    }
+    .rating-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .rating-group {
+      margin-bottom: 12px;
+    }
+    .rating-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+    .rating-options {
+      display: flex;
+      gap: 8px;
+    }
+    .rating-btn {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ddd;
+      background: white;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .rating-btn:hover {
+      border-color: #007bff;
+      background: #f0f8ff;
+    }
+    .rating-btn.selected {
+      border-color: #007bff;
+      background: #007bff;
+      color: white;
+    }
+    textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 14px;
+      resize: vertical;
+    }
+    .save-btn {
+      background: #28a745;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 16px;
+    }
+    .save-btn:hover {
+      background: #218838;
+    }
+    .warning {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      color: #856404;
+      padding: 16px;
+      border-radius: 6px;
+      margin-bottom: 24px;
+    }
+    .gemini-note {
+      background: #e7f3ff;
+      border: 1px solid #0066cc;
+      color: #004085;
+      padding: 16px;
+      border-radius: 6px;
+      margin-bottom: 24px;
+    }
+    .gemini-note strong { color: #003d7a; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🔬 Groq AI Director Experiment</h1>
+      <div class="meta">
+        Comparing Groq storytelling with previous Gemini experiments<br>
+        Started: 2026-09-16T20:13:47.070Z | Completed: 2026-09-16T20:22:35.920Z
+      </div>
+    </header>
+
+    <div class="gemini-note">
+      <strong>⚠️ Important Limitation:</strong> Original Gemini JSON responses were not saved from previous experiments.
+      Comparison is based on documented patterns and structures from AI-DIRECTOR-EXPERIMENT-RESULTS.md.
+      Direct JSON-to-JSON comparison is not available. This evaluation focuses on Groq output quality and correctness.
+    </div>
+
+    <div class="summary">
+      <h2>Experiment Summary</h2>
+      <div class="summary-grid">
+        <div class="summary-card">
+          <h3>Total Attempts</h3>
+          <div class="value">14</div>
+        </div>
+        <div class="summary-card">
+          <h3>Successful</h3>
+          <div class="value" style="color: #28a745">9</div>
+        </div>
+        <div class="summary-card">
+          <h3>Failed</h3>
+          <div class="value" style="color: #dc3545">5</div>
+        </div>
+        <div class="summary-card">
+          <h3>Success Rate</h3>
+          <div class="value">64%</div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="comparison" id="case-birthday-test-a">
+      <div class="comparison-header">
+        <div class="comparison-title">
+          <h2>Birthday - Test A (No Instructions)</h2>
+          <div class="subtitle">
+            15 memories | 2 repetition(s) | Avg: 4343ms, 3636 tokens
+          </div>
+          
+        </div>
+      </div>
+
+      
+      <div class="plans-grid">
+        <div class="plan-card">
+          <div class="plan-header">
+            <div class="plan-label">Repetition 2</div>
+            <div class="plan-meta">4348ms | 3660 tokens</div>
+          </div>
+
+          <div class="opening">"From baby steps to lifelong love, we celebrate Emma’s 30 years of laughter, growth, and the people who shaped her journey."</div>
+
+          
+            <div class="chapter">
+              <div class="chapter-title">1. First Steps & Early Bonds</div>
+              <div class="chapter-memories">3 memories: mem_004, mem_007, mem_015</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">2. Growing Up with Family</div>
+              <div class="chapter-memories">2 memories: mem_002, mem_012</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">3. School Days & Drama</div>
+              <div class="chapter-memories">2 memories: mem_011, mem_014</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">4. College Adventures</div>
+              <div class="chapter-memories">3 memories: mem_001, mem_009, mem_003</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">5. Summer Escapades</div>
+              <div class="chapter-memories">2 memories: mem_006, mem_008</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">6. Professional Partnerships</div>
+              <div class="chapter-memories">2 memories: mem_005, mem_013</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">7. Love & Future</div>
+              <div class="chapter-memories">1 memories: mem_010</div>
+            </div>
+          
+
+          <div class="finale">
+            <strong>Finale:</strong> mem_010
+          </div>
+
+          
+            <div style="margin-top: 12px; font-size: 13px; color: #666;">
+              <strong>Highlights:</strong> mem_002, mem_012
+            </div>
+          
+
+          
+            <details style="margin-top: 12px;">
+              <summary style="cursor: pointer; color: #666; font-size: 13px;">Show AI reasoning</summary>
+              <p style="margin-top: 8px; font-size: 13px; color: #666;">Grouped memories by life stages, balancing humor and heartfelt moments while spacing similar tones. Highlighted parental love and ended with the partner’s message.</p>
+            </details>
+          
+        </div>
+      </div>
+
+      <div class="plans-grid">
+        <div class="plan-card">
+          <div class="plan-header">
+            <div class="plan-label">Repetition 3</div>
+            <div class="plan-meta">4337ms | 3612 tokens</div>
+          </div>
+
+          <div class="opening">"From baby steps to lifelong adventures, we celebrate Emma’s 30 years of love, laughter, and unforgettable friendships."</div>
+
+          
+            <div class="chapter">
+              <div class="chapter-title">1. Family Foundations</div>
+              <div class="chapter-memories">3 memories: mem_007, mem_012, mem_015</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">2. Childhood Dreams & School Days</div>
+              <div class="chapter-memories">2 memories: mem_004, mem_011</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">3. College Capers & Road‑Trip Tales</div>
+              <div class="chapter-memories">4 memories: mem_001, mem_009, mem_003...</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">4. Creative Collaborations</div>
+              <div class="chapter-memories">2 memories: mem_005, mem_013</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">5. Friendship Fun & Lighthearted Moments</div>
+              <div class="chapter-memories">2 memories: mem_006, mem_014</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">6. Love & Life Together</div>
+              <div class="chapter-memories">1 memories: mem_010</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">7. A Mother’s Heartfelt Tribute</div>
+              <div class="chapter-memories">1 memories: mem_002</div>
+            </div>
+          
+
+          <div class="finale">
+            <strong>Finale:</strong> mem_002
+          </div>
+
+          
+            <div style="margin-top: 12px; font-size: 13px; color: #666;">
+              <strong>Highlights:</strong> mem_010, mem_003, mem_001
+            </div>
+          
+
+          
+            <details style="margin-top: 12px;">
+              <summary style="cursor: pointer; color: #666; font-size: 13px;">Show AI reasoning</summary>
+              <p style="margin-top: 8px; font-size: 13px; color: #666;">Grouped memories by life stages, balancing humor and sentiment, building toward a loving finale. Highlighted partner, road‑trip, and college cake memories for extra emphasis.</p>
+            </details>
+          
+        </div>
+      </div>
+
+      <div class="rating-section">
+        <h3>Rate This Plan (Repetition 1)</h3>
+        
+      <div class="rating-form">
+        <div>
+          
+      <div class="rating-group">
+        <label>Emotional Progression</label>
+        <div class="rating-options">
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-emotional" value="1" style="display: none;" onchange="selectRating('birthday-test-a-1-emotional', '1')">
+              1
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-emotional" value="2" style="display: none;" onchange="selectRating('birthday-test-a-1-emotional', '2')">
+              2
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-emotional" value="3" style="display: none;" onchange="selectRating('birthday-test-a-1-emotional', '3')">
+              3
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-emotional" value="4" style="display: none;" onchange="selectRating('birthday-test-a-1-emotional', '4')">
+              4
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-emotional" value="5" style="display: none;" onchange="selectRating('birthday-test-a-1-emotional', '5')">
+              5
+            </label>
+          
+        </div>
+      </div>
+    
+          
+      <div class="rating-group">
+        <label>Chapter Coherence</label>
+        <div class="rating-options">
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-coherence" value="1" style="display: none;" onchange="selectRating('birthday-test-a-1-coherence', '1')">
+              1
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-coherence" value="2" style="display: none;" onchange="selectRating('birthday-test-a-1-coherence', '2')">
+              2
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-coherence" value="3" style="display: none;" onchange="selectRating('birthday-test-a-1-coherence', '3')">
+              3
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-coherence" value="4" style="display: none;" onchange="selectRating('birthday-test-a-1-coherence', '4')">
+              4
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-coherence" value="5" style="display: none;" onchange="selectRating('birthday-test-a-1-coherence', '5')">
+              5
+            </label>
+          
+        </div>
+      </div>
+    
+          
+      <div class="rating-group">
+        <label>Finale Quality</label>
+        <div class="rating-options">
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-finale" value="1" style="display: none;" onchange="selectRating('birthday-test-a-1-finale', '1')">
+              1
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-finale" value="2" style="display: none;" onchange="selectRating('birthday-test-a-1-finale', '2')">
+              2
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-finale" value="3" style="display: none;" onchange="selectRating('birthday-test-a-1-finale', '3')">
+              3
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-finale" value="4" style="display: none;" onchange="selectRating('birthday-test-a-1-finale', '4')">
+              4
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-finale" value="5" style="display: none;" onchange="selectRating('birthday-test-a-1-finale', '5')">
+              5
+            </label>
+          
+        </div>
+      </div>
+    
+          
+        </div>
+        <div>
+          
+      <div class="rating-group">
+        <label>Appropriate Tone</label>
+        <div class="rating-options">
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-tone" value="1" style="display: none;" onchange="selectRating('birthday-test-a-1-tone', '1')">
+              1
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-tone" value="2" style="display: none;" onchange="selectRating('birthday-test-a-1-tone', '2')">
+              2
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-tone" value="3" style="display: none;" onchange="selectRating('birthday-test-a-1-tone', '3')">
+              3
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-tone" value="4" style="display: none;" onchange="selectRating('birthday-test-a-1-tone', '4')">
+              4
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-tone" value="5" style="display: none;" onchange="selectRating('birthday-test-a-1-tone', '5')">
+              5
+            </label>
+          
+        </div>
+      </div>
+    
+          
+      <div class="rating-group">
+        <label>Overall Assessment</label>
+        <div class="rating-options" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-overall" value="Better" style="display: none;" onchange="selectRating('birthday-test-a-1-overall', 'Better')">
+              Better
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-overall" value="Comparable" style="display: none;" onchange="selectRating('birthday-test-a-1-overall', 'Comparable')">
+              Comparable
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-overall" value="Worse" style="display: none;" onchange="selectRating('birthday-test-a-1-overall', 'Worse')">
+              Worse
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-a-1-overall" value="Unsure" style="display: none;" onchange="selectRating('birthday-test-a-1-overall', 'Unsure')">
+              Unsure
+            </label>
+          
+        </div>
+      </div>
+    
+          <div class="rating-group">
+            <label>Comments</label>
+            <textarea id="comments-birthday-test-a-1" rows="4" placeholder="Optional feedback..."></textarea>
+          </div>
+        </div>
+      </div>
+      <button class="save-btn" onclick="saveRating('birthday-test-a', 1)">Save Rating</button>
+    
+      </div>
+    </div>
+
+    <div class="comparison" id="case-birthday-test-b">
+      <div class="comparison-header">
+        <div class="comparison-title">
+          <h2>Birthday - Test B (With Instructions)</h2>
+          <div class="subtitle">
+            15 memories | 3 repetition(s) | Avg: 3931ms, 3441 tokens
+          </div>
+          <div style="margin-top: 8px; padding: 8px; background: #e7f3ff; border-radius: 4px; font-size: 13px;">
+            <strong>Creator Instructions:</strong> "Open with fun energy, transition to deeper memories, end with family love"
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="plans-grid">
+        <div class="plan-card">
+          <div class="plan-header">
+            <div class="plan-label">Repetition 1</div>
+            <div class="plan-meta">4188ms | 3611 tokens</div>
+          </div>
+
+          <div class="opening">"Let’s kick off Emma’s 30th with the same wild energy that’s defined our three decades together!"</div>
+
+          
+            <div class="chapter">
+              <div class="chapter-title">1. Kickoff: Laughter & Wild Adventures</div>
+              <div class="chapter-memories">5 memories: mem_001, mem_003, mem_006...</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">2. Friendship Through the Years</div>
+              <div class="chapter-memories">3 memories: mem_004, mem_011, mem_009</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">3. Career Milestones & Creative Chaos</div>
+              <div class="chapter-memories">2 memories: mem_005, mem_013</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">4. Family Roots & Sibling Bonds</div>
+              <div class="chapter-memories">3 memories: mem_007, mem_012, mem_015</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">5. Love & Life Together</div>
+              <div class="chapter-memories">1 memories: mem_010</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">6. Finale: Mom’s Heartfelt Tribute</div>
+              <div class="chapter-memories">1 memories: mem_002</div>
+            </div>
+          
+
+          <div class="finale">
+            <strong>Finale:</strong> mem_002
+          </div>
+
+          
+            <div style="margin-top: 12px; font-size: 13px; color: #666;">
+              <strong>Highlights:</strong> mem_010, mem_015
+            </div>
+          
+
+          
+            <details style="margin-top: 12px;">
+              <summary style="cursor: pointer; color: #666; font-size: 13px;">Show AI reasoning</summary>
+              <p style="margin-top: 8px; font-size: 13px; color: #666;">Chapters move from high‑energy fun to deeper friendship, career growth, family foundations, and romance, ending on Mom’s touching message. Highlights spotlight Emma’s partner and brother, while the finale gives the strongest emotional closure.</p>
+            </details>
+          
+        </div>
+      </div>
+
+      <div class="plans-grid">
+        <div class="plan-card">
+          <div class="plan-header">
+            <div class="plan-label">Repetition 2</div>
+            <div class="plan-meta">3338ms | 3182 tokens</div>
+          </div>
+
+          <div class="opening">"Let’s kick off Emma’s 30‑year adventure with laughter, memories, and the love that’s shaped her life."</div>
+
+          
+            <div class="chapter">
+              <div class="chapter-title">1. Laugh‑Out‑Loud Beginnings</div>
+              <div class="chapter-memories">5 memories: mem_001, mem_008, mem_014...</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">2. Childhood & Campus Memories</div>
+              <div class="chapter-memories">4 memories: mem_004, mem_011, mem_009...</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">3. Career Wins & Heartfelt Partnership</div>
+              <div class="chapter-memories">2 memories: mem_005, mem_010</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">4. Family Roots & Forever Love</div>
+              <div class="chapter-memories">4 memories: mem_007, mem_012, mem_015...</div>
+            </div>
+          
+
+          <div class="finale">
+            <strong>Finale:</strong> mem_002
+          </div>
+
+          
+            <div style="margin-top: 12px; font-size: 13px; color: #666;">
+              <strong>Highlights:</strong> mem_010, mem_009, mem_002
+            </div>
+          
+
+          
+            <details style="margin-top: 12px;">
+              <summary style="cursor: pointer; color: #666; font-size: 13px;">Show AI reasoning</summary>
+              <p style="margin-top: 8px; font-size: 13px; color: #666;">Fun, humorous clips open the video, then we transition to nostalgic school and college moments, followed by career and partnership highlights, and finish with deep family love. The Mom message is the emotional finale, while partner, college roommate, and Mom are highlighted for impact.</p>
+            </details>
+          
+        </div>
+      </div>
+
+      <div class="plans-grid">
+        <div class="plan-card">
+          <div class="plan-header">
+            <div class="plan-label">Repetition 3</div>
+            <div class="plan-meta">4268ms | 3531 tokens</div>
+          </div>
+
+          <div class="opening">"From wild college mishaps to the warm embrace of family, let’s celebrate Emma’s 30 years of laughter, love, and unforgettable moments."</div>
+
+          
+            <div class="chapter">
+              <div class="chapter-title">1. Celebration Kickoff</div>
+              <div class="chapter-memories">5 memories: mem_001, mem_003, mem_006...</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">2. Childhood Royals & Family Roots</div>
+              <div class="chapter-memories">3 memories: mem_004, mem_007, mem_015</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">3. School, Drama & Late‑Night Dreams</div>
+              <div class="chapter-memories">3 memories: mem_011, mem_009, mem_013</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">4. Career Highlights</div>
+              <div class="chapter-memories">1 memories: mem_005</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">5. Love & Partnership</div>
+              <div class="chapter-memories">1 memories: mem_010</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">6. Family Blessings</div>
+              <div class="chapter-memories">2 memories: mem_002, mem_012</div>
+            </div>
+          
+
+          <div class="finale">
+            <strong>Finale:</strong> mem_002
+          </div>
+
+          
+            <div style="margin-top: 12px; font-size: 13px; color: #666;">
+              <strong>Highlights:</strong> mem_002, mem_010, mem_012
+            </div>
+          
+
+          
+            <details style="margin-top: 12px;">
+              <summary style="cursor: pointer; color: #666; font-size: 13px;">Show AI reasoning</summary>
+              <p style="margin-top: 8px; font-size: 13px; color: #666;">Chapters move from fun, early memories to deeper friendships, then career, love, and end with heartfelt family messages. Highlights spotlight Mom, Dad, and Tom for emotional impact; Mom's note serves as the finale for maximum family love.</p>
+            </details>
+          
+        </div>
+      </div>
+
+      <div class="rating-section">
+        <h3>Rate This Plan (Repetition 1)</h3>
+        
+      <div class="rating-form">
+        <div>
+          
+      <div class="rating-group">
+        <label>Emotional Progression</label>
+        <div class="rating-options">
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-emotional" value="1" style="display: none;" onchange="selectRating('birthday-test-b-1-emotional', '1')">
+              1
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-emotional" value="2" style="display: none;" onchange="selectRating('birthday-test-b-1-emotional', '2')">
+              2
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-emotional" value="3" style="display: none;" onchange="selectRating('birthday-test-b-1-emotional', '3')">
+              3
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-emotional" value="4" style="display: none;" onchange="selectRating('birthday-test-b-1-emotional', '4')">
+              4
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-emotional" value="5" style="display: none;" onchange="selectRating('birthday-test-b-1-emotional', '5')">
+              5
+            </label>
+          
+        </div>
+      </div>
+    
+          
+      <div class="rating-group">
+        <label>Chapter Coherence</label>
+        <div class="rating-options">
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-coherence" value="1" style="display: none;" onchange="selectRating('birthday-test-b-1-coherence', '1')">
+              1
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-coherence" value="2" style="display: none;" onchange="selectRating('birthday-test-b-1-coherence', '2')">
+              2
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-coherence" value="3" style="display: none;" onchange="selectRating('birthday-test-b-1-coherence', '3')">
+              3
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-coherence" value="4" style="display: none;" onchange="selectRating('birthday-test-b-1-coherence', '4')">
+              4
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-coherence" value="5" style="display: none;" onchange="selectRating('birthday-test-b-1-coherence', '5')">
+              5
+            </label>
+          
+        </div>
+      </div>
+    
+          
+      <div class="rating-group">
+        <label>Finale Quality</label>
+        <div class="rating-options">
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-finale" value="1" style="display: none;" onchange="selectRating('birthday-test-b-1-finale', '1')">
+              1
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-finale" value="2" style="display: none;" onchange="selectRating('birthday-test-b-1-finale', '2')">
+              2
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-finale" value="3" style="display: none;" onchange="selectRating('birthday-test-b-1-finale', '3')">
+              3
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-finale" value="4" style="display: none;" onchange="selectRating('birthday-test-b-1-finale', '4')">
+              4
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-finale" value="5" style="display: none;" onchange="selectRating('birthday-test-b-1-finale', '5')">
+              5
+            </label>
+          
+        </div>
+      </div>
+    
+          
+      <div class="rating-group">
+        <label>Creator Instruction Adherence</label>
+        <div class="rating-options">
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-adherence" value="1" style="display: none;" onchange="selectRating('birthday-test-b-1-adherence', '1')">
+              1
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-adherence" value="2" style="display: none;" onchange="selectRating('birthday-test-b-1-adherence', '2')">
+              2
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-adherence" value="3" style="display: none;" onchange="selectRating('birthday-test-b-1-adherence', '3')">
+              3
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-adherence" value="4" style="display: none;" onchange="selectRating('birthday-test-b-1-adherence', '4')">
+              4
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-adherence" value="5" style="display: none;" onchange="selectRating('birthday-test-b-1-adherence', '5')">
+              5
+            </label>
+          
+        </div>
+      </div>
+    
+        </div>
+        <div>
+          
+      <div class="rating-group">
+        <label>Appropriate Tone</label>
+        <div class="rating-options">
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-tone" value="1" style="display: none;" onchange="selectRating('birthday-test-b-1-tone', '1')">
+              1
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-tone" value="2" style="display: none;" onchange="selectRating('birthday-test-b-1-tone', '2')">
+              2
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-tone" value="3" style="display: none;" onchange="selectRating('birthday-test-b-1-tone', '3')">
+              3
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-tone" value="4" style="display: none;" onchange="selectRating('birthday-test-b-1-tone', '4')">
+              4
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-tone" value="5" style="display: none;" onchange="selectRating('birthday-test-b-1-tone', '5')">
+              5
+            </label>
+          
+        </div>
+      </div>
+    
+          
+      <div class="rating-group">
+        <label>Overall Assessment</label>
+        <div class="rating-options" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-overall" value="Better" style="display: none;" onchange="selectRating('birthday-test-b-1-overall', 'Better')">
+              Better
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-overall" value="Comparable" style="display: none;" onchange="selectRating('birthday-test-b-1-overall', 'Comparable')">
+              Comparable
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-overall" value="Worse" style="display: none;" onchange="selectRating('birthday-test-b-1-overall', 'Worse')">
+              Worse
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="birthday-test-b-1-overall" value="Unsure" style="display: none;" onchange="selectRating('birthday-test-b-1-overall', 'Unsure')">
+              Unsure
+            </label>
+          
+        </div>
+      </div>
+    
+          <div class="rating-group">
+            <label>Comments</label>
+            <textarea id="comments-birthday-test-b-1" rows="4" placeholder="Optional feedback..."></textarea>
+          </div>
+        </div>
+      </div>
+      <button class="save-btn" onclick="saveRating('birthday-test-b', 1)">Save Rating</button>
+    
+      </div>
+    </div>
+
+    <div class="comparison" id="case-retirement-test-a">
+      <div class="comparison-header">
+        <div class="comparison-title">
+          <h2>Retirement - Test A (No Instructions)</h2>
+          <div class="subtitle">
+            12 memories | 2 repetition(s) | Avg: 3166ms, 2795 tokens
+          </div>
+          
+        </div>
+      </div>
+
+      
+      <div class="plans-grid">
+        <div class="plan-card">
+          <div class="plan-header">
+            <div class="plan-label">Repetition 1</div>
+            <div class="plan-meta">3187ms | 2826 tokens</div>
+          </div>
+
+          <div class="opening">"Celebrating 35 years of Michael’s steady guidance, laughter, and lasting impact."</div>
+
+          
+            <div class="chapter">
+              <div class="chapter-title">1. Foundations of Vision and Resilience</div>
+              <div class="chapter-memories">3 memories: mem_f04, mem_f09, mem_f02</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">2. Mentorship That Shaped Careers</div>
+              <div class="chapter-memories">4 memories: mem_f01, mem_f06, mem_f10...</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">3. Moments of Laughter and Friendship</div>
+              <div class="chapter-memories">4 memories: mem_f03, mem_f05, mem_f07...</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">4. A Collective Tribute</div>
+              <div class="chapter-memories">1 memories: mem_f12</div>
+            </div>
+          
+
+          <div class="finale">
+            <strong>Finale:</strong> mem_f12
+          </div>
+
+          
+            <div style="margin-top: 12px; font-size: 13px; color: #666;">
+              <strong>Highlights:</strong> mem_f04, mem_f01, mem_f10
+            </div>
+          
+
+          
+            <details style="margin-top: 12px;">
+              <summary style="cursor: pointer; color: #666; font-size: 13px;">Show AI reasoning</summary>
+              <p style="margin-top: 8px; font-size: 13px; color: #666;">I opened with the CEO’s formal tribute to set gravitas, then mixed resilience and humor. The middle chapters focus on personal mentorship, followed by light‑hearted memories, ending with the team’s collective message as the powerful finale. Highlights spotlight the CEO endorsement and two deep mentorship notes.</p>
+            </details>
+          
+        </div>
+      </div>
+
+      <div class="plans-grid">
+        <div class="plan-card">
+          <div class="plan-header">
+            <div class="plan-label">Repetition 3</div>
+            <div class="plan-meta">3145ms | 2764 tokens</div>
+          </div>
+
+          <div class="opening">"Celebrating a remarkable 35-year journey of leadership, mentorship, and unforgettable moments."</div>
+
+          
+            <div class="chapter">
+              <div class="chapter-title">1. Our Collective Thanks</div>
+              <div class="chapter-memories">3 memories: mem_f12, mem_f11, mem_f03</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">2. Mentorship Moments</div>
+              <div class="chapter-memories">4 memories: mem_f01, mem_f08, mem_f06...</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">3. Adventures & Laughter</div>
+              <div class="chapter-memories">4 memories: mem_f02, mem_f09, mem_f05...</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">4. Final Tribute</div>
+              <div class="chapter-memories">1 memories: mem_f04</div>
+            </div>
+          
+
+          <div class="finale">
+            <strong>Finale:</strong> mem_f04
+          </div>
+
+          
+            <div style="margin-top: 12px; font-size: 13px; color: #666;">
+              <strong>Highlights:</strong> mem_f01, mem_f09
+            </div>
+          
+
+          
+            <details style="margin-top: 12px;">
+              <summary style="cursor: pointer; color: #666; font-size: 13px;">Show AI reasoning</summary>
+              <p style="margin-top: 8px; font-size: 13px; color: #666;">Grouped memories by theme to create an emotional arc, balancing heartfelt mentorship with humor, and ending with the CEO's powerful tribute as the finale.</p>
+            </details>
+          
+        </div>
+      </div>
+
+      <div class="rating-section">
+        <h3>Rate This Plan (Repetition 1)</h3>
+        
+      <div class="rating-form">
+        <div>
+          
+      <div class="rating-group">
+        <label>Emotional Progression</label>
+        <div class="rating-options">
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-emotional" value="1" style="display: none;" onchange="selectRating('retirement-test-a-1-emotional', '1')">
+              1
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-emotional" value="2" style="display: none;" onchange="selectRating('retirement-test-a-1-emotional', '2')">
+              2
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-emotional" value="3" style="display: none;" onchange="selectRating('retirement-test-a-1-emotional', '3')">
+              3
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-emotional" value="4" style="display: none;" onchange="selectRating('retirement-test-a-1-emotional', '4')">
+              4
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-emotional" value="5" style="display: none;" onchange="selectRating('retirement-test-a-1-emotional', '5')">
+              5
+            </label>
+          
+        </div>
+      </div>
+    
+          
+      <div class="rating-group">
+        <label>Chapter Coherence</label>
+        <div class="rating-options">
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-coherence" value="1" style="display: none;" onchange="selectRating('retirement-test-a-1-coherence', '1')">
+              1
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-coherence" value="2" style="display: none;" onchange="selectRating('retirement-test-a-1-coherence', '2')">
+              2
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-coherence" value="3" style="display: none;" onchange="selectRating('retirement-test-a-1-coherence', '3')">
+              3
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-coherence" value="4" style="display: none;" onchange="selectRating('retirement-test-a-1-coherence', '4')">
+              4
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-coherence" value="5" style="display: none;" onchange="selectRating('retirement-test-a-1-coherence', '5')">
+              5
+            </label>
+          
+        </div>
+      </div>
+    
+          
+      <div class="rating-group">
+        <label>Finale Quality</label>
+        <div class="rating-options">
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-finale" value="1" style="display: none;" onchange="selectRating('retirement-test-a-1-finale', '1')">
+              1
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-finale" value="2" style="display: none;" onchange="selectRating('retirement-test-a-1-finale', '2')">
+              2
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-finale" value="3" style="display: none;" onchange="selectRating('retirement-test-a-1-finale', '3')">
+              3
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-finale" value="4" style="display: none;" onchange="selectRating('retirement-test-a-1-finale', '4')">
+              4
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-finale" value="5" style="display: none;" onchange="selectRating('retirement-test-a-1-finale', '5')">
+              5
+            </label>
+          
+        </div>
+      </div>
+    
+          
+        </div>
+        <div>
+          
+      <div class="rating-group">
+        <label>Appropriate Tone</label>
+        <div class="rating-options">
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-tone" value="1" style="display: none;" onchange="selectRating('retirement-test-a-1-tone', '1')">
+              1
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-tone" value="2" style="display: none;" onchange="selectRating('retirement-test-a-1-tone', '2')">
+              2
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-tone" value="3" style="display: none;" onchange="selectRating('retirement-test-a-1-tone', '3')">
+              3
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-tone" value="4" style="display: none;" onchange="selectRating('retirement-test-a-1-tone', '4')">
+              4
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-tone" value="5" style="display: none;" onchange="selectRating('retirement-test-a-1-tone', '5')">
+              5
+            </label>
+          
+        </div>
+      </div>
+    
+          
+      <div class="rating-group">
+        <label>Overall Assessment</label>
+        <div class="rating-options" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-overall" value="Better" style="display: none;" onchange="selectRating('retirement-test-a-1-overall', 'Better')">
+              Better
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-overall" value="Comparable" style="display: none;" onchange="selectRating('retirement-test-a-1-overall', 'Comparable')">
+              Comparable
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-overall" value="Worse" style="display: none;" onchange="selectRating('retirement-test-a-1-overall', 'Worse')">
+              Worse
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-a-1-overall" value="Unsure" style="display: none;" onchange="selectRating('retirement-test-a-1-overall', 'Unsure')">
+              Unsure
+            </label>
+          
+        </div>
+      </div>
+    
+          <div class="rating-group">
+            <label>Comments</label>
+            <textarea id="comments-retirement-test-a-1" rows="4" placeholder="Optional feedback..."></textarea>
+          </div>
+        </div>
+      </div>
+      <button class="save-btn" onclick="saveRating('retirement-test-a', 1)">Save Rating</button>
+    
+      </div>
+    </div>
+
+    <div class="comparison" id="case-retirement-test-b">
+      <div class="comparison-header">
+        <div class="comparison-title">
+          <h2>Retirement - Test B (With Instructions)</h2>
+          <div class="subtitle">
+            12 memories | 2 repetition(s) | Avg: 2652ms, 2578 tokens
+          </div>
+          <div style="margin-top: 8px; padding: 8px; background: #e7f3ff; border-radius: 4px; font-size: 13px;">
+            <strong>Creator Instructions:</strong> "Start with professional acknowledgments, include lighter moments in the middle, and build to the most heartfelt messages at the end"
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="plans-grid">
+        <div class="plan-card">
+          <div class="plan-header">
+            <div class="plan-label">Repetition 1</div>
+            <div class="plan-meta">2260ms | 2421 tokens</div>
+          </div>
+
+          <div class="opening">"Today we honor Michael Zhang’s 35 years of dedication, celebrating the leadership, laughter, and lasting impact he’s shared with us."</div>
+
+          
+            <div class="chapter">
+              <div class="chapter-title">1. Foundations of Leadership</div>
+              <div class="chapter-memories">3 memories: mem_f04, mem_f06, mem_f08</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">2. Stories and Laughter</div>
+              <div class="chapter-memories">6 memories: mem_f02, mem_f03, mem_f05...</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">3. Mentorship and Impact</div>
+              <div class="chapter-memories">2 memories: mem_f10, mem_f12</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">4. A Personal Tribute</div>
+              <div class="chapter-memories">1 memories: mem_f01</div>
+            </div>
+          
+
+          <div class="finale">
+            <strong>Finale:</strong> mem_f01
+          </div>
+
+          
+            <div style="margin-top: 12px; font-size: 13px; color: #666;">
+              <strong>Highlights:</strong> mem_f04, mem_f01, mem_f12
+            </div>
+          
+
+          
+            <details style="margin-top: 12px;">
+              <summary style="cursor: pointer; color: #666; font-size: 13px;">Show AI reasoning</summary>
+              <p style="margin-top: 8px; font-size: 13px; color: #666;">Professional acknowledgments open the video, followed by humor to lighten pacing, then heartfelt mentorship messages, culminating in Jennifer's deeply personal tribute as the finale. Highlights spotlight the CEO, the finale, and the team tribute.</p>
+            </details>
+          
+        </div>
+      </div>
+
+      <div class="plans-grid">
+        <div class="plan-card">
+          <div class="plan-header">
+            <div class="plan-label">Repetition 2</div>
+            <div class="plan-meta">3044ms | 2734 tokens</div>
+          </div>
+
+          <div class="opening">"Today we celebrate Michael Zhang’s 35 years of dedication, mentorship, and the lasting legacy he leaves behind."</div>
+
+          
+            <div class="chapter">
+              <div class="chapter-title">1. Leadership & Impact</div>
+              <div class="chapter-memories">4 memories: mem_f04, mem_f06, mem_f08...</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">2. Stories & Smiles</div>
+              <div class="chapter-memories">6 memories: mem_f02, mem_f03, mem_f05...</div>
+            </div>
+          
+            <div class="chapter">
+              <div class="chapter-title">3. Heartfelt Farewell</div>
+              <div class="chapter-memories">2 memories: mem_f01, mem_f12</div>
+            </div>
+          
+
+          <div class="finale">
+            <strong>Finale:</strong> mem_f12
+          </div>
+
+          
+            <div style="margin-top: 12px; font-size: 13px; color: #666;">
+              <strong>Highlights:</strong> mem_f04, mem_f01, mem_f12
+            </div>
+          
+
+          
+            <details style="margin-top: 12px;">
+              <summary style="cursor: pointer; color: #666; font-size: 13px;">Show AI reasoning</summary>
+              <p style="margin-top: 8px; font-size: 13px; color: #666;">Started with formal acknowledgments to set a respectful tone, followed by lighter, humorous memories for pacing, and closed with personal, heartfelt tributes. Highlighted the CEO message, Jennifer's transformative note, and the team’s collective farewell, ending with the team message as the powerful finale.</p>
+            </details>
+          
+        </div>
+      </div>
+
+      <div class="rating-section">
+        <h3>Rate This Plan (Repetition 1)</h3>
+        
+      <div class="rating-form">
+        <div>
+          
+      <div class="rating-group">
+        <label>Emotional Progression</label>
+        <div class="rating-options">
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-emotional" value="1" style="display: none;" onchange="selectRating('retirement-test-b-1-emotional', '1')">
+              1
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-emotional" value="2" style="display: none;" onchange="selectRating('retirement-test-b-1-emotional', '2')">
+              2
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-emotional" value="3" style="display: none;" onchange="selectRating('retirement-test-b-1-emotional', '3')">
+              3
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-emotional" value="4" style="display: none;" onchange="selectRating('retirement-test-b-1-emotional', '4')">
+              4
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-emotional" value="5" style="display: none;" onchange="selectRating('retirement-test-b-1-emotional', '5')">
+              5
+            </label>
+          
+        </div>
+      </div>
+    
+          
+      <div class="rating-group">
+        <label>Chapter Coherence</label>
+        <div class="rating-options">
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-coherence" value="1" style="display: none;" onchange="selectRating('retirement-test-b-1-coherence', '1')">
+              1
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-coherence" value="2" style="display: none;" onchange="selectRating('retirement-test-b-1-coherence', '2')">
+              2
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-coherence" value="3" style="display: none;" onchange="selectRating('retirement-test-b-1-coherence', '3')">
+              3
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-coherence" value="4" style="display: none;" onchange="selectRating('retirement-test-b-1-coherence', '4')">
+              4
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-coherence" value="5" style="display: none;" onchange="selectRating('retirement-test-b-1-coherence', '5')">
+              5
+            </label>
+          
+        </div>
+      </div>
+    
+          
+      <div class="rating-group">
+        <label>Finale Quality</label>
+        <div class="rating-options">
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-finale" value="1" style="display: none;" onchange="selectRating('retirement-test-b-1-finale', '1')">
+              1
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-finale" value="2" style="display: none;" onchange="selectRating('retirement-test-b-1-finale', '2')">
+              2
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-finale" value="3" style="display: none;" onchange="selectRating('retirement-test-b-1-finale', '3')">
+              3
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-finale" value="4" style="display: none;" onchange="selectRating('retirement-test-b-1-finale', '4')">
+              4
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-finale" value="5" style="display: none;" onchange="selectRating('retirement-test-b-1-finale', '5')">
+              5
+            </label>
+          
+        </div>
+      </div>
+    
+          
+      <div class="rating-group">
+        <label>Creator Instruction Adherence</label>
+        <div class="rating-options">
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-adherence" value="1" style="display: none;" onchange="selectRating('retirement-test-b-1-adherence', '1')">
+              1
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-adherence" value="2" style="display: none;" onchange="selectRating('retirement-test-b-1-adherence', '2')">
+              2
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-adherence" value="3" style="display: none;" onchange="selectRating('retirement-test-b-1-adherence', '3')">
+              3
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-adherence" value="4" style="display: none;" onchange="selectRating('retirement-test-b-1-adherence', '4')">
+              4
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-adherence" value="5" style="display: none;" onchange="selectRating('retirement-test-b-1-adherence', '5')">
+              5
+            </label>
+          
+        </div>
+      </div>
+    
+        </div>
+        <div>
+          
+      <div class="rating-group">
+        <label>Appropriate Tone</label>
+        <div class="rating-options">
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-tone" value="1" style="display: none;" onchange="selectRating('retirement-test-b-1-tone', '1')">
+              1
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-tone" value="2" style="display: none;" onchange="selectRating('retirement-test-b-1-tone', '2')">
+              2
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-tone" value="3" style="display: none;" onchange="selectRating('retirement-test-b-1-tone', '3')">
+              3
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-tone" value="4" style="display: none;" onchange="selectRating('retirement-test-b-1-tone', '4')">
+              4
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-tone" value="5" style="display: none;" onchange="selectRating('retirement-test-b-1-tone', '5')">
+              5
+            </label>
+          
+        </div>
+      </div>
+    
+          
+      <div class="rating-group">
+        <label>Overall Assessment</label>
+        <div class="rating-options" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-overall" value="Better" style="display: none;" onchange="selectRating('retirement-test-b-1-overall', 'Better')">
+              Better
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-overall" value="Comparable" style="display: none;" onchange="selectRating('retirement-test-b-1-overall', 'Comparable')">
+              Comparable
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-overall" value="Worse" style="display: none;" onchange="selectRating('retirement-test-b-1-overall', 'Worse')">
+              Worse
+            </label>
+          
+            <label class="rating-btn">
+              <input type="radio" name="retirement-test-b-1-overall" value="Unsure" style="display: none;" onchange="selectRating('retirement-test-b-1-overall', 'Unsure')">
+              Unsure
+            </label>
+          
+        </div>
+      </div>
+    
+          <div class="rating-group">
+            <label>Comments</label>
+            <textarea id="comments-retirement-test-b-1" rows="4" placeholder="Optional feedback..."></textarea>
+          </div>
+        </div>
+      </div>
+      <button class="save-btn" onclick="saveRating('retirement-test-b', 1)">Save Rating</button>
+    
+      </div>
+    </div>
+
+    <div class="summary" style="margin-top: 40px;">
+      <h2>Rating Guidelines</h2>
+      <ul style="color: #666; line-height: 1.6;">
+        <li><strong>Emotional Progression:</strong> Does the story build naturally from start to finish?</li>
+        <li><strong>Chapter Coherence:</strong> Do memories within each chapter relate thematically?</li>
+        <li><strong>Finale Quality:</strong> Is the last memory emotionally appropriate and impactful?</li>
+        <li><strong>Creator Instruction Adherence:</strong> (Test B only) Did the AI follow the explicit guidance?</li>
+        <li><strong>Appropriate Tone:</strong> Does the plan respect the occasion (celebratory, thoughtful, sympathetic)?</li>
+      </ul>
+      <p style="color: #666; margin-top: 16px; font-style: italic;">
+        Remember: A different order or higher reorder percentage does not automatically make a story better.
+        Evaluate based on emotional impact and narrative coherence.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    function saveRating(caseId, repetition) {
+      const data = {
+        caseId,
+        repetition,
+        emotionalProgression: getSelectedRating(caseId, repetition, 'emotional'),
+        chapterCoherence: getSelectedRating(caseId, repetition, 'coherence'),
+        finaleQuality: getSelectedRating(caseId, repetition, 'finale'),
+        creatorAdherence: getSelectedRating(caseId, repetition, 'adherence'),
+        appropriateTone: getSelectedRating(caseId, repetition, 'tone'),
+        overallAssessment: getSelectedRating(caseId, repetition, 'overall'),
+        comments: document.getElementById(`comments-${caseId}-${repetition}`)?.value || '',
+        timestamp: new Date().toISOString()
+      };
+
+      console.log('Rating saved:', data);
+      localStorage.setItem(`rating-${caseId}-${repetition}`, JSON.stringify(data));
+      alert('Rating saved locally');
+    }
+
+    function getSelectedRating(caseId, repetition, dimension) {
+      const name = `${caseId}-${repetition}-${dimension}`;
+      const selected = document.querySelector(`input[name="${name}"]:checked`);
+      return selected ? selected.value : null;
+    }
+
+    function selectRating(name, value) {
+      document.querySelectorAll(`input[name="${name}"]`).forEach(el => {
+        el.parentElement.classList.toggle('selected', el.value === value);
+      });
+    }
+
+    // Load saved ratings
+    window.addEventListener('load', () => {
+      document.querySelectorAll('input[type="radio"]').forEach(input => {
+        const key = `rating-${input.name}`;
+        const saved = localStorage.getItem(key);
+        if (saved) {
+          try {
+            const data = JSON.parse(saved);
+            const dimension = input.name.split('-').pop();
+            if (data[dimension] === input.value) {
+              input.checked = true;
+              input.parentElement.classList.add('selected');
+            }
+          } catch (e) {}
+        }
+      });
+    });
+  </script>
+</body>
+</html>

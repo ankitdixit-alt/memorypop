@@ -1,0 +1,15 @@
+{
+  "caseId": "sympathy-test-b",
+  "attemptNumber": 4,
+  "retryNumber": 0,
+  "success": false,
+  "error": "Groq API error (429): {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2kk1vh6emga6r1gxxc6gnn8` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 5426, Requested 3497. Please try again in 6.9225s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n",
+  "errorType": "rate_limit_minute",
+  "retryAfterSeconds": 7,
+  "requestedModel": "openai/gpt-oss-120b",
+  "latencyMs": 49,
+  "timestamp": "2026-09-17T08:26:14.495Z",
+  "inputHash": "31d9e3605b020700",
+  "promptHash": "e5597d21dfb7dfc4",
+  "configVersion": "json-schema-strict"
+}

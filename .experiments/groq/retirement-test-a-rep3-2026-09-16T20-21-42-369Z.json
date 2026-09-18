@@ -1,0 +1,60 @@
+{
+  "caseId": "retirement-test-a",
+  "repetition": 3,
+  "success": true,
+  "plan": {
+    "opening": "Celebrating a remarkable 35-year journey of leadership, mentorship, and unforgettable moments.",
+    "chapters": [
+      {
+        "title": "Our Collective Thanks",
+        "memoryIds": [
+          "mem_f12",
+          "mem_f11",
+          "mem_f03"
+        ]
+      },
+      {
+        "title": "Mentorship Moments",
+        "memoryIds": [
+          "mem_f01",
+          "mem_f08",
+          "mem_f06",
+          "mem_f10"
+        ]
+      },
+      {
+        "title": "Adventures & Laughter",
+        "memoryIds": [
+          "mem_f02",
+          "mem_f09",
+          "mem_f05",
+          "mem_f07"
+        ]
+      },
+      {
+        "title": "Final Tribute",
+        "memoryIds": [
+          "mem_f04"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_f01",
+      "mem_f09"
+    ],
+    "finaleMemoryId": "mem_f04",
+    "reasoningSummary": "Grouped memories by theme to create an emotional arc, balancing heartfelt mentorship with humor, and ending with the CEO's powerful tribute as the finale.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 3144,
+      "tokensUsed": 2764,
+      "timestamp": "2026-09-16T20:21:45.514Z"
+    }
+  },
+  "latencyMs": 3145,
+  "tokensUsed": 2764,
+  "timestamp": "2026-09-16T20:21:42.369Z",
+  "inputHash": "518452279ff4b0a5",
+  "promptHash": "c8a418b03531cd96"
+}

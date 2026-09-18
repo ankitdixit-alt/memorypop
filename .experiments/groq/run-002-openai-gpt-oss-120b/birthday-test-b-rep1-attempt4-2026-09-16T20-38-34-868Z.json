@@ -1,0 +1,67 @@
+{
+  "caseId": "birthday-test-b",
+  "repetition": 1,
+  "attemptNumber": 4,
+  "success": true,
+  "plan": {
+    "opening": "From fire‑alarm cake fails to heartfelt family hugs, let’s celebrate Emma's 30 years of laughter, love, and lasting friendships.",
+    "chapters": [
+      {
+        "title": "Wild College Adventures",
+        "memoryIds": [
+          "mem_001",
+          "mem_003",
+          "mem_008",
+          "mem_014"
+        ]
+      },
+      {
+        "title": "Childhood & School Memories",
+        "memoryIds": [
+          "mem_004",
+          "mem_011",
+          "mem_009"
+        ]
+      },
+      {
+        "title": "Career & Growth",
+        "memoryIds": [
+          "mem_005",
+          "mem_013",
+          "mem_006",
+          "mem_015"
+        ]
+      },
+      {
+        "title": "Love & Family",
+        "memoryIds": [
+          "mem_010",
+          "mem_007",
+          "mem_012",
+          "mem_002"
+        ]
+      }
+    ],
+    "highlightMemoryIds": [
+      "mem_002",
+      "mem_012",
+      "mem_010"
+    ],
+    "finaleMemoryId": "mem_002",
+    "reasoningSummary": "Chapters move from fun, youthful antics to deeper school and work memories, then to love and finally family, matching the requested emotional arc. Highlights spotlight Emma's parents and partner, with Mom's message as the powerful finale.",
+    "_metadata": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "latencyMs": 3595,
+      "tokensUsed": 3064,
+      "timestamp": "2026-09-16T20:38:38.468Z"
+    }
+  },
+  "requestedModel": "openai/gpt-oss-120b",
+  "returnedModel": "openai/gpt-oss-120b",
+  "latencyMs": 3600,
+  "tokensUsed": 3064,
+  "timestamp": "2026-09-16T20:38:34.868Z",
+  "inputHash": "bf3b61b8803a8067",
+  "promptHash": "b57fc8789286b082"
+}
