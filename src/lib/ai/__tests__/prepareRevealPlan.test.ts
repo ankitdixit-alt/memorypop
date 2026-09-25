@@ -1,0 +1,512 @@
+/**
+ * Integration tests for prepareRevealPlan service
+ * Tests authorization, Plus entitlement, generation, validation, and persistence
+ */
+
+import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals'
+import type { PreparationResult } from '../prepareRevealPlan'
+import type { RevealPlan, MemoryMetadata } from '../types'
+
+// Mock Supabase
+const mockSupabaseServer = {
+  from: jest.fn()
+}
+
+jest.mock('@/lib/supabaseServer', () => ({
+  supabaseServer: mockSupabaseServer
+}))
+
+// Mock premium entitlement
+const mockHasPremiumAccess = jest.fn()
+jest.mock('@/lib/premiumEntitlement', () => ({
+  hasPremiumAccess: mockHasPremiumAccess
+}))
+
+// Mock generation service
+const mockGenerateRevealPlan = jest.fn()
+const mockHashInput = jest.fn()
+jest.mock('../revealPlanService', () => ({
+  generateRevealPlan: mockGenerateRevealPlan,
+  hashInput: mockHashInput
+}))
+
+// Mock validation
+const mockValidateRevealPlan = jest.fn()
+jest.mock('../validation', () => ({
+  validateRevealPlan: mockValidateRevealPlan
+}))
+
+describe('prepareRevealPlan', () => {
+  let prepareRevealPlan: (options: any) => Promise<PreparationResult>
+
+  beforeEach(async () => {
+    jest.clearAllMocks()
+    // Reset mock implementations
+    mockHasPremiumAccess.mockReturnValue(true)
+    mockHashInput.mockReturnValue('test-hash-123')
+    mockValidateRevealPlan.mockReturnValue({ valid: true, errors: [] })
+
+    // Dynamically import after mocks are set up
+    const module = await import('../prepareRevealPlan')
+    prepareRevealPlan = module.prepareRevealPlan
+  })
+
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
+
+  it('rejects unauthorized requests with invalid creator token', async () => {
+    // Setup: MemoryPop exists with different creator token
+    mockSupabaseServer.from.mockReturnValue({
+      select: jest.fn().mockReturnValue({
+        eq: jest.fn().mockReturnValue({
+          single: jest.fn().mockResolvedValue({
+            data: {
+              id: 'mp-test-1',
+              management_token_hash: 'correct-token-456',
+              is_premium: true,
+              status: 'collecting',
+              recipient_name: 'Test User',
+              occasion: 'birthday'
+            },
+            error: null
+          })
+        })
+      })
+    })
+
+    const result = await prepareRevealPlan({
+      creatorToken: 'wrong-token-789',
+      memorypopId: 'mp-test-1'
+    })
+
+    expect(result.success).toBe(false)
+    expect(result.error).toContain('Unauthorized')
+    expect(mockGenerateRevealPlan).not.toHaveBeenCalled()
+  })
+
+  it('rejects requests without Plus entitlement', async () => {
+    // Setup: MemoryPop exists but not Plus
+    mockHasPremiumAccess.mockReturnValue(false)
+    mockSupabaseServer.from.mockReturnValue({
+      select: jest.fn().mockReturnValue({
+        eq: jest.fn().mockReturnValue({
+          single: jest.fn().mockResolvedValue({
+            data: {
+              id: 'mp-test-1',
+              management_token_hash: 'correct-token',
+              is_premium: false,
+              status: 'collecting',
+              recipient_name: 'Test User',
+              occasion: 'birthday'
+            },
+            error: null
+          })
+        })
+      })
+    })
+
+    const result = await prepareRevealPlan({
+      creatorToken: 'correct-token',
+      memorypopId: 'mp-test-1'
+    })
+
+    expect(result.success).toBe(false)
+    expect(result.error).toContain('Plus entitlement required')
+    expect(mockGenerateRevealPlan).not.toHaveBeenCalled()
+  })
+
+  it('successfully prepares plan for authorized Plus gift', async () => {
+    const testMemories: MemoryMetadata[] = [
+      {
+        id: 'mem-1',
+        contributorName: 'Alice',
+        message: 'Happy birthday!',
+        photoCount: 1,
+        gifCount: 0,
+        videoDuration: 0,
+        createdAt: new Date()
+      }
+    ]
+
+    const testPlan: RevealPlan = {
+      openingTitle: 'Happy Birthday Sarah',
+      chapters: [{
+        title: 'Celebrations',
+        memoryIds: ['mem-1']
+      }],
+      highlightMemoryIds: ['mem-1'],
+      finaleMemoryId: 'mem-1',
+      reasoningSummary: 'Test plan'
+    }
+
+    // Setup mocks for successful flow
+    mockSupabaseServer.from.mockImplementation((table: string) => {
+      if (table === 'memorypops') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: {
+                  id: 'mp-test-1',
+                  management_token_hash: 'correct-token',
+                  is_premium: true,
+                  status: 'collecting',
+                  recipient_name: 'Sarah',
+                  occasion: 'birthday'
+                },
+                error: null
+              })
+            })
+          })
+        }
+      } else if (table === 'memories') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              order: jest.fn().mockResolvedValue({
+                data: [{
+                  id: 'mem-1',
+                  contributor_name: 'Alice',
+                  message: 'Happy birthday!',
+                  photo_url: 'photo.jpg',
+                  photos: null,
+                  gifs: null,
+                  video: null,
+                  created_at: new Date().toISOString()
+                }],
+                error: null
+              })
+            })
+          })
+        }
+      } else if (table === 'ai_reveal_plans') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: null,
+                error: { code: 'PGRST116' }
+              })
+            })
+          }),
+          insert: jest.fn((data) => ({
+            select: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: { ...data, id: 'plan-1' },
+                error: null
+              })
+            })
+          }))
+        }
+      }
+      return {} as any
+    })
+
+    // Mock RPC for publish function
+    mockSupabaseServer.rpc = jest.fn().mockResolvedValue({
+      data: 'success',
+      error: null
+    })
+
+    mockGenerateRevealPlan.mockResolvedValue({
+      plan: testPlan,
+      source: 'ai_generated' as const,
+      modelName: 'groq-test',
+      modelProvider: 'groq',
+      inputHash: 'test-hash-123',
+      fromCache: false
+    })
+
+    const result = await prepareRevealPlan({
+      creatorToken: 'correct-token',
+      memorypopId: 'mp-test-1'
+    })
+
+    expect(result.success).toBe(true)
+    expect(result.plan).toEqual(testPlan)
+    expect(result.source).toBe('ai_generated')
+    expect(result.fromCache).toBe(false)
+  })
+
+  it('returns cached plan when input hash matches', async () => {
+    const cachedPlan: RevealPlan = {
+      openingTitle: 'Cached Plan',
+      chapters: [{ title: 'Chapter 1', memoryIds: ['mem-1'] }],
+      highlightMemoryIds: [],
+      finaleMemoryId: 'mem-1',
+      reasoningSummary: 'Cached'
+    }
+
+    // Setup mocks
+    mockSupabaseServer.from.mockImplementation((table: string) => {
+      if (table === 'memorypops') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: {
+                  id: 'mp-test-1',
+                  management_token_hash: 'correct-token',
+                  is_premium: true,
+                  status: 'collecting',
+                  recipient_name: 'John',
+                  occasion: 'birthday'
+                },
+                error: null
+              })
+            })
+          })
+        }
+      } else if (table === 'memories') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              order: jest.fn().mockResolvedValue({
+                data: [{
+                  id: 'mem-1',
+                  contributor_name: 'Bob',
+                  message: 'Test',
+                  photo_url: null,
+                  photos: null,
+                  gifs: null,
+                  video: null,
+                  created_at: new Date().toISOString()
+                }],
+                error: null
+              })
+            })
+          })
+        }
+      } else if (table === 'ai_reveal_plans') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: {
+                  plan: cachedPlan,
+                  input_hash: 'test-hash-123',
+                  generation_source: 'ai_generated'
+                },
+                error: null
+              })
+            })
+          })
+        }
+      }
+      return {} as any
+    })
+
+    const result = await prepareRevealPlan({
+      creatorToken: 'correct-token',
+      memorypopId: 'mp-test-1'
+    })
+
+    expect(result.success).toBe(true)
+    expect(result.plan).toEqual(cachedPlan)
+    expect(result.fromCache).toBe(true)
+    expect(mockGenerateRevealPlan).not.toHaveBeenCalled()
+  })
+
+  it('regenerates when cached plan is invalid', async () => {
+    const invalidCachedPlan = {
+      openingTitle: 'Invalid',
+      chapters: [],
+      highlightMemoryIds: ['nonexistent-id'],
+      finaleMemoryId: 'nonexistent-id',
+      reasoningSummary: 'Invalid'
+    }
+
+    const validPlan: RevealPlan = {
+      openingTitle: 'Valid Plan',
+      chapters: [{ title: 'Chapter 1', memoryIds: ['mem-1'] }],
+      highlightMemoryIds: ['mem-1'],
+      finaleMemoryId: 'mem-1',
+      reasoningSummary: 'Valid'
+    }
+
+    // First validation fails, second succeeds
+    mockValidateRevealPlan
+      .mockReturnValueOnce({ valid: false, errors: ['Unknown memory ID'] })
+      .mockReturnValueOnce({ valid: true, errors: [] })
+
+    mockSupabaseServer.from.mockImplementation((table: string) => {
+      if (table === 'memorypops') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: {
+                  id: 'mp-test-1',
+                  management_token_hash: 'correct-token',
+                  is_premium: true,
+                  status: 'collecting',
+                  recipient_name: 'Jane',
+                  occasion: 'birthday'
+                },
+                error: null
+              })
+            })
+          })
+        }
+      } else if (table === 'memories') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              order: jest.fn().mockResolvedValue({
+                data: [{
+                  id: 'mem-1',
+                  contributor_name: 'Charlie',
+                  message: 'Test',
+                  photo_url: null,
+                  photos: null,
+                  gifs: null,
+                  video: null,
+                  created_at: new Date().toISOString()
+                }],
+                error: null
+              })
+            })
+          })
+        }
+      } else if (table === 'ai_reveal_plans') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: {
+                  plan: invalidCachedPlan,
+                  input_hash: 'test-hash-123',
+                  generation_source: 'ai_generated',
+                  model_name: 'groq-test',
+                  generation_version: 1,
+                  generation_lock_holder: null
+                },
+                error: null
+              })
+            })
+          }),
+          update: jest.fn((data) => ({
+            eq: jest.fn().mockReturnThis(),
+            select: jest.fn().mockResolvedValue({
+              data: [{ ...data, id: 'plan-1' }],
+              error: null
+            })
+          }))
+        }
+      }
+      return {} as any
+    })
+
+    // Mock RPC for publish function
+    mockSupabaseServer.rpc = jest.fn().mockResolvedValue({
+      data: 'success',
+      error: null
+    })
+
+    mockGenerateRevealPlan.mockResolvedValue({
+      plan: validPlan,
+      source: 'ai_generated' as const,
+      modelName: 'groq-test',
+      modelProvider: 'groq',
+      inputHash: 'test-hash-123',
+      fromCache: false
+    })
+
+    const result = await prepareRevealPlan({
+      creatorToken: 'correct-token',
+      memorypopId: 'mp-test-1'
+    })
+
+    expect(result.success).toBe(true)
+    expect(result.plan).toEqual(validPlan)
+    expect(result.fromCache).toBe(false)
+    expect(mockGenerateRevealPlan).toHaveBeenCalled()
+  })
+
+  it('is idempotent when retrying already-ready gifts', async () => {
+    // Simulates calling preparation multiple times on same gift
+    const plan: RevealPlan = {
+      openingTitle: 'Test',
+      chapters: [{ title: 'Ch1', memoryIds: ['mem-1'] }],
+      highlightMemoryIds: [],
+      finaleMemoryId: 'mem-1',
+      reasoningSummary: 'Test'
+    }
+
+    mockSupabaseServer.from.mockImplementation((table: string) => {
+      if (table === 'memorypops') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: {
+                  id: 'mp-test-1',
+                  management_token_hash: 'correct-token',
+                  is_premium: true,
+                  recipient_name: 'Test',
+                  occasion: 'birthday',
+                  status: 'ready' // Already ready
+                },
+                error: null
+              })
+            })
+          })
+        }
+      } else if (table === 'memories') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              order: jest.fn().mockResolvedValue({
+                data: [{
+                  id: 'mem-1',
+                  contributor_name: 'Dave',
+                  message: 'Test',
+                  photo_url: null,
+                  photos: null,
+                  gifs: null,
+                  video: null,
+                  created_at: new Date().toISOString()
+                }],
+                error: null
+              })
+            })
+          })
+        }
+      } else if (table === 'ai_reveal_plans') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: {
+                  plan,
+                  input_hash: 'test-hash-123',
+                  generation_source: 'ai_generated'
+                },
+                error: null
+              })
+            })
+          })
+        }
+      }
+      return {} as any
+    })
+
+    // First call
+    const result1 = await prepareRevealPlan({
+      creatorToken: 'correct-token',
+      memorypopId: 'mp-test-1'
+    })
+
+    // Second call (retry)
+    const result2 = await prepareRevealPlan({
+      creatorToken: 'correct-token',
+      memorypopId: 'mp-test-1'
+    })
+
+    expect(result1.success).toBe(true)
+    expect(result2.success).toBe(true)
+    expect(result1.plan).toEqual(result2.plan)
+    expect(mockGenerateRevealPlan).not.toHaveBeenCalled() // Used cached
+  })
+})

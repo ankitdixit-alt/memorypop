@@ -1,7 +1,11 @@
 import { notFound } from "next/navigation";
 import { supabaseServer } from "@/lib/supabaseServer";
+import { hasPremiumAccess } from "@/lib/premiumEntitlement";
+import { loadRevealPlan } from "@/lib/ai/prepareRevealPlan";
+import { generateDeterministicRevealPlan } from "@/lib/ai/deterministicPlanner";
 import RevealExperience from "./RevealExperience";
 import type { Metadata } from "next";
+import type { RevealPlan, MemoryMetadata } from "@/lib/ai/types";
 
 // Opt out of static generation - this page requires database access
 export const dynamic = 'force-dynamic';
@@ -95,6 +99,39 @@ export default async function RevealPage({
     .eq('memorypop_id', memoryPop.id)
     .maybeSingle();
 
+  // Determine Plus access and prepare reveal plan
+  const isPlusGift = hasPremiumAccess(memoryPop);
+  let revealPlan: RevealPlan | null = null;
+
+  if (isPlusGift) {
+    // Convert memories to MemoryMetadata for validation
+    const memoryMetadata: MemoryMetadata[] = (memories || []).map(m => ({
+      id: m.id,
+      contributorName: m.contributor_name,
+      message: m.message,
+      photoCount: (m.photos?.length || 0) + (m.photo_url && !m.photo_url.endsWith('.gif') ? 1 : 0),
+      gifCount: (m.gifs?.length || 0) + (m.photo_url?.endsWith('.gif') ? 1 : 0),
+      videoDuration: m.video?.duration || 0,
+      createdAt: new Date(m.created_at)
+    }));
+
+    // Try to load validated AI plan from database (never calls Groq)
+    revealPlan = await loadRevealPlan(memoryPop.id, memoryMetadata);
+
+    // Fallback to deterministic Plus if no valid AI plan
+    // This ensures Plus gifts ALWAYS get the Plus experience
+    if (!revealPlan) {
+      revealPlan = generateDeterministicRevealPlan({
+        memoryPopId: memoryPop.id,
+        recipientName: memoryPop.recipient_name || '',
+        occasion: memoryPop.occasion || 'birthday',
+        tone: memoryPop.mood || 'warm',
+        story: '',
+        memories: memoryMetadata
+      });
+    }
+  }
+
   // Pass to client component
   return (
     <RevealExperience
@@ -107,6 +144,8 @@ export default async function RevealPage({
       shareCode={shareCode}
       mood={memoryPop.tone}
       existingReaction={existingReaction}
+      isPlusGift={isPlusGift}
+      revealPlan={revealPlan}
     />
   );
 }

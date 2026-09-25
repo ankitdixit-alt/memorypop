@@ -9,7 +9,9 @@ import { getSoundtrack } from "@/lib/occasionExperience";
 import ReactionPrompt from "./ReactionPrompt";
 import ReactionThankYou from "./ReactionThankYou";
 import GlobalCinematicController from "./GlobalCinematicController";
+import AIDirectorRevealController from "./AIDirectorRevealController";
 import type { MediaItem, VideoMedia } from "@/components/memory-experience/types";
+import type { RevealPlan } from "@/lib/ai/types";
 
 interface Memory {
   id: string;
@@ -35,6 +37,8 @@ interface Props {
   shareCode: string;
   mood?: string | null;
   existingReaction?: { reaction_type: string } | null;
+  isPlusGift: boolean;
+  revealPlan: RevealPlan | null;
 }
 
 export default function RevealExperience({
@@ -47,6 +51,8 @@ export default function RevealExperience({
   shareCode,
   mood,
   existingReaction,
+  isPlusGift,
+  revealPlan,
 }: Props) {
   const [currentStep, setCurrentStep] = useState(0);
   const [hasReacted, setHasReacted] = useState<boolean>(!!existingReaction); // Initialize from server prop
@@ -196,17 +202,35 @@ export default function RevealExperience({
       />
     );
   } else if (currentStep === 1) {
-    // Step 1: Cinematic (ALL memories in one global timeline)
-    return (
-      <GlobalCinematicController
-        memories={memories}
-        shareCode={shareCode}
-        onComplete={handleNext}
-        audioRef={audioRef}
-        isMusicMuted={isMuted}
-        onMuteToggle={handleToggleMute}
-      />
-    );
+    // Step 1: Cinematic - Plus or Standard
+    if (isPlusGift && revealPlan) {
+      // Plus Experience (AI-generated or deterministic)
+      return (
+        <AIDirectorRevealController
+          recipientName={recipientName}
+          occasion={occasion}
+          memories={memories}
+          plan={revealPlan}
+          shareCode={shareCode}
+          onComplete={handleNext}
+          audioRef={audioRef}
+          isMusicMuted={isMuted}
+          onMuteToggle={handleToggleMute}
+        />
+      )
+    } else {
+      // Standard Experience
+      return (
+        <GlobalCinematicController
+          memories={memories}
+          shareCode={shareCode}
+          onComplete={handleNext}
+          audioRef={audioRef}
+          isMusicMuted={isMuted}
+          onMuteToggle={handleToggleMute}
+        />
+      )
+    }
   } else if (currentStep === 2) {
     // Step 2: Final celebration
     return (

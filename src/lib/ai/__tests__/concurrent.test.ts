@@ -1,0 +1,501 @@
+/**
+ * Concurrent Preparation Tests
+ *
+ * Verifies that concurrent preparation requests are handled safely:
+ * - Stale results cannot overwrite current plans (version + input hash checks)
+ * - Identical inputs share one provider call (lock deduplication)
+ * - Expired workers cannot publish (database time check)
+ * - Content changes detected during generation
+ */
+
+import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals'
+import type { RevealPlan, MemoryMetadata } from '../types'
+
+// Mock Supabase
+const mockSupabaseServer = {
+  from: jest.fn(),
+  rpc: jest.fn()
+}
+
+jest.mock('@/lib/supabaseServer', () => ({
+  supabaseServer: mockSupabaseServer
+}))
+
+// Mock premium entitlement
+const mockHasPremiumAccess = jest.fn()
+jest.mock('@/lib/premiumEntitlement', () => ({
+  hasPremiumAccess: mockHasPremiumAccess
+}))
+
+// Mock generation service
+const mockGenerateRevealPlan = jest.fn()
+const mockHashInput = jest.fn()
+jest.mock('../revealPlanService', () => ({
+  generateRevealPlan: mockGenerateRevealPlan,
+  hashInput: mockHashInput
+}))
+
+// Mock validation
+const mockValidateRevealPlan = jest.fn()
+jest.mock('../validation', () => ({
+  validateRevealPlan: mockValidateRevealPlan
+}))
+
+describe('Concurrent Preparation', () => {
+  let prepareRevealPlan: (options: any) => Promise<any>
+
+  beforeEach(async () => {
+    jest.clearAllMocks()
+    mockHasPremiumAccess.mockReturnValue(true)
+    mockValidateRevealPlan.mockReturnValue({ valid: true, errors: [] })
+
+    // Dynamically import after mocks are set up
+    const module = await import('../prepareRevealPlan')
+    prepareRevealPlan = module.prepareRevealPlan
+  })
+
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
+
+  it('prevents stale worker from publishing after new version', async () => {
+    // Scenario: Worker A acquires lock (v1), Worker B takes over (v2) and publishes.
+    // Worker A tries to publish later with v1 - should be rejected.
+
+    const planA: RevealPlan = {
+      openingTitle: 'Plan A (stale)',
+      chapters: [{ title: 'Chapter A', memoryIds: ['mem1', 'mem2'] }],
+      highlightMemoryIds: ['mem1'],
+      finaleMemoryId: 'mem2',
+      reasoningSummary: 'Stale'
+    }
+
+    const planB: RevealPlan = {
+      openingTitle: 'Plan B (current)',
+      chapters: [{ title: 'Chapter B', memoryIds: ['mem1', 'mem2'] }],
+      highlightMemoryIds: ['mem2'],
+      finaleMemoryId: 'mem2',
+      reasoningSummary: 'Current'
+    }
+
+    mockHashInput.mockReturnValue('hash-shared')
+
+    // Track state
+    let currentVersion = 0
+    let lockHolder: string | null = null
+
+    let resolveA: any, resolveB: any
+    let callCount = 0
+
+    // Pre-create promises so resolvers are available
+    const promiseAGen = new Promise((resolve) => { resolveA = resolve })
+    const promiseBGen = new Promise((resolve) => { resolveB = resolve })
+
+    mockGenerateRevealPlan.mockImplementation(() => {
+      callCount++
+      if (callCount === 1) return promiseAGen
+      else return promiseBGen
+    })
+
+    mockSupabaseServer.from.mockImplementation((table: string) => {
+      if (table === 'memorypops') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: { id: 'mp-1', management_token_hash: 'token-1', status: 'collecting', is_premium: true, recipient_name: 'Test', occasion: 'birthday' },
+                error: null
+              })
+            })
+          })
+        }
+      } else if (table === 'memories') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              order: jest.fn().mockResolvedValue({
+                data: [
+                  { id: 'mem1', contributor_name: 'A', message: 'Test', photo_url: null, photos: null, gifs: null, video: null, created_at: new Date().toISOString() },
+                  { id: 'mem2', contributor_name: 'B', message: 'Test', photo_url: null, photos: null, gifs: null, video: null, created_at: new Date().toISOString() }
+                ],
+                error: null
+              })
+            })
+          })
+        }
+      } else if (table === 'ai_reveal_plans') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: currentVersion > 0 ? {
+                  memorypop_id: 'mp-1',
+                  plan: null,
+                  input_hash: '',
+                  generation_version: currentVersion,
+                  generation_lock_holder: lockHolder,
+                  generation_lock_expires_at: null,
+                  model_name: 'pending'
+                } : null,
+                error: currentVersion > 0 ? null : { code: 'PGRST116' }
+              })
+            })
+          }),
+          insert: jest.fn((data) => {
+            if (currentVersion === 0) {
+              currentVersion = 1
+              lockHolder = data.generation_lock_holder
+              return {
+                select: jest.fn().mockReturnValue({
+                  single: jest.fn().mockResolvedValue({
+                    data: { ...data, id: 'plan-1', generation_version: 1 },
+                    error: null
+                  })
+                })
+              }
+            }
+            return {
+              select: jest.fn().mockReturnValue({
+                single: jest.fn().mockResolvedValue({
+                  data: null,
+                  error: { message: 'Already exists' }
+                })
+              })
+            }
+          }),
+          update: jest.fn((data) => {
+            const chain = {
+              eq: jest.fn().mockReturnThis(),
+              select: jest.fn().mockImplementation(() => {
+                if (data.generation_version) {
+                  // Lock takeover
+                  currentVersion = data.generation_version
+                  lockHolder = data.generation_lock_holder
+                  return Promise.resolve({ data: [{ ...data }], error: null })
+                }
+                return Promise.resolve({ data: [{ ...data }], error: null })
+              })
+            }
+            return chain
+          })
+        }
+      }
+      return {} as any
+    })
+
+    // Mock RPC - Worker B succeeds, Worker A fails with version_mismatch
+    let rpcCallCount = 0
+    mockSupabaseServer.rpc.mockImplementation((fn, params) => {
+      rpcCallCount++
+      if (rpcCallCount === 1) {
+        // Worker B publishes v1 successfully
+        return Promise.resolve({ data: 'success', error: null })
+      } else {
+        // Worker A tries to publish v1 but version is now 2
+        return Promise.resolve({ data: 'version_mismatch', error: null })
+      }
+    })
+
+    // Start both workers
+    const promiseA = prepareRevealPlan({ creatorToken: 'token-1', memorypopId: 'mp-1' })
+    const promiseB = prepareRevealPlan({ creatorToken: 'token-1', memorypopId: 'mp-1' })
+
+    await new Promise(resolve => setImmediate(resolve))
+
+    // Worker B finishes first
+    resolveB({ plan: planB, source: 'ai_generated' as const, modelName: 'test', modelProvider: 'groq', inputHash: 'hash-shared' })
+    const resultB = await promiseB
+
+    // Worker A finishes later
+    resolveA({ plan: planA, source: 'ai_generated' as const, modelName: 'test', modelProvider: 'groq', inputHash: 'hash-shared' })
+    const resultA = await promiseA
+
+    // Worker B should succeed
+    expect(resultB.success).toBe(true)
+    expect(resultB.plan?.openingTitle).toBe('Plan B (current)')
+
+    // Worker A should fail with version conflict
+    expect(resultA.success).toBe(false)
+    expect(resultA.error).toMatch(/version/i)
+  })
+
+  it('shares one generation for identical concurrent requests', async () => {
+    const sharedPlan: RevealPlan = {
+      openingTitle: 'Shared',
+      chapters: [{ title: 'Chapter', memoryIds: ['mem1'] }],
+      highlightMemoryIds: [],
+      finaleMemoryId: 'mem1',
+      reasoningSummary: 'Shared'
+    }
+
+    mockHashInput.mockReturnValue('hash-shared')
+
+    let generationCount = 0
+    mockGenerateRevealPlan.mockImplementation(async () => {
+      generationCount++
+      await new Promise(resolve => setTimeout(resolve, 10))
+      return { plan: sharedPlan, source: 'ai_generated' as const, modelName: 'test', modelProvider: 'groq', inputHash: 'hash-shared' }
+    })
+
+    let insertCount = 0
+    let currentPlan: any = null // Track current database state
+
+    mockSupabaseServer.from.mockImplementation((table: string) => {
+      if (table === 'memorypops') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: { id: 'mp-1', management_token_hash: 'token-1', status: 'collecting', is_premium: true, recipient_name: 'Test', occasion: 'birthday' },
+                error: null
+              })
+            })
+          })
+        }
+      } else if (table === 'memories') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              order: jest.fn().mockResolvedValue({
+                data: [{ id: 'mem1', contributor_name: 'A', message: 'Test', photo_url: null, photos: null, gifs: null, video: null, created_at: new Date().toISOString() }],
+                error: null
+              })
+            })
+          })
+        }
+      } else if (table === 'ai_reveal_plans') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              single: jest.fn().mockImplementation(async () => {
+                // Return current state (null initially, then the inserted row)
+                if (!currentPlan) {
+                  return { data: null, error: { code: 'PGRST116' } }
+                }
+                return { data: currentPlan, error: null }
+              })
+            })
+          }),
+          insert: jest.fn((data) => {
+            insertCount++
+            if (insertCount === 1) {
+              // First worker succeeds - update state
+              currentPlan = {
+                ...data,
+                id: 'plan-1',
+                generation_version: 1,
+                plan: null, // Pending
+                input_hash: '',
+                model_name: 'pending'
+              }
+              return {
+                select: jest.fn().mockReturnValue({
+                  single: jest.fn().mockResolvedValue({
+                    data: currentPlan,
+                    error: null
+                  })
+                })
+              }
+            } else {
+              // Second worker fails (unique constraint)
+              return {
+                select: jest.fn().mockReturnValue({
+                  single: jest.fn().mockResolvedValue({
+                    data: null,
+                    error: { message: 'Already exists' }
+                  })
+                })
+              }
+            }
+          })
+        }
+      }
+      return {} as any
+    })
+
+    mockSupabaseServer.rpc.mockImplementation(async (fn, params) => {
+      if (fn === 'publish_reveal_plan') {
+        // Update current plan to published state
+        currentPlan = {
+          ...currentPlan,
+          plan: params.p_plan,
+          input_hash: params.p_input_hash,
+          model_name: params.p_model_name,
+          generation_lock_holder: null
+        }
+        return { data: 'success', error: null }
+      }
+      return { data: null, error: null }
+    })
+
+    const [result1, result2] = await Promise.all([
+      prepareRevealPlan({ creatorToken: 'token-1', memorypopId: 'mp-1' }),
+      prepareRevealPlan({ creatorToken: 'token-1', memorypopId: 'mp-1' })
+    ])
+
+    // Both should succeed
+    expect(result1.success).toBe(true)
+    expect(result2.success).toBe(true)
+
+    // Only one generation (second worker waited for first)
+    expect(generationCount).toBe(1)
+  })
+
+  it('rejects expired worker attempting to publish', async () => {
+    const plan: RevealPlan = {
+      openingTitle: 'Expired',
+      chapters: [{ title: 'Chapter', memoryIds: ['mem1'] }],
+      highlightMemoryIds: [],
+      finaleMemoryId: 'mem1',
+      reasoningSummary: 'Test'
+    }
+
+    mockHashInput.mockReturnValue('hash-1')
+    mockGenerateRevealPlan.mockResolvedValue({
+      plan,
+      source: 'ai_generated' as const,
+      modelName: 'test',
+      modelProvider: 'groq',
+      inputHash: 'hash-1'
+    })
+
+    mockSupabaseServer.from.mockImplementation((table: string) => {
+      if (table === 'memorypops') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: { id: 'mp-1', management_token_hash: 'token-1', status: 'collecting', is_premium: true, recipient_name: 'Test', occasion: 'birthday' },
+                error: null
+              })
+            })
+          })
+        }
+      } else if (table === 'memories') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              order: jest.fn().mockResolvedValue({
+                data: [{ id: 'mem1', contributor_name: 'A', message: 'Test', photo_url: null, photos: null, gifs: null, video: null, created_at: new Date().toISOString() }],
+                error: null
+              })
+            })
+          })
+        }
+      } else if (table === 'ai_reveal_plans') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: null,
+                error: { code: 'PGRST116' }
+              })
+            })
+          }),
+          insert: jest.fn((data) => ({
+            select: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: { ...data, id: 'plan-1', generation_version: 1 },
+                error: null
+              })
+            })
+          }))
+        }
+      }
+      return {} as any
+    })
+
+    // RPC returns lock_expired (database checked expiry with NOW())
+    mockSupabaseServer.rpc.mockResolvedValue({
+      data: 'lock_expired',
+      error: null
+    })
+
+    const result = await prepareRevealPlan({
+      creatorToken: 'token-1',
+      memorypopId: 'mp-1'
+    })
+
+    expect(result.success).toBe(false)
+    expect(result.error).toMatch(/expired/i)
+  })
+
+  it('detects input changes during generation', async () => {
+    const plan: RevealPlan = {
+      openingTitle: 'Test',
+      chapters: [{ title: 'Chapter', memoryIds: ['mem1'] }],
+      highlightMemoryIds: [],
+      finaleMemoryId: 'mem1',
+      reasoningSummary: 'Test'
+    }
+
+    mockHashInput.mockReturnValue('hash-original')
+    mockGenerateRevealPlan.mockResolvedValue({
+      plan,
+      source: 'ai_generated' as const,
+      modelName: 'test',
+      modelProvider: 'groq',
+      inputHash: 'hash-original'
+    })
+
+    mockSupabaseServer.from.mockImplementation((table: string) => {
+      if (table === 'memorypops') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: { id: 'mp-1', management_token_hash: 'token-1', status: 'collecting', is_premium: true, recipient_name: 'Test', occasion: 'birthday' },
+                error: null
+              })
+            })
+          })
+        }
+      } else if (table === 'memories') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              order: jest.fn().mockResolvedValue({
+                data: [{ id: 'mem1', contributor_name: 'A', message: 'Test', photo_url: null, photos: null, gifs: null, video: null, created_at: new Date().toISOString() }],
+                error: null
+              })
+            })
+          })
+        }
+      } else if (table === 'ai_reveal_plans') {
+        return {
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: null,
+                error: { code: 'PGRST116' }
+              })
+            })
+          }),
+          insert: jest.fn((data) => ({
+            select: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({
+                data: { ...data, id: 'plan-1', generation_version: 1 },
+                error: null
+              })
+            })
+          }))
+        }
+      }
+      return {} as any
+    })
+
+    // RPC returns input_changed (memories were added/modified during generation)
+    mockSupabaseServer.rpc.mockResolvedValue({
+      data: 'input_changed',
+      error: null
+    })
+
+    const result = await prepareRevealPlan({
+      creatorToken: 'token-1',
+      memorypopId: 'mp-1'
+    })
+
+    expect(result.success).toBe(false)
+    expect(result.error).toMatch(/input.*changed/i)
+  })
+})
