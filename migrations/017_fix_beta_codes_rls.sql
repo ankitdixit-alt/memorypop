@@ -1,0 +1,9 @@
+-- Migration 017: DEPRECATED - DO NOT USE
+-- This migration contained unsafe permissions grants to authenticated role
+--
+-- The correct approach is in migration 016:
+-- - RLS enabled on both tables
+-- - Grants to service_role only
+-- - Proper RLS policies for service_role
+--
+-- DO NOT RUN THIS MIGRATION

@@ -16,6 +16,10 @@ export function DashboardPlusFeatures({ isPremium, shareCode }: DashboardPlusFea
   const router = useRouter();
   const [showWelcome, setShowWelcome] = useState(false);
   const [hasClickedInterest, setHasClickedInterest] = useState(false);
+  const [showBetaCodeInput, setShowBetaCodeInput] = useState(false);
+  const [betaCode, setBetaCode] = useState("");
+  const [isRedeeming, setIsRedeeming] = useState(false);
+  const [redemptionError, setRedemptionError] = useState("");
 
   // Handle payment verification on mount if upgraded=true param
   useEffect(() => {
@@ -61,6 +65,50 @@ export function DashboardPlusFeatures({ isPremium, shareCode }: DashboardPlusFea
     setHasClickedInterest(true);
   };
 
+  const handleBetaCodeRedeem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsRedeeming(true);
+    setRedemptionError("");
+
+    try {
+      // Get memorypop ID from share code
+      const response = await fetch(`/api/memorypops/share/${shareCode}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch MemoryPop");
+      }
+      const { id: memorypopId } = await response.json();
+
+      // Redeem beta code
+      const redeemResponse = await fetch(`/api/memorypops/${memorypopId}/redeem-beta-code`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: betaCode.trim() }),
+      });
+
+      const result = await redeemResponse.json();
+
+      if (!redeemResponse.ok) {
+        setRedemptionError(result.error || "Redemption failed");
+        return;
+      }
+
+      // Success - show welcome message and refresh
+      trackEvent('beta_code_redeemed', {
+        share_code: shareCode,
+        source: 'dashboard',
+      });
+
+      setShowWelcome(true);
+      router.push(`/dashboard/${shareCode}?upgraded=true`);
+      router.refresh();
+    } catch (error) {
+      console.error("Beta code redemption error:", error);
+      setRedemptionError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsRedeeming(false);
+    }
+  };
+
   return (
     <>
       {/* Welcome Message */}
@@ -99,7 +147,7 @@ export function DashboardPlusFeatures({ isPremium, shareCode }: DashboardPlusFea
               {MEMORYPOP_PLUS.priceLabel} {MEMORYPOP_PLUS.price}
             </p>
 
-            {!hasClickedInterest ? (
+            {!hasClickedInterest && !showBetaCodeInput ? (
               <div className="flex flex-col gap-3">
                 <Link
                   href="/plus"
@@ -108,12 +156,76 @@ export function DashboardPlusFeatures({ isPremium, shareCode }: DashboardPlusFea
                   Learn More About Plus
                 </Link>
                 <button
-                  onClick={handleInterestClick}
+                  onClick={() => setShowBetaCodeInput(true)}
                   className="rounded-full bg-[#ef6a57] px-8 py-3 font-semibold text-white transition-colors hover:bg-[#e05a47]"
                 >
-                  {MEMORYPOP_PLUS.comingSoonCTA}
+                  Upgrade to Plus
                 </button>
-                <p className="text-xs text-[#856b5f]">Coming soon</p>
+                <button
+                  onClick={handleInterestClick}
+                  className="text-sm text-[#856b5f] hover:text-[#6B5B52] underline"
+                >
+                  Notify me when payment is available
+                </button>
+              </div>
+            ) : showBetaCodeInput ? (
+              <div className="space-y-4">
+                <div className="text-left space-y-2 text-sm text-[#3a241e]">
+                  <p className="font-semibold">Enter Your Beta Access Code</p>
+                  <p className="text-[#6B5B52]">
+                    During our beta period, Plus is activated with a complimentary access code at <span className="font-bold">€0</span>.
+                    No payment details required.
+                  </p>
+                </div>
+
+                <form onSubmit={handleBetaCodeRedeem} className="space-y-3">
+                  <input
+                    type="text"
+                    value={betaCode}
+                    onChange={(e) => setBetaCode(e.target.value)}
+                    placeholder="Enter beta code"
+                    disabled={isRedeeming}
+                    className="w-full rounded-full border border-[#ead8c9] bg-white px-6 py-3 text-center text-[#3a241e] placeholder:text-[#a89687] focus:border-[#ef6a57] focus:outline-none focus:ring-2 focus:ring-[#ef6a57]/20 disabled:opacity-50"
+                    required
+                  />
+
+                  {redemptionError && (
+                    <p className="text-sm text-[#ef6a57] text-center">
+                      {redemptionError}
+                    </p>
+                  )}
+
+                  <div className="flex flex-col gap-2">
+                    <button
+                      type="submit"
+                      disabled={isRedeeming || !betaCode.trim()}
+                      className="rounded-full bg-[#ef6a57] px-8 py-3 font-semibold text-white transition-colors hover:bg-[#e05a47] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isRedeeming ? "Activating..." : "Activate Plus for €0"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowBetaCodeInput(false);
+                        setBetaCode("");
+                        setRedemptionError("");
+                      }}
+                      className="text-sm text-[#856b5f] hover:text-[#6B5B52] underline"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+
+                <div className="text-xs text-[#856b5f] text-left space-y-1">
+                  <p>Don&apos;t have a code?</p>
+                  <button
+                    onClick={handleInterestClick}
+                    className="text-[#ef6a57] hover:text-[#e05a47] underline"
+                  >
+                    Register your interest for future beta access
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="text-sm text-[#2B1E18]">

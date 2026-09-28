@@ -138,3 +138,25 @@ export async function isCreatorAuthorized(shareCode: string): Promise<boolean> {
   const session = await getCreatorSession(shareCode);
   return session !== null;
 }
+
+/**
+ * Check if user has creator session for MemoryPop by ID
+ * Returns true if valid session exists for this MemoryPop
+ */
+export async function isCreatorAuthorizedForMemoryPop(memorypopId: string): Promise<boolean> {
+  // Import here to avoid circular dependency
+  const { supabaseServer } = await import('@/lib/supabaseServer');
+
+  // Fetch share code for this memorypop
+  const { data: memorypop } = await supabaseServer
+    .from('memorypops')
+    .select('share_code')
+    .eq('id', memorypopId)
+    .single();
+
+  if (!memorypop) {
+    return false;
+  }
+
+  return isCreatorAuthorized(memorypop.share_code);
+}

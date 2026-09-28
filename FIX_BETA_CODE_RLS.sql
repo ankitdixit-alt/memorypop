@@ -1,0 +1,11 @@
+-- ============================================================
+-- DEPRECATED - Use CORRECT_BETA_CODE_PERMISSIONS.sql instead
+-- ============================================================
+-- This file previously contained unsafe permissions grants.
+--
+-- The correct fix is in CORRECT_BETA_CODE_PERMISSIONS.sql:
+-- - Keeps RLS enabled
+-- - Grants specific privileges to service_role only
+-- - Creates proper RLS policies for service_role
+-- - Removes unsafe grants to authenticated/anon/public
+-- ============================================================

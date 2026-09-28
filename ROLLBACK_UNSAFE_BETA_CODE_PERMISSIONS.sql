@@ -1,0 +1,10 @@
+-- ============================================================
+-- DEPRECATED - Use CORRECT_BETA_CODE_PERMISSIONS.sql instead
+-- ============================================================
+-- This file incorrectly recommended disabling RLS.
+--
+-- The correct approach is in CORRECT_BETA_CODE_PERMISSIONS.sql:
+-- - Keep RLS enabled
+-- - Grant specific privileges to service_role
+-- - Create proper RLS policies for service_role
+-- ============================================================
