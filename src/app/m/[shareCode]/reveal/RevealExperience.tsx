@@ -39,6 +39,7 @@ interface Props {
   existingReaction?: { reaction_type: string } | null;
   isPlusGift: boolean;
   revealPlan: RevealPlan | null;
+  customMusicUrl?: string | null;
 }
 
 export default function RevealExperience({
@@ -48,6 +49,7 @@ export default function RevealExperience({
   memorypopId,
   celebrationDate,
   coverStyle,
+  customMusicUrl,
   shareCode,
   mood,
   existingReaction,
@@ -78,38 +80,58 @@ export default function RevealExperience({
     recipientName
   });
 
-  // Resolve soundtrack based on occasion + atmosphere
+  // Resolve soundtrack based on occasion + atmosphere, with Plus custom music override
   const soundtrack = getSoundtrack(occasion, mood || 'simple_classic');
+  const [audioTrack, setAudioTrack] = useState<string>(customMusicUrl || soundtrack.track);
+  const [hasCustomMusicError, setHasCustomMusicError] = useState(false);
 
-  // Initialize and manage audio playback
+  // Initialize and manage audio playback with error fallback
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Create audio element
-    const audio = new Audio(soundtrack.track);
+    // Create audio element (use custom music if available, otherwise default soundtrack)
+    const audio = new Audio(audioTrack);
     audio.loop = true;
     audio.volume = isMuted ? 0 : 0.5; // Start at 50% volume
+    audio.preload = 'auto'; // Ensure audio starts loading immediately
     audioRef.current = audio;
 
     // Handle audio ready state
-    const handleCanPlay = () => setIsAudioReady(true);
-    audio.addEventListener('canplay', handleCanPlay);
+    const handleCanPlay = () => {
+      setIsAudioReady(true);
+      // If user already clicked "Begin", start playing immediately when audio is ready
+      if (currentStep > 0) {
+        audio.play().catch(err => {
+          console.warn('Audio playback failed on load:', err.message);
+        });
+      }
+    };
 
-    // Start playing when experience begins (after welcome screen)
-    if (currentStep > 0 && isAudioReady) {
-      audio.play().catch(err => {
-        // Autoplay blocked - expected on first interaction, no action needed
-        console.warn('Audio autoplay blocked:', err.message);
-      });
-    }
+    // Handle audio load errors (custom music failed to load)
+    const handleError = (e: ErrorEvent | Event) => {
+      console.error('Audio load error:', e);
+      // If custom music failed and we haven't already fallen back
+      if (customMusicUrl && audioTrack === customMusicUrl && !hasCustomMusicError) {
+        console.warn('Custom music failed to load, falling back to default soundtrack');
+        setHasCustomMusicError(true);
+        setAudioTrack(soundtrack.track);
+      }
+    };
+
+    audio.addEventListener('canplay', handleCanPlay);
+    audio.addEventListener('error', handleError);
+
+    // Start loading immediately
+    audio.load();
 
     // Cleanup
     return () => {
       audio.pause();
       audio.removeEventListener('canplay', handleCanPlay);
+      audio.removeEventListener('error', handleError);
       audioRef.current = null;
     };
-  }, [soundtrack.track]);
+  }, [audioTrack, customMusicUrl, hasCustomMusicError, soundtrack.track]);
 
   // Control audio playback based on current step
   useEffect(() => {
@@ -129,8 +151,17 @@ export default function RevealExperience({
   // Mute/unmute control
   useEffect(() => {
     if (!audioRef.current) return;
+
     audioRef.current.volume = isMuted ? 0 : 0.5;
-  }, [isMuted]);
+
+    // If unmuting while in the experience and audio is paused, resume playback
+    // (Audio might be paused due to video playback or other scene transitions)
+    if (!isMuted && currentStep > 0 && audioRef.current.paused) {
+      audioRef.current.play().catch(err => {
+        console.warn('Failed to resume audio after unmute:', err.message);
+      });
+    }
+  }, [isMuted, currentStep]);
 
   const handleToggleMute = () => {
     setIsMuted(!isMuted);

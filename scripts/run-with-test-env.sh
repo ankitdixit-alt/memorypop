@@ -16,6 +16,9 @@ fi
 # Load test environment variables
 echo "📦 Loading test environment from .env.test..."
 
+# Set NODE_ENV=test to make Next.js skip .env.local and load .env.test
+export NODE_ENV=test
+
 # Export each line from .env.test
 set -a
 source .env.test

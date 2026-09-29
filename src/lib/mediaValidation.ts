@@ -48,8 +48,11 @@ export function validatePhotoFile(file: File): PhotoValidation {
 /**
  * Validate video file
  * Standard: max 1 video, 50MB, 15s max, MP4/MOV/WebM only
+ * Plus: max 1 video, 50MB, 90s max, MP4/MOV/WebM only
+ * @param file - Video file to validate
+ * @param maxDurationSeconds - Maximum allowed duration (15 for Standard, 90 for Plus)
  */
-export async function validateVideoFile(file: File): Promise<VideoValidation> {
+export async function validateVideoFile(file: File, maxDurationSeconds: number = 15): Promise<VideoValidation> {
   // Validate file type
   const allowedTypes = ['video/mp4', 'video/quicktime', 'video/webm'];
   if (!allowedTypes.includes(file.type)) {
@@ -79,10 +82,11 @@ export async function validateVideoFile(file: File): Promise<VideoValidation> {
       };
     }
 
-    if (duration > 15) {
+    if (duration > maxDurationSeconds) {
+      const tierName = maxDurationSeconds === 15 ? 'Standard MemoryPops' : 'MemoryPop Plus';
       return {
         valid: false,
-        error: `Video is ${duration.toFixed(1)} seconds long. Standard MemoryPops have a 15-second video limit.`,
+        error: `Video is ${duration.toFixed(1)} seconds long. ${tierName} has a ${maxDurationSeconds}-second video limit.`,
         duration
       };
     }

@@ -5,22 +5,22 @@
  * Handles photo, GIF, and video uploads to Supabase Storage.
  * Server-side upload using service role.
  *
- * Standard multimedia support:
- * - Photos: JPEG, PNG, WebP (max 10MB each, up to 3)
- * - GIFs: Animated GIF (max 5MB, up to 1)
- * - Video: MP4, MOV, WebM (max 50MB, max 15 seconds, up to 1)
+ * Tier-based multimedia support:
+ * - Standard: 3 photos (10MB), 1 GIF (5MB), 15s video (50MB)
+ * - Plus: 10 photos (10MB), 3 GIFs (5MB), 90s video (50MB)
  *
  * Security:
  * - Uses service role for storage operations
  * - Validates file type per media type
  * - Validates file size per media type
- * - Server-side video duration validation (15s limit for Standard tier)
+ * - Server-side video duration validation with tier-specific limits
  * - Generates unique file names to prevent collisions
  * - Returns public URL for uploaded file
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createHmac } from 'crypto';
+import { getContributionLimits } from '@/config/plus';
 
 // Opt out of static generation for this API route
 export const dynamic = 'force-dynamic';
@@ -49,9 +49,6 @@ const ALLOWED_TYPES = {
   gif: ['image/gif'],
   video: ['video/mp4', 'video/quicktime', 'video/webm'],
 };
-
-// Video duration limit for Standard tier (seconds)
-const MAX_VIDEO_DURATION = 15;
 
 /**
  * Parse video duration from MP4/MOV/WebM container metadata
@@ -317,6 +314,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Fetch gift tier for video duration validation
+    // Required for tier-specific limits (Standard 15s, Plus 90s)
+    let isPremium = false;
+    if (mediaType === 'video') {
+      const { data: memorypop, error: fetchError } = await supabaseServer
+        .from('memorypops')
+        .select('is_premium')
+        .eq('share_code', shareCode)
+        .single();
+
+      if (fetchError || !memorypop) {
+        return NextResponse.json(
+          { error: 'MemoryPop not found' },
+          { status: 404 }
+        );
+      }
+
+      isPremium = memorypop.is_premium;
+    }
+
+    // Get tier-specific limits
+    const limits = getContributionLimits(isPremium);
+
     // Convert File to Buffer once (reused for validation and upload)
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
@@ -351,11 +371,12 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Enforce Standard tier 15-second limit
-      if (videoDuration > MAX_VIDEO_DURATION) {
+      // Enforce tier-specific duration limit
+      if (videoDuration > limits.videoSeconds) {
+        const tierName = isPremium ? 'MemoryPop Plus' : 'Standard MemoryPops';
         return NextResponse.json(
           {
-            error: `Video duration ${videoDuration.toFixed(1)}s exceeds ${MAX_VIDEO_DURATION}s limit for Standard MemoryPops.`,
+            error: `Video duration ${videoDuration.toFixed(1)}s exceeds ${limits.videoSeconds}s limit for ${tierName}.`,
             duration: videoDuration,
           },
           { status: 400 }

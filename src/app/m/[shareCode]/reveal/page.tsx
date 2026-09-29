@@ -132,6 +132,25 @@ export default async function RevealPage({
     }
   }
 
+  // Generate signed playback URL from durable storage path
+  // Recipients don't need creator access - this is authorized reveal
+  let customMusicUrl: string | null = null;
+  if (memoryPop.custom_music_url) {
+    try {
+      const { data: signedData, error: signedError } = await supabaseServer.storage
+        .from('memorypop-custom-music')
+        .createSignedUrl(memoryPop.custom_music_url, 3600); // 1 hour validity
+
+      if (signedData && !signedError) {
+        customMusicUrl = signedData.signedUrl;
+      } else {
+        console.warn('Failed to generate custom music playback URL:', signedError);
+      }
+    } catch (error) {
+      console.warn('Custom music URL generation error:', error);
+    }
+  }
+
   // Pass to client component
   return (
     <RevealExperience
@@ -146,6 +165,7 @@ export default async function RevealPage({
       existingReaction={existingReaction}
       isPlusGift={isPlusGift}
       revealPlan={revealPlan}
+      customMusicUrl={customMusicUrl}
     />
   );
 }

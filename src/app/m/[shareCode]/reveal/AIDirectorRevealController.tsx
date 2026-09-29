@@ -18,7 +18,7 @@
  * - All approved presentation features from RevealPlayer
  */
 
-import { useMemo, useCallback, useState } from 'react'
+import { useMemo, useCallback, useState, useEffect } from 'react'
 import { adaptRevealPlanToStory } from '@/lib/ai/planAdapter'
 import { RevealPlayer } from '@/app/ai-director-reveal/RevealPlayer'
 import type { RevealPlan, MemoryMetadata } from '@/lib/ai/types'
@@ -121,6 +121,11 @@ export default function AIDirectorRevealController({
 
   // Sound state managed by parent through props
   const [soundEnabled, setSoundEnabled] = useState(!isMusicMuted)
+
+  // Sync local sound state when parent mute state changes
+  useEffect(() => {
+    setSoundEnabled(!isMusicMuted)
+  }, [isMusicMuted])
 
   // Sync sound state with parent
   const handleSoundToggle = useCallback((enabled: boolean) => {

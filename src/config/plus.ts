@@ -45,3 +45,12 @@ export const MEMORYPOP_PLUS = {
   comingSoonConfirmation: '✓ Thanks — noted 💛',
   comingSoonFollowup: 'We\'ll let you know when MemoryPop Plus is ready.',
 } as const;
+
+/**
+ * Get contribution limits for a tier
+ * @param isPremium - Whether the gift is Plus/Premium tier
+ * @returns Contribution limits for the tier
+ */
+export function getContributionLimits(isPremium: boolean) {
+  return isPremium ? MEMORYPOP_PLUS.plus : MEMORYPOP_PLUS.standard;
+}

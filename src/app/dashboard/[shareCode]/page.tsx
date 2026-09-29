@@ -221,11 +221,13 @@ export default async function DashboardPage({
           </Suspense>
         )} */}
 
-        {/* Plus Features (Welcome Message & Upgrade CTA) */}
+        {/* Plus Features (Welcome Message, Upgrade CTA, Custom Music) */}
         <Suspense fallback={null}>
           <DashboardPlusFeatures
             isPremium={memorypop.is_premium || false}
             shareCode={shareCode}
+            memorypopId={memorypop.id}
+            customMusicUrl={memorypop.custom_music_url || null}
           />
         </Suspense>
 

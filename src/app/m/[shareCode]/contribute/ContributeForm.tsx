@@ -10,6 +10,7 @@ import { getCoverTheme } from "@/lib/coverTheme";
 import type { MediaItem, VideoMedia } from "@/components/memory-experience/types";
 import CuratedGifPicker from "@/components/contribute/CuratedGifPicker";
 import type { CuratedGif } from "@/lib/curatedGifs";
+import { getContributionLimits } from "@/config/plus";
 
 interface Props {
   shareCode: string;
@@ -18,6 +19,7 @@ interface Props {
   celebrationDate: string | null;
   coverStyle: string | null;
   tone: string;
+  isPremium: boolean;
 }
 
 export default function ContributeForm({
@@ -27,13 +29,17 @@ export default function ContributeForm({
   celebrationDate,
   coverStyle,
   tone,
+  isPremium,
 }: Props) {
   const router = useRouter();
 
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
 
-  // Standard multimedia state (3 photos + 1 GIF + 1 video)
+  // Get tier-specific contribution limits
+  const limits = useMemo(() => getContributionLimits(isPremium), [isPremium]);
+
+  // Multimedia state (tier-based: Standard 3/1/15s, Plus 10/3/90s)
   const [photos, setPhotos] = useState<Array<{file: File; preview: string; uploading: boolean}>>([]);
   const [selectedCuratedGif, setSelectedCuratedGif] = useState<CuratedGif | null>(null);
   const [video, setVideo] = useState<{file: File; preview: string; duration: number; uploading: boolean} | null>(null);
@@ -67,18 +73,18 @@ export default function ContributeForm({
     return getCoverTheme(coverStyle);
   }, [coverStyle]);
 
-  // Photo upload handler (up to 3 photos, 10MB each)
+  // Photo upload handler (tier-based limits)
   function handlePhotoUpload(event: ChangeEvent<HTMLInputElement>) {
     const files = Array.from(event.target.files || []);
 
     if (files.length === 0) return;
 
-    // Validate count (Standard tier: max 3 photos)
-    const remainingSlots = 3 - photos.length;
+    // Validate count (tier-based: Standard 3, Plus 10)
+    const remainingSlots = limits.photos - photos.length;
     if (files.length > remainingSlots) {
       setUploadErrors(prev => ({
         ...prev,
-        photos: `You can add up to 3 photos. You have ${remainingSlots} slot${remainingSlots === 1 ? '' : 's'} remaining.`
+        photos: `You can add up to ${limits.photos} photos. You have ${remainingSlots} slot${remainingSlots === 1 ? '' : 's'} remaining.`
       }));
       return;
     }
@@ -190,10 +196,11 @@ export default function ContributeForm({
         return;
       }
 
-      if (duration > 15) {
+      if (duration > limits.videoSeconds) {
+        const tierName = isPremium ? 'MemoryPop Plus' : 'Standard MemoryPops';
         setUploadErrors(prev => ({
           ...prev,
-          video: `Video is ${duration.toFixed(1)} seconds long. Standard MemoryPops have a 15-second video limit.`
+          video: `Video is ${duration.toFixed(1)} seconds long. ${tierName} have a ${limits.videoSeconds}-second video limit.`
         }));
         URL.revokeObjectURL(videoElement.src);
         return;
@@ -694,10 +701,10 @@ export default function ContributeForm({
               Add photos, a GIF, or a video to make your memory even more special. All are optional, but they help {recipientName || 'them'} feel the moment.
             </p>
 
-            {/* Photos Section (up to 3) */}
+            {/* Photos Section (tier-based limits) */}
             <div className="mb-8">
               <label className="block font-semibold text-[#2B1E18] mb-1">
-                📸 Photos (up to 3)
+                📸 Photos (up to {limits.photos})
               </label>
               <p className="text-sm text-[#6B5B52] mb-3">
                 Share favorite moments, places you both love, or anything that captures your connection.
@@ -708,7 +715,7 @@ export default function ContributeForm({
                 accept="image/jpeg,image/jpg,image/png,image/webp"
                 multiple
                 onChange={handlePhotoUpload}
-                disabled={photos.length >= 3}
+                disabled={photos.length >= limits.photos}
                 className="block w-full rounded-2xl border border-[#F0DED2] bg-white px-5 py-4 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               />
 
@@ -740,9 +747,9 @@ export default function ContributeForm({
                 </div>
               )}
 
-              {photos.length > 0 && photos.length < 3 && (
+              {photos.length > 0 && photos.length < limits.photos && (
                 <p className="mt-2 text-xs text-[#6B5B52] italic">
-                  {3 - photos.length} more photo{3 - photos.length === 1 ? '' : 's'} available
+                  {limits.photos - photos.length} more photo{limits.photos - photos.length === 1 ? '' : 's'} available
                 </p>
               )}
             </div>
@@ -763,13 +770,13 @@ export default function ContributeForm({
               )}
             </div>
 
-            {/* Video Section (up to 1, max 15s) */}
+            {/* Video Section (tier-based limits) */}
             <div className="mb-6">
               <label className="block font-semibold text-[#2B1E18] mb-1">
-                🎥 Video (up to 1, max 15 seconds)
+                🎥 Video (up to 1, max {limits.videoSeconds} seconds)
               </label>
               <p className="text-sm text-[#6B5B52] mb-3">
-                Share a short video message or moment. Standard MemoryPops support videos up to 15 seconds.
+                Share a short video message or moment. {isPremium ? 'MemoryPop Plus' : 'Standard MemoryPops'} support videos up to {limits.videoSeconds} seconds.
               </p>
 
               <input
