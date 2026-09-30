@@ -2,7 +2,7 @@ import { supabaseServer } from "@/lib/supabaseServer";
 import { notFound, redirect } from "next/navigation";
 import { isCreatorAuthorized } from "@/lib/creatorSession";
 import { headers } from "next/headers";
-import { ShareButtons } from "@/components/ShareButtons";
+import { DashboardSharingCards } from "@/components/DashboardSharingCards";
 import { DashboardPlusFeatures } from "@/components/DashboardPlusFeatures";
 // import { EmailCaptureReminder } from "@/components/EmailCaptureReminder"; // Disabled: incompatible with new security model
 import DashboardClientSection from "@/components/DashboardClientSection";
@@ -143,11 +143,12 @@ export default async function DashboardPage({
     memories?.map((m) => m.contributor_name) || []
   ).size;
 
-  // Generate share link
+  // Generate share links
   const headersList = await headers();
   const host = headersList.get("host") || "localhost:3000";
   const protocol = host.includes("localhost") ? "http" : "https";
   const shareLink = `${protocol}://${host}/m/${shareCode}/contribute`;
+  const revealLink = `${protocol}://${host}/m/${shareCode}/reveal`;
 
   // Get celebration experience (occasion + mood composition)
   const celebrationExperience = getCelebrationExperience({
@@ -156,6 +157,9 @@ export default async function DashboardPage({
     recipientName: memorypop.recipient_name
   });
   const revealWhatsappMessage = celebrationExperience.revealWhatsappMessage || '';
+
+  // Check if reveal is ready
+  const isRevealReady = memorypop.status === 'ready' || memorypop.status === 'revealed';
 
   // Get adaptive theme for timeline card
   // This ensures text is readable on both light and dark gradients
@@ -270,44 +274,32 @@ export default async function DashboardPage({
           </div>
         )}
 
-        {/* Quick Actions - Contributor Invitations */}
-        <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm">
-          <p className="mb-4 text-center text-sm font-semibold uppercase tracking-wide text-[#856b5f]">
-            Invite Contributors
-          </p>
-          <p className="mb-4 text-center text-xs text-[#6B5B52] italic">
-            Share this link with friends and family to collect memories
-          </p>
-
-          <div className="flex flex-col gap-3">
-            <ShareButtons
-              shareLink={shareLink}
-              recipient={memorypop.recipient_name}
-              whatsappMessage={celebrationExperience.whatsappMessage}
-              mode="contributor"
-              shareCode={memorypop.share_code}
-            />
-
-            <Link
-              href={`/m/${shareCode}`}
-              className="rounded-full border border-[#ead8c9] bg-white px-7 py-4 text-center font-semibold text-[#3a241e] transition-colors hover:bg-[#fff8ef] active:ring-2 active:ring-[#FF6B57] active:ring-offset-2 transition-all"
-            >
-              Preview MemoryPop
-            </Link>
-          </div>
+        {/* Sharing Cards - Redesigned UI */}
+        <div className="mt-6">
+          <DashboardSharingCards
+            contributorLink={shareLink}
+            contributorMessage={celebrationExperience.whatsappMessage}
+            recipientName={memorypop.recipient_name}
+            shareCode={shareCode}
+            isReady={isRevealReady}
+            revealLink={revealLink}
+            revealMessage={revealWhatsappMessage}
+          />
         </div>
 
-        {/* Reveal Workflow Section - Client Component */}
-        <Suspense fallback={null}>
-          <DashboardClientSection
-            memorypopId={memorypop.id}
-            shareCode={shareCode}
-            recipientName={memorypop.recipient_name}
-            memoryCount={memoryCount}
-            currentStatus={memorypop.status}
-            revealWhatsappMessage={revealWhatsappMessage}
-          />
-        </Suspense>
+        {/* Prepare Reveal Section (shown when collecting) */}
+        {memorypop.status === 'collecting' && (
+          <Suspense fallback={null}>
+            <DashboardClientSection
+              memorypopId={memorypop.id}
+              shareCode={shareCode}
+              recipientName={memorypop.recipient_name}
+              memoryCount={memoryCount}
+              currentStatus={memorypop.status}
+              revealWhatsappMessage={revealWhatsappMessage}
+            />
+          </Suspense>
+        )}
 
         {/* Story Card */}
         <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm">

@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { canTransitionToReady } from "@/lib/memoryPopStates";
 import PrepareRevealModal from "./PrepareRevealModal";
-import RevealLinkSection from "./RevealLinkSection";
 
 interface Props {
   memorypopId: string;
@@ -22,6 +22,7 @@ export default function DashboardClientSection({
   currentStatus,
   revealWhatsappMessage,
 }: Props) {
+  const router = useRouter();
   const [status, setStatus] = useState(currentStatus);
   const [showModal, setShowModal] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -40,6 +41,8 @@ export default function DashboardClientSection({
       if (response.ok) {
         setStatus('ready');
         setShowModal(false);
+        // Refresh the page to show updated reveal card in DashboardSharingCards
+        router.refresh();
       } else {
         alert('Failed to prepare reveal. Please try again.');
       }
@@ -94,28 +97,7 @@ export default function DashboardClientSection({
     );
   }
 
-  // Ready or Revealed state: Show reveal link section
-  if (status === 'ready' || status === 'revealed') {
-    return (
-      <>
-        <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm text-center">
-          <p className="text-4xl mb-3">✅</p>
-          <h2 className="text-xl font-bold text-[#3a241e] mb-2">
-            Your MemoryPop is ready to share with {recipientName}
-          </h2>
-          <p className="text-[#856b5f]">
-            Use the reveal link below when you&apos;re ready to share the celebration.
-          </p>
-        </div>
-
-        <RevealLinkSection
-          shareCode={shareCode}
-          recipientName={recipientName}
-          revealWhatsappMessage={revealWhatsappMessage}
-        />
-      </>
-    );
-  }
-
+  // Ready or Revealed state: No longer needed here
+  // Reveal sharing is now handled by DashboardSharingCards component
   return null;
 }

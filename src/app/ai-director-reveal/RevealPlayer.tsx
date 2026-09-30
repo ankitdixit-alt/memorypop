@@ -32,6 +32,8 @@ interface RevealPlayerProps {
   onComplete?: () => void
   // Production music integration
   audioRef?: React.MutableRefObject<HTMLAudioElement | null>
+  // Share code for gift sharing
+  shareCode?: string
 }
 
 export function RevealPlayer({
@@ -44,7 +46,8 @@ export function RevealPlayer({
   onSound,
   showSpeedSelector = true,
   onComplete,
-  audioRef: externalAudioRef
+  audioRef: externalAudioRef,
+  shareCode
 }: RevealPlayerProps) {
   const beats = useMemo(() => buildBeats(story, mode), [story, mode])
   const player = usePlayback(beats, speed)
@@ -61,6 +64,12 @@ export function RevealPlayer({
   const isClosing = beat.kind === 'closing'
   const modalOpen = wall || inspected !== null
   const [isMobile, setIsMobile] = useState(false)
+
+  // Gift sharing state
+  const [showGiftSharing, setShowGiftSharing] = useState(false)
+  const [showMoreChannels, setShowMoreChannels] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const [showFallback, setShowFallback] = useState(false)
 
   // Tile transition state
   const [showTileTransition, setShowTileTransition] = useState(false)
@@ -162,6 +171,98 @@ export function RevealPlayer({
 
   const closeModal = () => { setWall(false); setInspected(null) }
 
+  // Gift sharing handlers
+  const giftLink = typeof window !== 'undefined' && shareCode
+    ? `${window.location.origin}/m/${shareCode}/reveal`
+    : ''
+
+  const handleCopyGift = async () => {
+    if (!giftLink) return
+    try {
+      await navigator.clipboard.writeText(giftLink)
+      setCopied(true)
+      setShowFallback(false)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (error) {
+      console.error('Failed to copy:', error)
+      setShowFallback(true)
+      setCopied(false)
+    }
+  }
+
+  const handleWhatsAppGift = () => {
+    if (!giftLink) return
+    const message = `Look at this lovely MemoryPop made for me ❤️ ${giftLink}`
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`
+    window.location.href = whatsappUrl
+  }
+
+  const handleTelegramGift = () => {
+    if (!giftLink) return
+    const text = 'Look at this lovely MemoryPop made for me ❤️'
+    const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(giftLink)}&text=${encodeURIComponent(text)}`
+    window.open(telegramUrl, '_blank', 'noopener,noreferrer')
+  }
+
+  const handleEmailGift = () => {
+    if (!giftLink) return
+    const subject = 'Look at this MemoryPop'
+    const body = `Look at this lovely MemoryPop made for me ❤️\n\n${giftLink}`
+    const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+    window.location.href = mailtoUrl
+  }
+
+  const handleFacebookGift = () => {
+    if (!giftLink) return
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(giftLink)}`
+    window.open(facebookUrl, '_blank', 'noopener,noreferrer,width=600,height=400')
+  }
+
+  const handleXGift = () => {
+    if (!giftLink) return
+    const text = 'Look at this lovely MemoryPop made for me ❤️'
+    const xUrl = `https://x.com/intent/tweet?url=${encodeURIComponent(giftLink)}&text=${encodeURIComponent(text)}`
+    window.open(xUrl, '_blank', 'noopener,noreferrer,width=600,height=400')
+  }
+
+  const handleLinkedInGift = () => {
+    if (!giftLink) return
+    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(giftLink)}`
+    window.open(linkedInUrl, '_blank', 'noopener,noreferrer,width=600,height=400')
+  }
+
+  const handleRedditGift = () => {
+    if (!giftLink) return
+    const titleText = 'Look at this MemoryPop'
+    const redditUrl = `https://reddit.com/submit?url=${encodeURIComponent(giftLink)}&title=${encodeURIComponent(titleText)}`
+    window.open(redditUrl, '_blank', 'noopener,noreferrer')
+  }
+
+  const handleCopyMessageGift = async () => {
+    if (!giftLink) return
+    const message = `Look at this lovely MemoryPop made for me ❤️ ${giftLink}`
+    try {
+      await navigator.clipboard.writeText(message)
+    } catch (error) {
+      console.error('Failed to copy message:', error)
+    }
+  }
+
+  const handleNativeShareGift = async () => {
+    if (!navigator.share || !giftLink) return
+    try {
+      await navigator.share({
+        title: 'Look at this MemoryPop',
+        text: 'Look at this lovely MemoryPop made for me ❤️',
+        url: giftLink
+      })
+    } catch (error: any) {
+      if (error.name !== 'AbortError') {
+        console.error('Native share failed:', error)
+      }
+    }
+  }
+
   // Music with ducking during video (production integration)
   useEffect(() => {
     const audio = externalAudioRef?.current
@@ -219,13 +320,9 @@ export function RevealPlayer({
     return () => window.removeEventListener('keydown', keys)
   }, [modalOpen, isClosing, toggle, player])
 
-  // Production completion callback
-  useEffect(() => {
-    if (isClosing && !player.running && onComplete) {
-      const timer = setTimeout(onComplete, 2000)
-      return () => clearTimeout(timer)
-    }
-  }, [isClosing, player.running, onComplete])
+  // Production completion callback removed
+  // Keep ending screen stable until user takes explicit action
+  // onComplete is available but not automatically called
 
   const currentProgress = isVideo ? videoProgress : player.progress
   const overall = isClosing ? 100 : Math.round((player.index + currentProgress) / (beats.length - 1) * 100)
@@ -319,7 +416,360 @@ export function RevealPlayer({
           <p className={s.eyebrow}>{story.occasion === 'sympathy' ? 'Held in memory' : 'Made together. Yours to revisit.'}</p>
           <h2>{story.occasion === 'sympathy' ? 'These memories are here for you.' : 'All these people. All this love.'}</h2>
           <p>{story.memories.length} contributions, ready to revisit whenever you like.</p>
-          <div className={s.endActions}><button className={s.primary} onClick={() => player.go(0, true)}>Replay reveal ↻</button><button onClick={openWall}>Visit memory wall ↗</button></div>
+          <div className={s.endActions}>
+            {onComplete && <button className={s.primary} onClick={onComplete}>Leave a reaction</button>}
+            <button onClick={() => player.go(0, true)}>Replay reveal ↻</button>
+            <button onClick={openWall}>Visit memory wall ↗</button>
+          </div>
+
+          {/* Gift sharing - discreet action */}
+          {shareCode && (
+            <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+              {!showGiftSharing ? (
+                <button
+                  onClick={() => setShowGiftSharing(true)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'inherit',
+                    opacity: 0.7,
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  Share this gift
+                </button>
+              ) : (
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  borderRadius: '12px',
+                  padding: '1rem',
+                  maxWidth: '400px',
+                  margin: '0 auto',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                    <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#3a241e' }}>Share this gift</span>
+                    <button
+                      onClick={() => setShowGiftSharing(false)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        fontSize: '1.25rem',
+                        cursor: 'pointer',
+                        padding: '0 0.25rem',
+                        color: '#6B5B52'
+                      }}
+                      aria-label="Close sharing"
+                    >
+                      ×
+                    </button>
+                  </div>
+
+                  {/* Main actions */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                    <button
+                      onClick={handleWhatsAppGift}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.5rem',
+                        borderRadius: '8px',
+                        background: '#25D366',
+                        color: 'white',
+                        border: 'none',
+                        padding: '0.625rem',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <span>💬</span>
+                      <span>WhatsApp</span>
+                    </button>
+                    <button
+                      onClick={handleCopyGift}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.5rem',
+                        borderRadius: '8px',
+                        background: '#ef6a57',
+                        color: 'white',
+                        border: 'none',
+                        padding: '0.625rem',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {copied ? (
+                        <>
+                          <span>✓</span>
+                          <span>Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>🔗</span>
+                          <span>Copy link</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Clipboard fallback */}
+                  {showFallback && (
+                    <div style={{
+                      marginBottom: '0.75rem',
+                      borderRadius: '8px',
+                      border: '1px solid #FFD4CC',
+                      background: '#FFF8F5',
+                      padding: '0.75rem'
+                    }}>
+                      <p style={{ marginBottom: '0.5rem', fontSize: '0.75rem', color: '#6B5B52' }}>
+                        Unable to copy automatically. Select and copy the link below:
+                      </p>
+                      <input
+                        type="text"
+                        readOnly
+                        value={giftLink}
+                        onClick={(e) => e.currentTarget.select()}
+                        style={{
+                          width: '100%',
+                          borderRadius: '4px',
+                          border: '1px solid #ead8c9',
+                          background: 'white',
+                          padding: '0.5rem',
+                          fontSize: '0.75rem',
+                          fontFamily: 'monospace',
+                          color: '#3a241e'
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  {/* Secondary actions */}
+                  <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.875rem', justifyContent: 'center', alignItems: 'center' }}>
+                    <button
+                      onClick={handleTelegramGift}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#856b5f',
+                        textDecoration: 'underline',
+                        cursor: 'pointer',
+                        padding: 0
+                      }}
+                    >
+                      📱 Telegram
+                    </button>
+                    <span style={{ color: '#ead8c9' }}>•</span>
+                    <div style={{ position: 'relative' }}>
+                      <button
+                        onClick={() => setShowMoreChannels(!showMoreChannels)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#856b5f',
+                          textDecoration: 'underline',
+                          cursor: 'pointer',
+                          padding: 0
+                        }}
+                      >
+                        {showMoreChannels ? 'Hide channels' : 'More channels'}
+                      </button>
+
+                      {showMoreChannels && (
+                        <div style={{
+                          position: 'absolute',
+                          bottom: '100%',
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          marginBottom: '0.5rem',
+                          minWidth: '200px',
+                          borderRadius: '12px',
+                          border: '1px solid #FFD4CC',
+                          background: 'white',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                          zIndex: 10
+                        }}>
+                          <div style={{ padding: '0.5rem' }}>
+                            <button
+                              onClick={() => { handleEmailGift(); setShowMoreChannels(false) }}
+                              style={{
+                                display: 'flex',
+                                width: '100%',
+                                alignItems: 'center',
+                                gap: '0.75rem',
+                                borderRadius: '8px',
+                                padding: '0.625rem 1rem',
+                                textAlign: 'left',
+                                fontSize: '0.875rem',
+                                fontWeight: 500,
+                                color: '#3a241e',
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer'
+                              }}
+                              onMouseOver={(e) => e.currentTarget.style.background = '#FFF8F2'}
+                              onMouseOut={(e) => e.currentTarget.style.background = 'none'}
+                            >
+                              <span>📧</span>
+                              <span>Email</span>
+                            </button>
+                            <button
+                              onClick={() => { handleFacebookGift(); setShowMoreChannels(false) }}
+                              style={{
+                                display: 'flex',
+                                width: '100%',
+                                alignItems: 'center',
+                                gap: '0.75rem',
+                                borderRadius: '8px',
+                                padding: '0.625rem 1rem',
+                                textAlign: 'left',
+                                fontSize: '0.875rem',
+                                fontWeight: 500,
+                                color: '#3a241e',
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer'
+                              }}
+                              onMouseOver={(e) => e.currentTarget.style.background = '#FFF8F2'}
+                              onMouseOut={(e) => e.currentTarget.style.background = 'none'}
+                            >
+                              <span>📘</span>
+                              <span>Facebook</span>
+                            </button>
+                            <button
+                              onClick={() => { handleXGift(); setShowMoreChannels(false) }}
+                              style={{
+                                display: 'flex',
+                                width: '100%',
+                                alignItems: 'center',
+                                gap: '0.75rem',
+                                borderRadius: '8px',
+                                padding: '0.625rem 1rem',
+                                textAlign: 'left',
+                                fontSize: '0.875rem',
+                                fontWeight: 500,
+                                color: '#3a241e',
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer'
+                              }}
+                              onMouseOver={(e) => e.currentTarget.style.background = '#FFF8F2'}
+                              onMouseOut={(e) => e.currentTarget.style.background = 'none'}
+                            >
+                              <span>𝕏</span>
+                              <span>X (Twitter)</span>
+                            </button>
+                            <button
+                              onClick={() => { handleLinkedInGift(); setShowMoreChannels(false) }}
+                              style={{
+                                display: 'flex',
+                                width: '100%',
+                                alignItems: 'center',
+                                gap: '0.75rem',
+                                borderRadius: '8px',
+                                padding: '0.625rem 1rem',
+                                textAlign: 'left',
+                                fontSize: '0.875rem',
+                                fontWeight: 500,
+                                color: '#3a241e',
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer'
+                              }}
+                              onMouseOver={(e) => e.currentTarget.style.background = '#FFF8F2'}
+                              onMouseOut={(e) => e.currentTarget.style.background = 'none'}
+                            >
+                              <span>💼</span>
+                              <span>LinkedIn</span>
+                            </button>
+                            <button
+                              onClick={() => { handleRedditGift(); setShowMoreChannels(false) }}
+                              style={{
+                                display: 'flex',
+                                width: '100%',
+                                alignItems: 'center',
+                                gap: '0.75rem',
+                                borderRadius: '8px',
+                                padding: '0.625rem 1rem',
+                                textAlign: 'left',
+                                fontSize: '0.875rem',
+                                fontWeight: 500,
+                                color: '#3a241e',
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer'
+                              }}
+                              onMouseOver={(e) => e.currentTarget.style.background = '#FFF8F2'}
+                              onMouseOut={(e) => e.currentTarget.style.background = 'none'}
+                            >
+                              <span>🔴</span>
+                              <span>Reddit</span>
+                            </button>
+                            <div style={{ margin: '0.25rem 0', borderTop: '1px solid #FFD4CC' }} />
+                            <button
+                              onClick={() => { handleCopyMessageGift(); setShowMoreChannels(false) }}
+                              style={{
+                                display: 'flex',
+                                width: '100%',
+                                alignItems: 'center',
+                                gap: '0.75rem',
+                                borderRadius: '8px',
+                                padding: '0.625rem 1rem',
+                                textAlign: 'left',
+                                fontSize: '0.875rem',
+                                fontWeight: 500,
+                                color: '#3a241e',
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer'
+                              }}
+                              onMouseOver={(e) => e.currentTarget.style.background = '#FFF8F2'}
+                              onMouseOut={(e) => e.currentTarget.style.background = 'none'}
+                            >
+                              <span>📋</span>
+                              <span>Copy message</span>
+                            </button>
+                            {typeof navigator !== 'undefined' && 'share' in navigator && (
+                              <button
+                                onClick={() => { handleNativeShareGift(); setShowMoreChannels(false) }}
+                                style={{
+                                  display: 'flex',
+                                  width: '100%',
+                                  alignItems: 'center',
+                                  gap: '0.75rem',
+                                  borderRadius: '8px',
+                                  padding: '0.625rem 1rem',
+                                  textAlign: 'left',
+                                  fontSize: '0.875rem',
+                                  fontWeight: 500,
+                                  color: '#3a241e',
+                                  background: 'none',
+                                  border: 'none',
+                                  cursor: 'pointer'
+                                }}
+                                onMouseOver={(e) => e.currentTarget.style.background = '#FFF8F2'}
+                                onMouseOut={(e) => e.currentTarget.style.background = 'none'}
+                              >
+                                <span>↗️</span>
+                                <span>Share via device</span>
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>}
       </section>
 

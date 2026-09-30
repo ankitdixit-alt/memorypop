@@ -5,6 +5,7 @@ import { useState } from "react";
 interface Props {
   memorypopId: string;
   onReactionSelect: (reactionType: string) => void;
+  onSkip?: () => void;
 }
 
 const REACTIONS = [
@@ -13,7 +14,7 @@ const REACTIONS = [
   { type: "made_me_laugh", emoji: "😂", label: "Made me laugh" },
 ] as const;
 
-export default function ReactionPrompt({ memorypopId, onReactionSelect }: Props) {
+export default function ReactionPrompt({ memorypopId, onReactionSelect, onSkip }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedType, setSelectedType] = useState<string | null>(null);
 
@@ -92,6 +93,16 @@ export default function ReactionPrompt({ memorypopId, onReactionSelect }: Props)
         <p className="mt-6 text-sm text-[#856b5f]">
           Saving your reaction...
         </p>
+      )}
+
+      {/* Skip button */}
+      {onSkip && !isSubmitting && (
+        <button
+          onClick={onSkip}
+          className="mt-8 text-sm text-[#856b5f] underline hover:text-[#3a241e] transition-colors"
+        >
+          Maybe later
+        </button>
       )}
     </div>
   );

@@ -201,7 +201,10 @@ export default function RevealExperience({
     : 5; // not reacted: welcome + cinematic + final + reaction + thank you
 
   const handleNext = () => {
-    if (currentStep < totalSteps - 1) {
+    // For Plus gifts, skip FinalScreen (step 2) and go directly to ReactionPrompt (step 3)
+    if (currentStep === 1 && isPlusGift) {
+      setCurrentStep(3);
+    } else if (currentStep < totalSteps - 1) {
       setCurrentStep((prev) => prev + 1);
     }
   };
@@ -271,6 +274,7 @@ export default function RevealExperience({
         celebrationDate={celebrationDate}
         getCelebrationMessage={getCelebrationMessage}
         coverStyle={coverStyle}
+        shareCode={shareCode}
       />
     );
   } else if (currentStep === 3 && !hasReacted) {
@@ -279,6 +283,7 @@ export default function RevealExperience({
       <ReactionPrompt
         memorypopId={memorypopId}
         onReactionSelect={handleReactionSelect}
+        onSkip={isPlusGift ? () => setCurrentStep(1) : undefined}
       />
     );
   } else if (currentStep === 3 && hasReacted && selectedReaction) {
@@ -288,6 +293,7 @@ export default function RevealExperience({
         reactionType={selectedReaction}
         shareCode={shareCode}
         isReturningUser={true}
+        onBack={isPlusGift ? () => setCurrentStep(1) : undefined}
       />
     );
   } else if (currentStep === 4 && selectedReaction) {
@@ -296,6 +302,7 @@ export default function RevealExperience({
       <ReactionThankYou
         reactionType={selectedReaction}
         shareCode={shareCode}
+        onBack={isPlusGift ? () => setCurrentStep(1) : undefined}
       />
     );
   }
@@ -308,6 +315,7 @@ export default function RevealExperience({
       celebrationDate={celebrationDate}
       getCelebrationMessage={getCelebrationMessage}
       coverStyle={coverStyle}
+      shareCode={shareCode}
     />
   );
 }
@@ -399,12 +407,14 @@ function FinalScreen({
   celebrationDate,
   getCelebrationMessage,
   coverStyle,
+  shareCode,
 }: {
   celebrationExperience: { celebrationMessage: string; subMessage?: string; emoji: string };
   onNext?: () => void;
   celebrationDate?: string | null;
   getCelebrationMessage?: (dateString?: string | null) => string | null;
   coverStyle?: string | null;
+  shareCode?: string;
 }) {
   const specialMessage = getCelebrationMessage ? getCelebrationMessage(celebrationDate) : null;
   const theme = getCoverTheme(coverStyle);
@@ -469,6 +479,242 @@ function FinalScreen({
           </button>
         </div>
       )}
+
+      {/* Product Discovery - Organic Growth Opportunity (collapsed initially) */}
+      {shareCode && <ProductSharingPanel theme={theme} />}
+    </div>
+  );
+}
+
+// Collapsed product sharing panel
+function ProductSharingPanel({ theme }: { theme: any }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [showMoreChannels, setShowMoreChannels] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [showFallback, setShowFallback] = useState(false);
+
+  const shareLink = typeof window !== 'undefined' ? window.location.origin : 'https://memorypop.app';
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(shareLink);
+      setCopied(true);
+      setShowFallback(false);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error("Failed to copy:", error);
+      setShowFallback(true);
+      setCopied(false);
+    }
+  };
+
+  const handleWhatsApp = () => {
+    const message = `Create beautiful collaborative gifts with MemoryPop - the perfect way to celebrate someone special. ${shareLink}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.location.href = whatsappUrl;
+  };
+
+  const handleTelegram = () => {
+    const text = 'Create beautiful collaborative gifts with MemoryPop';
+    const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent(text)}`;
+    window.open(telegramUrl, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleEmail = () => {
+    const subject = 'Create beautiful gift memories with MemoryPop';
+    const body = `I wanted to share MemoryPop with you - it's a beautiful way to create collaborative gifts for someone special.\n\nYou can collect memories, photos, and messages from friends and family, then reveal them as a surprise gift.\n\n${shareLink}`;
+    const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoUrl;
+  };
+
+  const handleFacebook = () => {
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareLink)}`;
+    window.open(facebookUrl, '_blank', 'noopener,noreferrer,width=600,height=400');
+  };
+
+  const handleX = () => {
+    const text = 'Create beautiful collaborative gifts with MemoryPop';
+    const xUrl = `https://x.com/intent/tweet?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent(text)}`;
+    window.open(xUrl, '_blank', 'noopener,noreferrer,width=600,height=400');
+  };
+
+  const handleLinkedIn = () => {
+    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareLink)}`;
+    window.open(linkedInUrl, '_blank', 'noopener,noreferrer,width=600,height=400');
+  };
+
+  const handleReddit = () => {
+    const title = 'MemoryPop - Create beautiful collaborative gifts';
+    const redditUrl = `https://reddit.com/submit?url=${encodeURIComponent(shareLink)}&title=${encodeURIComponent(title)}`;
+    window.open(redditUrl, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleCopyMessage = async () => {
+    const fullMessage = `Create beautiful collaborative gifts with MemoryPop - the perfect way to celebrate someone special. ${shareLink}`;
+    try {
+      await navigator.clipboard.writeText(fullMessage);
+    } catch (error) {
+      console.error("Failed to copy message:", error);
+    }
+  };
+
+  const handleNativeShare = async () => {
+    if (!navigator.share) return;
+    try {
+      await navigator.share({
+        title: 'MemoryPop',
+        text: 'Create beautiful collaborative gifts with MemoryPop',
+        url: shareLink,
+      });
+    } catch (error: any) {
+      if (error.name !== 'AbortError') {
+        console.error('Native share failed:', error);
+      }
+    }
+  };
+
+  return (
+    <div className="mt-12 pt-8 border-t border-white/20 w-full max-w-md">
+      <div className="text-center">
+        <p className="text-sm mb-3" style={{ color: theme.secondaryText }}>
+          Loved your MemoryPop?
+        </p>
+
+        {!isExpanded ? (
+          <button
+            onClick={() => setIsExpanded(true)}
+            className="text-sm underline transition-colors"
+            style={{ color: theme.secondaryText }}
+            onMouseEnter={(e) => e.currentTarget.style.color = theme.primaryText}
+            onMouseLeave={(e) => e.currentTarget.style.color = theme.secondaryText}
+          >
+            Share MemoryPop
+          </button>
+        ) : (
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
+            <div className="flex justify-between items-center mb-4">
+              <p className="text-sm font-semibold text-[#3a241e]">Share MemoryPop</p>
+              <button
+                onClick={() => { setIsExpanded(false); setShowMoreChannels(false); }}
+                className="text-[#856b5f] hover:text-[#3a241e] text-xl leading-none"
+                aria-label="Close sharing panel"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Main Actions */}
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              <button
+                onClick={handleWhatsApp}
+                className="flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 font-semibold text-white text-sm transition-all hover:bg-[#22c55e] active:scale-95"
+              >
+                💬 WhatsApp
+              </button>
+              <button
+                onClick={handleCopy}
+                className="flex items-center justify-center gap-2 rounded-xl bg-[#ef6a57] px-4 py-3 font-semibold text-white text-sm transition-all hover:bg-[#e05a47] active:scale-95"
+              >
+                {copied ? '✓ Copied!' : '🔗 Copy Link'}
+              </button>
+            </div>
+
+            {/* Clipboard Fallback */}
+            {showFallback && (
+              <div className="mb-3 rounded-lg border border-[#FFD4CC] bg-[#FFF8F5] p-3">
+                <p className="mb-2 text-xs text-[#6B5B52]">
+                  Unable to copy automatically. Select and copy the link below:
+                </p>
+                <input
+                  type="text"
+                  readOnly
+                  value={shareLink}
+                  onClick={(e) => e.currentTarget.select()}
+                  className="w-full rounded-md border border-[#ead8c9] bg-white px-3 py-2 text-xs font-mono text-[#3a241e]"
+                />
+              </div>
+            )}
+
+            {/* Secondary Actions */}
+            <div className="mb-3 flex gap-2 justify-center text-sm">
+              <button
+                onClick={handleTelegram}
+                className="text-[#856b5f] underline hover:text-[#3a241e] transition-colors"
+              >
+                📱 Telegram
+              </button>
+              <span className="text-[#ead8c9]">•</span>
+              <div className="relative">
+                <button
+                  onClick={() => setShowMoreChannels(!showMoreChannels)}
+                  className="text-[#856b5f] underline hover:text-[#3a241e] transition-colors"
+                >
+                  {showMoreChannels ? 'Hide channels' : 'More channels'}
+                </button>
+
+                {showMoreChannels && (
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 min-w-[200px] rounded-xl border border-[#FFD4CC] bg-white shadow-lg z-10">
+                    <div className="p-2">
+                      <button
+                        onClick={() => { handleEmail(); setShowMoreChannels(false); }}
+                        className="flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium text-[#3a241e] transition-colors hover:bg-[#FFF8F2]"
+                      >
+                        <span>📧</span>
+                        <span>Email</span>
+                      </button>
+                      <button
+                        onClick={() => { handleFacebook(); setShowMoreChannels(false); }}
+                        className="flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium text-[#3a241e] transition-colors hover:bg-[#FFF8F2]"
+                      >
+                        <span>📘</span>
+                        <span>Facebook</span>
+                      </button>
+                      <button
+                        onClick={() => { handleX(); setShowMoreChannels(false); }}
+                        className="flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium text-[#3a241e] transition-colors hover:bg-[#FFF8F2]"
+                      >
+                        <span>𝕏</span>
+                        <span>X (Twitter)</span>
+                      </button>
+                      <button
+                        onClick={() => { handleLinkedIn(); setShowMoreChannels(false); }}
+                        className="flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium text-[#3a241e] transition-colors hover:bg-[#FFF8F2]"
+                      >
+                        <span>💼</span>
+                        <span>LinkedIn</span>
+                      </button>
+                      <button
+                        onClick={() => { handleReddit(); setShowMoreChannels(false); }}
+                        className="flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium text-[#3a241e] transition-colors hover:bg-[#FFF8F2]"
+                      >
+                        <span>🔴</span>
+                        <span>Reddit</span>
+                      </button>
+                      <div className="my-1 border-t border-[#FFD4CC]" />
+                      <button
+                        onClick={() => { handleCopyMessage(); setShowMoreChannels(false); }}
+                        className="flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium text-[#3a241e] transition-colors hover:bg-[#FFF8F2]"
+                      >
+                        <span>📋</span>
+                        <span>Copy message</span>
+                      </button>
+                      {typeof navigator !== 'undefined' && 'share' in navigator && (
+                        <button
+                          onClick={() => { handleNativeShare(); setShowMoreChannels(false); }}
+                          className="flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium text-[#3a241e] transition-colors hover:bg-[#FFF8F2]"
+                        >
+                          <span>↗️</span>
+                          <span>Share via device</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

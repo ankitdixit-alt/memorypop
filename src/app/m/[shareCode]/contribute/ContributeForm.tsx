@@ -18,7 +18,7 @@ interface Props {
   occasion: string;
   celebrationDate: string | null;
   coverStyle: string | null;
-  tone: string;
+  tone: string | null;
   isPremium: boolean;
 }
 
@@ -551,6 +551,19 @@ export default function ContributeForm({
             >
               View All Memories
             </a>
+
+            {/* Product Discovery - Organic Growth Opportunity */}
+            <div className="mt-6 text-center">
+              <p className="text-sm text-[#6B5B52] mb-2">
+                Want to create your own MemoryPop for someone special?
+              </p>
+              <a
+                href="/"
+                className="inline-block text-sm text-[#FF6B57] underline hover:text-[#e05a47] transition-colors"
+              >
+                Create Your Own MemoryPop
+              </a>
+            </div>
           </div>
         </div>
       </main>

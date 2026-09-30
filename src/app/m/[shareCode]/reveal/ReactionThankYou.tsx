@@ -6,6 +6,7 @@ interface Props {
   reactionType: string;
   shareCode: string;
   isReturningUser?: boolean;
+  onBack?: () => void;
 }
 
 const REACTION_DISPLAY: Record<string, { emoji: string; label: string }> = {
@@ -14,7 +15,7 @@ const REACTION_DISPLAY: Record<string, { emoji: string; label: string }> = {
   made_me_laugh: { emoji: "😂", label: "it made you laugh" },
 };
 
-export default function ReactionThankYou({ reactionType, shareCode, isReturningUser = false }: Props) {
+export default function ReactionThankYou({ reactionType, shareCode, isReturningUser = false, onBack }: Props) {
   const reaction = REACTION_DISPLAY[reactionType] || { emoji: "❤️", label: "loved it" };
 
   return (
@@ -54,6 +55,16 @@ export default function ReactionThankYou({ reactionType, shareCode, isReturningU
         >
           Visit Memory Wall
         </Link>
+
+        {/* TERTIARY: Back to ending */}
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="mt-4 text-sm text-[#856b5f] underline hover:text-[#3a241e] transition-colors"
+          >
+            Back to ending
+          </button>
+        )}
       </div>
     </div>
   );

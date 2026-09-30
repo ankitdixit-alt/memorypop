@@ -24,7 +24,7 @@ export default async function ContributePage({
   // Query MemoryPop data server-side
   const { data: memorypop, error } = await supabaseServer
     .from("memorypops")
-    .select("recipient_name, occasion, celebration_date, cover_style, tone, is_premium")
+    .select("recipient_name, occasion, celebration_date, cover_style, is_premium")
     .eq("share_code", shareCode)
     .single();
 
@@ -41,7 +41,7 @@ export default async function ContributePage({
       occasion={memorypop.occasion}
       celebrationDate={memorypop.celebration_date}
       coverStyle={memorypop.cover_style}
-      tone={memorypop.tone}
+      tone={null}
       isPremium={memorypop.is_premium}
     />
   );

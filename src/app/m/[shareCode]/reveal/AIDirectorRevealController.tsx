@@ -146,6 +146,7 @@ export default function AIDirectorRevealController({
       showSpeedSelector={false}
       onComplete={onComplete}
       audioRef={audioRef}
+      shareCode={shareCode}
     />
   )
 }
