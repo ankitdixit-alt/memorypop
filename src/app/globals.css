@@ -79,3 +79,35 @@ body {
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
+
+/* Export mode: hide cookie banner and development overlays */
+html[data-memorypop-export="true"] [data-memorypop-cookie-banner] {
+  display: none !important;
+}
+
+html[data-memorypop-export="true"] nextjs-portal,
+html[data-memorypop-export="true"] #__next-build-watcher__,
+html[data-memorypop-export="true"] [id^="__next"] {
+  display: none !important;
+}
+
+/* Export mode: stage and scene layout */
+html[data-memorypop-export="true"] [data-reveal-stage] {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+html[data-memorypop-export="true"] [data-export-scene] {
+  box-sizing: border-box;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 56px;
+}

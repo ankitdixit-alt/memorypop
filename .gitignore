@@ -40,3 +40,13 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 test-assets/
+
+# generated video exports (from export worker)
+/exports/
+
+# playwright test outputs
+/test-results/
+/playwright-report/
+
+# temp build logs
+/tmp/build-*.log

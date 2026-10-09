@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { DownloadRevealButton } from "./DownloadRevealButton";
 
 interface DashboardSharingCardsProps {
   // Contributor invitation props
@@ -354,6 +355,16 @@ function SharingCard({
 
       {/* Footer with preview link and optional message */}
       <div className="mt-4 pt-4 border-t border-[#ead8c9] text-center">
+        {/* Download button for reveal mode */}
+        {mode === 'reveal' && (
+          <div className="mb-3">
+            <DownloadRevealButton
+              shareCode={shareCode}
+              className="rounded-xl bg-[#3a241e] px-4 py-3 font-semibold text-white transition-all hover:bg-[#2a1a15] active:scale-95 text-sm"
+            />
+          </div>
+        )}
+
         <Link
           href={previewHref}
           target="_blank"

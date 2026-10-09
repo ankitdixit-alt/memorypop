@@ -58,10 +58,14 @@ export async function generateMetadata({
 
 export default async function RevealPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ shareCode: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { shareCode } = await params;
+  const resolvedSearchParams = await searchParams;
+  const exportMode = resolvedSearchParams.export === 'true';
 
   // Fetch MemoryPop
   const { data: memoryPop, error: memoryPopError } = await supabaseServer
@@ -166,6 +170,7 @@ export default async function RevealPage({
       isPlusGift={isPlusGift}
       revealPlan={revealPlan}
       customMusicUrl={customMusicUrl}
+      exportMode={exportMode}
     />
   );
 }

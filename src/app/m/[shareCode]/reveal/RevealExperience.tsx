@@ -6,10 +6,12 @@ import { getCelebrationExperience } from "@/lib/celebrationExperience";
 import { getCoverHeroStyle } from "@/lib/coverStyles";
 import { getCoverTheme } from "@/lib/coverTheme";
 import { getSoundtrack } from "@/lib/occasionExperience";
+import { useExportPresentation } from "@/hooks/useExportPresentation";
 import ReactionPrompt from "./ReactionPrompt";
 import ReactionThankYou from "./ReactionThankYou";
 import GlobalCinematicController from "./GlobalCinematicController";
 import AIDirectorRevealController from "./AIDirectorRevealController";
+import StoryCreator from "@/components/story/StoryCreator";
 import type { MediaItem, VideoMedia } from "@/components/memory-experience/types";
 import type { RevealPlan } from "@/lib/ai/types";
 
@@ -40,6 +42,7 @@ interface Props {
   isPlusGift: boolean;
   revealPlan: RevealPlan | null;
   customMusicUrl?: string | null;
+  exportMode?: boolean;
 }
 
 export default function RevealExperience({
@@ -55,8 +58,10 @@ export default function RevealExperience({
   existingReaction,
   isPlusGift,
   revealPlan,
+  exportMode = false,
 }: Props) {
-  const [currentStep, setCurrentStep] = useState(0);
+  // In export mode, skip welcome (step 0) and go directly to reveal (step 1)
+  const [currentStep, setCurrentStep] = useState(exportMode ? 1 : 0);
   const [hasReacted, setHasReacted] = useState<boolean>(!!existingReaction); // Initialize from server prop
   const [selectedReaction, setSelectedReaction] = useState<string | null>(
     existingReaction?.reaction_type || null
@@ -66,6 +71,9 @@ export default function RevealExperience({
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isMuted, setIsMuted] = useState(false);
   const [isAudioReady, setIsAudioReady] = useState(false);
+
+  // Export mode: apply document-level presentation
+  useExportPresentation(exportMode);
 
   // FLAT ARCHITECTURE - Single global timeline
   // Step 0: Welcome
@@ -250,6 +258,7 @@ export default function RevealExperience({
           audioRef={audioRef}
           isMusicMuted={isMuted}
           onMuteToggle={handleToggleMute}
+          exportMode={exportMode}
         />
       )
     } else {
@@ -275,6 +284,9 @@ export default function RevealExperience({
         getCelebrationMessage={getCelebrationMessage}
         coverStyle={coverStyle}
         shareCode={shareCode}
+        memories={memories}
+        recipientName={recipientName}
+        occasion={occasion}
       />
     );
   } else if (currentStep === 3 && !hasReacted) {
@@ -316,6 +328,9 @@ export default function RevealExperience({
       getCelebrationMessage={getCelebrationMessage}
       coverStyle={coverStyle}
       shareCode={shareCode}
+      memories={memories}
+      recipientName={recipientName}
+      occasion={occasion}
     />
   );
 }
@@ -408,6 +423,9 @@ function FinalScreen({
   getCelebrationMessage,
   coverStyle,
   shareCode,
+  memories,
+  recipientName,
+  occasion,
 }: {
   celebrationExperience: { celebrationMessage: string; subMessage?: string; emoji: string };
   onNext?: () => void;
@@ -415,9 +433,13 @@ function FinalScreen({
   getCelebrationMessage?: (dateString?: string | null) => string | null;
   coverStyle?: string | null;
   shareCode?: string;
+  memories?: Memory[];
+  recipientName?: string;
+  occasion?: string;
 }) {
   const specialMessage = getCelebrationMessage ? getCelebrationMessage(celebrationDate) : null;
   const theme = getCoverTheme(coverStyle);
+  const [showStoryCreator, setShowStoryCreator] = useState(false);
 
   return (
     <div
@@ -482,6 +504,29 @@ function FinalScreen({
 
       {/* Product Discovery - Organic Growth Opportunity (collapsed initially) */}
       {shareCode && <ProductSharingPanel theme={theme} />}
+
+      {/* Story creator - optional "Share this moment" action */}
+      {shareCode && memories && recipientName && occasion && (
+        <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+          <button
+            onClick={() => setShowStoryCreator(true)}
+            className="text-[#856b5f] underline hover:text-[#3a241e] transition-colors text-sm"
+          >
+            Share this moment
+          </button>
+        </div>
+      )}
+
+      {/* Story creator modal */}
+      {showStoryCreator && shareCode && memories && recipientName && occasion && (
+        <StoryCreator
+          recipientName={recipientName}
+          occasion={occasion}
+          memories={memories}
+          shareCode={shareCode}
+          onClose={() => setShowStoryCreator(false)}
+        />
+      )}
     </div>
   );
 }

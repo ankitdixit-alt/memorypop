@@ -45,6 +45,7 @@ interface Props {
   audioRef: React.MutableRefObject<HTMLAudioElement | null>
   isMusicMuted: boolean
   onMuteToggle: () => void
+  exportMode?: boolean
 }
 
 export default function AIDirectorRevealController({
@@ -56,7 +57,8 @@ export default function AIDirectorRevealController({
   onComplete,
   audioRef,
   isMusicMuted,
-  onMuteToggle
+  onMuteToggle,
+  exportMode = false
 }: Props) {
   // Convert memories to MemoryMetadata
   const memoryMetadata = useMemo((): MemoryMetadata[] => {
@@ -147,6 +149,7 @@ export default function AIDirectorRevealController({
       onComplete={onComplete}
       audioRef={audioRef}
       shareCode={shareCode}
+      exportMode={exportMode}
     />
   )
 }

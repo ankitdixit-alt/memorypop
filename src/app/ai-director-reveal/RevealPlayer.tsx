@@ -18,6 +18,8 @@ import { PreviewImage, VideoSample, useReducedMotion, type VideoStatus } from '.
 import { DecorativeOverlay } from '../../components/DecorativeOverlay'
 import { TileTransition, type TileVariant } from './TileTransition'
 import { getDecorationConfig } from '../../config/decorations'
+import StoryCreator from '../../components/story/StoryCreator'
+import { DownloadRevealButton, getDownloadHelperText, type ExportStatus } from '../../components/DownloadRevealButton'
 import s from './reveal.module.css'
 
 interface RevealPlayerProps {
@@ -34,6 +36,8 @@ interface RevealPlayerProps {
   audioRef?: React.MutableRefObject<HTMLAudioElement | null>
   // Share code for gift sharing
   shareCode?: string
+  // Export mode for video recording
+  exportMode?: boolean
 }
 
 export function RevealPlayer({
@@ -47,7 +51,8 @@ export function RevealPlayer({
   showSpeedSelector = true,
   onComplete,
   audioRef: externalAudioRef,
-  shareCode
+  shareCode,
+  exportMode = false
 }: RevealPlayerProps) {
   const beats = useMemo(() => buildBeats(story, mode), [story, mode])
   const player = usePlayback(beats, speed)
@@ -71,6 +76,9 @@ export function RevealPlayer({
   const [copied, setCopied] = useState(false)
   const [showFallback, setShowFallback] = useState(false)
 
+  // Story creator state
+  const [showStoryCreator, setShowStoryCreator] = useState(false)
+
   // Tile transition state
   const [showTileTransition, setShowTileTransition] = useState(false)
   const [tileVariant, setTileVariant] = useState<TileVariant>('tileFadeOut')
@@ -80,6 +88,14 @@ export function RevealPlayer({
   const [userInteracted, setUserInteracted] = useState(false)
   const decorationEnabled = premium && story.occasion !== 'sympathy' && !reduced && !isMobile
 
+  // Export lifecycle state
+  const [exportPhase, setExportPhase] = useState<'preparing' | 'ready' | 'playing' | 'complete'>('preparing')
+
+  // Download button status tracking
+  const [downloadStatus, setDownloadStatus] = useState<ExportStatus>('idle')
+  const [downloadError, setDownloadError] = useState<string>('')
+  const exportStartedRef = useRef(false)
+
   // Detect mobile viewport
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 850)
@@ -87,6 +103,52 @@ export function RevealPlayer({
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
+
+  // Export lifecycle: preparation and readiness
+  useEffect(() => {
+    if (!exportMode) return;
+
+    // Start at first actual content beat (not opening)
+    if (beat.kind === 'opening' && player.index === 0) {
+      player.go(1, false); // Go to first beat but don't start playing yet
+    }
+
+    // Mark as ready once at the first content beat
+    if (exportPhase === 'preparing' && beat.kind !== 'opening' && player.index > 0) {
+      setExportPhase('ready');
+    }
+  }, [exportMode, beat.kind, player.index, exportPhase]);
+
+  // Export lifecycle: listen for start event
+  useEffect(() => {
+    if (!exportMode || exportPhase !== 'ready') return;
+
+    const handleExportStart = () => {
+      if (exportStartedRef.current) return; // Idempotent
+      exportStartedRef.current = true;
+
+      setExportPhase('playing');
+      if (!player.running) {
+        player.go(player.index, true); // Start playback from current beat
+      }
+    };
+
+    window.addEventListener('memorypop:export-start', handleExportStart);
+    return () => window.removeEventListener('memorypop:export-start', handleExportStart);
+  }, [exportMode, exportPhase, player]);
+
+  // Export lifecycle: mark complete after closing
+  useEffect(() => {
+    if (!exportMode || exportPhase !== 'playing') return;
+    if (!isClosing) return;
+
+    // Wait for emotional ending, then cut to branded closing
+    const timer = setTimeout(() => {
+      setExportPhase('complete');
+    }, 2000); // 2s for ending, then clean cut to branded card
+
+    return () => clearTimeout(timer);
+  }, [exportMode, exportPhase, isClosing]);
 
   // Trigger tile transition on beat change
   useEffect(() => {
@@ -263,6 +325,23 @@ export function RevealPlayer({
     }
   }
 
+  // Convert story memories to StoryCreator format
+  const convertMemoriesForStoryCreator = () => {
+    return story.memories.map(memory => ({
+      id: memory.id,
+      contributor_name: memory.name,
+      message: memory.message,
+      photos: memory.assets
+        .filter(asset => asset.kind === 'photo')
+        .map(asset => ({
+          url: asset.url,
+          uploaded_at: new Date().toISOString(),
+          file_size_bytes: 0
+        })),
+      photo_url: memory.assets.find(asset => asset.kind === 'photo')?.url || null
+    }))
+  }
+
   // Music with ducking during video (production integration)
   useEffect(() => {
     const audio = externalAudioRef?.current
@@ -334,15 +413,19 @@ export function RevealPlayer({
     player.go(next >= 0 ? next : beats.length - 1)
   }
 
-  return <div className={s.app}>
+  return <div className={s.app} {...(exportMode && {'data-export-root': 'true'})}>
     <div className={s.player} data-mode={mode} data-preset={preset}>
-      <div className={s.stageHeader}>
-        <span>{premium ? 'A story for ' + story.recipient : 'Memories for ' + story.recipient}</span>
-        <button onClick={openWall}>Browse memories ↗</button>
-      </div>
+      {!exportMode && (
+        <div className={s.stageHeader}>
+          <span>{premium ? 'A story for ' + story.recipient : 'Memories for ' + story.recipient}</span>
+          <button onClick={openWall}>Browse memories ↗</button>
+        </div>
+      )}
 
       <section className={[s.stage, premium ? s.director : s.standard, story.occasion === 'sympathy' ? s.quiet : '', beat.finale ? s.finale : ''].join(' ')}
         aria-label={premium ? 'AI Director reveal' : 'Standard reveal'} data-beat={beat.id} data-kind={beat.kind} data-layout={beat.presentation}
+        data-reveal-stage
+        {...(exportMode && {'data-export-phase': exportPhase})}
         style={{'--motion-play': player.running ? 'running' : 'paused'} as React.CSSProperties}>
 
         {/* Tile transition overlay */}
@@ -366,7 +449,7 @@ export function RevealPlayer({
               {beat.chapter && <span>{beat.chapter.title}</span>}</>}
         </div>
 
-        {beat.kind === 'opening' && <div key={player.key} className={s.opening + ' ' + s.fade}>
+        {beat.kind === 'opening' && <div key={player.key} className={s.opening + ' ' + s.fade} data-export-scene>
           <div className={s.openingCopy}><p className={s.eyebrow}>{story.occasion === 'sympathy' ? 'Shared with love' : 'Made of memories'}</p>
             <h1>{story.title}</h1><p className={s.dedication}>For {story.recipient},<br/>from your people.</p>
             <button className={s.primary} onClick={() => { player.go(1, true) }}>Begin the reveal <span>→</span></button>
@@ -376,14 +459,14 @@ export function RevealPlayer({
           </div>
         </div>}
 
-        {beat.kind === 'chapter' && <div key={player.key} className={s.chapterCard + ' ' + s.chapter}>
+        {beat.kind === 'chapter' && <div key={player.key} className={s.chapterCard + ' ' + s.chapter} data-export-scene>
           <span className={s.chapterNumber}>{String((beat.chapterIndex ?? 0) + 1).padStart(2,'0')}</span>
           <p className={s.eyebrow}>The next chapter</p><h2>{beat.chapter?.title}</h2>
           <p>{beat.chapter?.subtitle}</p><div className={s.chapterRule}/>
         </div>}
 
         {beat.kind === 'memory' && currentMemory && (premium
-          ? <article key={currentMemory.id} className={[s.contribution, beat.finale ? s.closing : story.occasion === 'sympathy' ? s.fade : s.slide, !currentMemory.assets.length ? s.letterOnly : ''].join(' ')} data-memory={currentMemory.id}>
+          ? <article key={currentMemory.id} className={[s.contribution, beat.finale ? s.closing : story.occasion === 'sympathy' ? s.fade : s.slide, !currentMemory.assets.length ? s.letterOnly : ''].join(' ')} data-memory={currentMemory.id} data-export-scene>
             <div className={s.messagePanel}>
               <p className={s.eyebrow}>{beat.finale ? 'One last thing, with love' : 'A memory from'}</p>
               <h2>{currentMemory.name}</h2>
@@ -403,7 +486,7 @@ export function RevealPlayer({
               {!beat.assets.length && currentMemory.assets.length > 0 && <div className={s.readFirst}>A few words before the film.</div>}
             </div>
           </article>
-          : <div key={beat.id} className={s.standardContent + ' ' + s.fade}>
+          : <div key={beat.id} className={s.standardContent + ' ' + s.fade} data-export-scene>
             {isVideo ? <VideoSample key={player.key} asset={beat.assets[0]} videoRef={videoRef} speed={speed} onStatus={onVideoStatus} onEnded={player.completeVideo}/>
               : beat.assets.length ? <div className={s.standardPhoto}><PreviewImage asset={beat.assets[0]} animated={player.running && !reduced} onInspect={() => openInspect(beat.assets[0])}/></div> : null}
             {!isVideo && <div className={beat.assets.length ? s.standardCaption : s.standardMessage}>
@@ -411,16 +494,47 @@ export function RevealPlayer({
             </div>}
           </div>)}
 
-        {isClosing && <div key={player.key} className={s.closingCard + ' ' + s.closing}>
+        {isClosing && <div key={player.key} className={s.closingCard + ' ' + s.closing} data-export-scene>
           <span className={s.heart} aria-hidden="true">♡</span>
           <p className={s.eyebrow}>{story.occasion === 'sympathy' ? 'Held in memory' : 'Made together. Yours to revisit.'}</p>
           <h2>{story.occasion === 'sympathy' ? 'These memories are here for you.' : 'All these people. All this love.'}</h2>
           <p>{story.memories.length} contributions, ready to revisit whenever you like.</p>
+
+          {!exportMode && (
+          <>
           <div className={s.endActions}>
             {onComplete && <button className={s.primary} onClick={onComplete}>Leave a reaction</button>}
             <button onClick={() => player.go(0, true)}>Replay reveal ↻</button>
             <button onClick={openWall}>Visit memory wall ↗</button>
+            {shareCode && (
+              <DownloadRevealButton
+                shareCode={shareCode}
+                onStatusChange={(status, error) => {
+                  setDownloadStatus(status);
+                  setDownloadError(error || '');
+                }}
+              />
+            )}
           </div>
+
+          {/* Helper text below action row - outside flex item height calculation */}
+          {shareCode && (() => {
+            const helperText = getDownloadHelperText(downloadStatus, downloadError);
+            return helperText ? (
+              <p style={{
+                fontSize: '0.85rem',
+                color: downloadStatus === 'failed' ? '#d32f2f' : '#6B5B52',
+                textAlign: 'center',
+                marginTop: '0.75rem',
+                maxWidth: '400px',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                lineHeight: '1.4'
+              }}>
+                {helperText}
+              </p>
+            ) : null;
+          })()}
 
           {/* Gift sharing - discreet action */}
           {shareCode && (
@@ -770,9 +884,32 @@ export function RevealPlayer({
               )}
             </div>
           )}
+
+          {/* Story creator - optional "Share this moment" action */}
+          {shareCode && (
+            <div style={{ marginTop: '0.75rem', textAlign: 'center' }}>
+              <button
+                onClick={() => setShowStoryCreator(true)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'inherit',
+                  opacity: 0.7,
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem'
+                }}
+              >
+                Share this moment
+              </button>
+            </div>
+          )}
+          </>
+          )}
         </div>}
       </section>
 
+      {!exportMode && (
       <div className={s.transport} aria-label="Playback controls">
         <div className={s.track} role="progressbar" aria-label="Reveal progress" aria-valuenow={overall} aria-valuemin={0} aria-valuemax={100}><span style={{width: overall + '%'}}/></div>
         <div className={s.controlRow}>
@@ -793,7 +930,9 @@ export function RevealPlayer({
         <div className={s.playbackNote}><span>{isVideo ? videoStatus === 'buffering' ? 'Buffering — the reveal is waiting.' : 'Video uses its own playback clock. Speed also applies to video.' : isClosing ? 'Your memory wall is ready.' : speed === 1 ? 'Take your time. Pause whenever you like.' : 'Preview speed — use 1× to judge the intended experience.'}</span>
           <span>About {formatDuration(estimateSeconds(beats, speed))} at {speed}×, excluding pauses</span></div>
       </div>
+      )}
 
+      {!exportMode && (
       <dialog ref={dialogRef} className={s.dialog} onCancel={closeModal} onClose={closeModal}>
         <div className={s.dialogHeader}><h2>{inspected ? inspected.name : 'Your memory wall'}</h2><button onClick={closeModal} aria-label="Close">Close ×</button></div>
         {inspected ? <AssetInspector key={inspected.assets[inspected.index].id} assets={inspected.assets} index={inspected.index}
@@ -805,6 +944,18 @@ export function RevealPlayer({
           </article>)}</div>}
         {inspected && wall && <button onClick={() => setInspected(null)}>← All memories</button>}
       </dialog>
+      )}
+
+      {/* Story creator modal */}
+      {!exportMode && showStoryCreator && shareCode && (
+        <StoryCreator
+          recipientName={story.recipient}
+          occasion={story.occasion}
+          memories={convertMemoriesForStoryCreator()}
+          shareCode={shareCode}
+          onClose={() => setShowStoryCreator(false)}
+        />
+      )}
     </div>
   </div>
 }

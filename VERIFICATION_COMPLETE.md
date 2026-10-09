@@ -1,130 +1,44 @@
-# AI Director Integration Testing - Verification Complete
+# Desktop Layout Fix - Verification Complete
 
-**Date**: 2026-09-22
-**Status**: Pre-execution verification complete, ready for database testing
+## Screenshots Generated
 
----
+### Reveal Page (All States)
+Location: `test-results/reveal-layout-1791577828718/`
 
-## What Was Fixed and Verified
+**Desktop (1920×1080):**
+- `create-video-desktop.png` - Create video button with helper text below
+- `processing-desktop.png` - Processing button with helper text below  
+- `download-video-desktop.png` - Download video button, no helper text
 
-### 1. Mock AI Provider Integration ✅
+**Mobile (400×800):**
+- `create-video-mobile.png` - Create video wrapped naturally
+- `processing-mobile.png` - Processing wrapped naturally
+- `download-video-mobile.png` - Download video wrapped naturally
 
-**Solution**: TEST_AI_PROVIDER=mock exercises full integration with mocked responses
+### Dashboard (Backward Compatibility)
+Location: `test-results/dashboard-verify-1791578569365/`
 
-**Flow**:
-```
-Creator → Plus entitlement check → Acquire lock → Mock generation
-→ Validate plan → Atomic publish → Lock release → Cached playback
-```
+- `dashboard-idle.png` - Dashboard with Create video + helper text
+- `dashboard-ready.png` - Dashboard with Download video, no helper
 
-**Test scenarios**: Normal (success), timeout error, generation error
+## Manual Verification URLs
 
-**Verified**: 37/37 AI Director tests pass (exit code 0)
+**Reveal page (end state with action buttons):**
+http://localhost:3000/m/test-sharing-1790756204563/reveal
 
-### 2. Complete Test Schema ✅
+**Dashboard:**
+http://localhost:3000/dashboard/test-sharing-1790756204563
 
-**File**: test-db-init-complete.sql includes all migrations 001-015
-- Premium, dates, creator identity, multimedia, RLS, AI plans
+## Fix Summary
 
-**Verified**: Schema matches production migrations exactly
+DownloadRevealButton now supports two rendering modes:
+- With onStatusChange callback: Returns only button (RevealPlayer usage)
+- Without callback: Returns button + helper in column (Dashboard usage)
 
-### 3. Environment Safety ✅
+RevealPlayer renders helper text after .endActions in normal flow.
 
-**File**: scripts/run-with-test-env.sh
-- Loads .env.test in memory only
-- Never touches .env.local
-- Blocks production URLs
+Result: All buttons maintain 42px height, helper text doesn't stretch neighbors.
 
-**Verified**: 7/7 launcher tests pass (exit code 0)
+## Build Status
 
-### 4. Test Results ✅
-
-**Unit tests**: 182/198 pass (7 pre-existing celebrationExperience failures)
-**AI Director tests**: 37/37 pass (exit code 0)
-**Build**: Success (exit code 0)
-**Launcher**: 7/7 pass (exit code 0)
-
----
-
-## What's Still Blocked
-
-**Single blocker**: Test Supabase project not created yet
-
-**Ready to run** after 5-minute setup:
-- Database function tests (5 tests)
-- Test data seeding (2 gifts)
-- Browser verification (Standard + Plus)
-
----
-
-## Supabase Browser Steps
-
-### 1. Create Project (2 min)
-1. https://supabase.com/dashboard → New Project
-2. Name: memorypop-test, Free plan
-3. Wait for initialization
-
-### 2. Get Credentials (1 min)
-Settings → API → Copy:
-- Project URL
-- Project Ref
-- anon key
-- service_role key
-
-### 3. Initialize Database (1 min)
-SQL Editor → New query → Paste test-db-init-complete.sql → Run
-
-### 4. Configure .env.test (1 min)
-```bash
-nano .env.test
-# Fill in credentials from step 2
-```
-
----
-
-## Commands After Setup
-
-```bash
-# Verify database (5 tests)
-npm run test:verify-db
-
-# Seed test data (2 gifts)
-npm run test:seed
-
-# Start test website
-npm run test:dev
-```
-
-**Verification**:
-- Standard reveal: Chronological display
-- Plus preparation: Mock AI generation
-- Plus reveal: Chapters, highlights, finale
-- Database: Plan cached, lock released
-
----
-
-## Configuration
-
-**.env.test**:
-```bash
-TEST_AI_PROVIDER=mock           # Full integration with mocks
-ENABLE_AI_DIRECTOR=false        # Live API disabled
-```
-
-**Mock scenarios**:
-- Normal ID → Success
-- ID with 'timeout' → Timeout error
-- ID with 'error' → Generation error
-
----
-
-## Files
-
-**Authoritative**:
-- TEST_SETUP_FINAL.md - Complete setup guide
-- test-db-init-complete.sql - Full schema
-- scripts/run-with-test-env.sh - Safe launcher
-
-**Obsolete** (marked with warnings):
-- TEST_ENVIRONMENT_SETUP.md
-- QUICK_START_TESTING.md
+✅ Exit status 0
