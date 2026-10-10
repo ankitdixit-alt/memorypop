@@ -20,7 +20,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.app'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://www.memorypop.app'),
 
   // Application metadata
   applicationName: 'MemoryPop',
@@ -104,17 +104,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.app';
-
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
-        {/* Canonical URL (SEO Foundation Quick Win #4) */}
-        <link rel="canonical" href={baseUrl} />
-        {/* Organization Schema (SEO Foundation Quick Win #2) */}
+        {/* Canonical URLs are generated from route metadata. */}
         <OrganizationSchema />
       </head>
       <body className="min-h-full flex flex-col">

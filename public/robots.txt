@@ -17,4 +17,4 @@ Disallow: /manage/
 Disallow: /m/
 
 # Sitemap location
-Sitemap: https://memorypop.app/sitemap.xml
+Sitemap: https://www.memorypop.app/sitemap.xml

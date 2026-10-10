@@ -13,8 +13,8 @@ export function OrganizationSchema() {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "MemoryPop",
-    "url": "https://memorypop.app",
-    "logo": "https://memorypop.app/apple-touch-icon.png",
+    "url": "https://www.memorypop.app",
+    "logo": "https://www.memorypop.app/apple-touch-icon.png",
     "description": "Create one beautiful home for every celebration. MemoryPop brings friends and family together to share memories, photos, and heartfelt messages for birthdays, weddings, farewells, and more.",
     "foundingDate": "2026",
     "sameAs": [

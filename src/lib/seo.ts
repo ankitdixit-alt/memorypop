@@ -5,7 +5,7 @@
  * Part of Phase 2C: SEO Foundation
  */
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.app';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.memorypop.app';
 
 /**
  * Site-wide configuration for SEO and schema markup
@@ -28,9 +28,9 @@ export const SITE_CONFIG = {
  * @returns Fully qualified canonical URL
  *
  * @example
- * getCanonicalUrl('/') // 'https://memorypop.app/'
- * getCanonicalUrl('/about') // 'https://memorypop.app/about'
- * getCanonicalUrl('birthday-memory-book') // 'https://memorypop.app/birthday-memory-book'
+ * getCanonicalUrl('/') // 'https://www.memorypop.app/'
+ * getCanonicalUrl('/about') // 'https://www.memorypop.app/about'
+ * getCanonicalUrl('birthday-memory-book') // 'https://www.memorypop.app/birthday-memory-book'
  */
 export function getCanonicalUrl(path: string): string {
   // Ensure path starts with /

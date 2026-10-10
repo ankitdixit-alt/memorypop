@@ -26,7 +26,7 @@ interface EventSchemaProps {
  * @param occasionSlug - URL slug (e.g., "birthday-memory-book")
  */
 export function EventSchema({ occasion, occasionSlug }: EventSchemaProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.app';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.memorypop.app';
 
   const schema = {
     '@context': 'https://schema.org',

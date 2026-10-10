@@ -10,7 +10,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.app';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.memorypop.app';
   const currentDate = new Date();
 
   // Define all public routes with SEO metadata

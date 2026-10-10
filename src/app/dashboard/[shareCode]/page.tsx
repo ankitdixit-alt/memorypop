@@ -51,7 +51,7 @@ export async function generateMetadata({
   params: Promise<{ shareCode: string }>;
 }): Promise<Metadata> {
   const { shareCode } = await params;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://memorypop.app';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.memorypop.app';
 
   // Fetch MemoryPop to get recipient name
   const { data: memorypop } = await supabaseServer
