@@ -10,9 +10,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabaseServer';
 import { calculateContentHash } from '@/lib/export/exportReveal';
+import { isVideoExportEnabled } from '@/lib/featureFlags';
 
 export async function POST(request: NextRequest) {
   try {
+    // Feature flag check
+    if (!isVideoExportEnabled()) {
+      return NextResponse.json(
+        { error: 'Video export is not available' },
+        { status: 503 }
+      );
+    }
+
     const body = await request.json();
     const { shareCode } = body;
 

@@ -22,6 +22,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { exportReveal } from '../src/lib/export/exportReveal';
 import path from 'path';
+import { promises as fs } from 'fs';
 
 const POLL_INTERVAL_MS = 5000; // Check every 5 seconds
 const MAX_ATTEMPTS = 3;
@@ -46,6 +47,45 @@ interface ExportJob {
   memorypops: {
     share_code: string;
   };
+}
+
+/**
+ * Upload video to Supabase Storage
+ * Returns the storage path on success, null on failure
+ */
+async function uploadToStorage(
+  localPath: string,
+  memorypopId: string,
+  jobId: string
+): Promise<string | null> {
+  try {
+    console.log(`   📤 Uploading to storage...`);
+
+    // Read video file
+    const videoBuffer = await fs.readFile(localPath);
+
+    // Storage path: exports/<memorypop-id>/<job-id>.mp4
+    const storagePath = `${memorypopId}/${jobId}.mp4`;
+
+    // Upload to Supabase Storage
+    const { error } = await supabase.storage
+      .from('exports')
+      .upload(storagePath, videoBuffer, {
+        contentType: 'video/mp4',
+        upsert: false, // Don't overwrite existing files
+      });
+
+    if (error) {
+      console.error(`   ❌ Upload failed: ${error.message}`);
+      return null;
+    }
+
+    console.log(`   ✅ Uploaded to: ${storagePath}`);
+    return storagePath;
+  } catch (error: any) {
+    console.error(`   ❌ Upload error: ${error.message}`);
+    return null;
+  }
 }
 
 async function processJob(job: ExportJob): Promise<void> {
@@ -77,14 +117,43 @@ async function processJob(job: ExportJob): Promise<void> {
     console.log(`   Duration: ${result.duration?.toFixed(1)}s`);
     console.log(`   Size: ${((result.size || 0) / 1024 / 1024).toFixed(2)} MB`);
 
-    await supabase
-      .from('export_jobs')
-      .update({
-        status: 'completed',
-        video_path: result.videoPath,
-        completed_at: new Date().toISOString(),
-      })
-      .eq('id', id);
+    // Upload to Supabase Storage
+    const storagePath = await uploadToStorage(result.videoPath, job.memorypop_id, id);
+
+    if (storagePath) {
+      // Upload successful - mark job as completed with storage path
+      await supabase
+        .from('export_jobs')
+        .update({
+          status: 'completed',
+          video_path: storagePath, // Storage path, not local path
+          completed_at: new Date().toISOString(),
+        })
+        .eq('id', id);
+
+      console.log(`✅ Job completed and uploaded`);
+    } else {
+      // Upload failed - treat as export failure
+      console.error(`❌ Upload failed, marking job as failed`);
+
+      const newAttemptCount = job.attempt_count + 1;
+      const finalFailure = newAttemptCount >= MAX_ATTEMPTS;
+
+      await supabase
+        .from('export_jobs')
+        .update({
+          status: finalFailure ? 'failed' : 'pending',
+          error_message: 'Failed to upload video to storage',
+          attempt_count: newAttemptCount,
+        })
+        .eq('id', id);
+
+      if (finalFailure) {
+        console.error(`   Max attempts reached, marking as failed`);
+      } else {
+        console.log(`   Will retry (${newAttemptCount}/${MAX_ATTEMPTS})`);
+      }
+    }
   } else {
     // Export failed
     console.error(`❌ Export failed: ${result.error}`);

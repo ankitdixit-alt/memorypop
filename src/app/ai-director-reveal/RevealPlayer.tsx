@@ -20,6 +20,7 @@ import { TileTransition, type TileVariant } from './TileTransition'
 import { getDecorationConfig } from '../../config/decorations'
 import StoryCreator from '../../components/story/StoryCreator'
 import { DownloadRevealButton, getDownloadHelperText, type ExportStatus } from '../../components/DownloadRevealButton'
+import { isVideoExportEnabledClient } from '../../lib/featureFlags'
 import s from './reveal.module.css'
 
 interface RevealPlayerProps {
@@ -59,6 +60,7 @@ export function RevealPlayer({
   const beat = player.beat
   const premium = mode === 'director'
   const reduced = useReducedMotion()
+  const videoExportEnabled = isVideoExportEnabledClient()
   const [videoStatus, setVideoStatus] = useState<VideoStatus>('ready')
   const [videoProgress, setVideoProgress] = useState(0)
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -506,7 +508,7 @@ export function RevealPlayer({
             {onComplete && <button className={s.primary} onClick={onComplete}>Leave a reaction</button>}
             <button onClick={() => player.go(0, true)}>Replay reveal ↻</button>
             <button onClick={openWall}>Visit memory wall ↗</button>
-            {shareCode && (
+            {videoExportEnabled && shareCode && (
               <DownloadRevealButton
                 shareCode={shareCode}
                 onStatusChange={(status, error) => {
@@ -518,7 +520,7 @@ export function RevealPlayer({
           </div>
 
           {/* Helper text below action row - outside flex item height calculation */}
-          {shareCode && (() => {
+          {videoExportEnabled && shareCode && (() => {
             const helperText = getDownloadHelperText(downloadStatus, downloadError);
             return helperText ? (
               <p style={{

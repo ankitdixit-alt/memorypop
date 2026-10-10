@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { DownloadRevealButton } from "./DownloadRevealButton";
+import { isVideoExportEnabledClient } from "@/lib/featureFlags";
 
 interface DashboardSharingCardsProps {
   // Contributor invitation props
@@ -26,6 +27,8 @@ export function DashboardSharingCards({
   revealLink,
   revealMessage,
 }: DashboardSharingCardsProps) {
+  const videoExportEnabled = isVideoExportEnabledClient();
+
   return (
     <div className="flex flex-col gap-6">
       {/* Card 1: Invite Contributors */}
@@ -39,6 +42,7 @@ export function DashboardSharingCards({
         mode="contributor"
         previewLabel="View contribution page"
         previewHref={`/m/${shareCode}/contribute`}
+        videoExportEnabled={videoExportEnabled}
       />
 
       {/* Card 2: Your Gift is Ready (only shown when ready) */}
@@ -55,6 +59,7 @@ export function DashboardSharingCards({
           showReadyBadge
           previewLabel="Preview reveal"
           previewHref={`/m/${shareCode}/reveal`}
+          videoExportEnabled={videoExportEnabled}
         />
       )}
     </div>
@@ -73,6 +78,7 @@ interface SharingCardProps {
   showReadyBadge?: boolean;
   previewLabel: string;
   previewHref: string;
+  videoExportEnabled?: boolean;
 }
 
 function SharingCard({
@@ -87,6 +93,7 @@ function SharingCard({
   showReadyBadge = false,
   previewLabel,
   previewHref,
+  videoExportEnabled = true,
 }: SharingCardProps) {
   const [copied, setCopied] = useState(false);
   const [showFallback, setShowFallback] = useState(false);
@@ -356,7 +363,7 @@ function SharingCard({
       {/* Footer with preview link and optional message */}
       <div className="mt-4 pt-4 border-t border-[#ead8c9] text-center">
         {/* Download button for reveal mode */}
-        {mode === 'reveal' && (
+        {mode === 'reveal' && videoExportEnabled && (
           <div className="mb-3">
             <DownloadRevealButton
               shareCode={shareCode}

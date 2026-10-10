@@ -118,9 +118,9 @@ export function DownloadRevealButton({ shareCode, className = '', onStatusChange
 
     setStatus('downloading');
 
-    // Trigger download via link
+    // Trigger download via link with authorization
     const link = document.createElement('a');
-    link.href = `/api/export/download?jobId=${job.jobId}`;
+    link.href = `/api/export/download?jobId=${job.jobId}&shareCode=${encodeURIComponent(shareCode)}`;
     link.download = 'reveal.mp4';
     document.body.appendChild(link);
     link.click();
